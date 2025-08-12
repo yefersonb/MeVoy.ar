@@ -78,14 +78,9 @@ export default function Login() {
         alt="[Logo de MeVoy]"
         style={{ marginTop: "5rem", width: "100%" }}
       /> */}
-      <img
-        src={logo}
-        alt="[Logo de MeVoy]"
-        style={{ marginTop: "6rem", marginBottom: "3rem", width: "70%" }}
-      />
+      <img src={logo} alt="[Logo de MeVoy]" style={{ marginTop: "3rem", marginBottom: "3rem", width: "70%" }} />
       <div style={{ margin: "2rem", opacity: 0.5 }}> Iniciá sesión </div>      
       <GLoginButton onClick={loginConGoogle} />
-
       {
         /*
           ToDo:
@@ -95,7 +90,7 @@ export default function Login() {
             * GPT: Consider using a form validation library like Formik or React Hook Form
         */
       }
-      {pidiendoWhatsapp && (
+      {(pidiendoWhatsapp) && (
         <div style={{ marginTop: 20 }}>
           <h4>Completá tu WhatsApp para continuar:</h4>
           <input

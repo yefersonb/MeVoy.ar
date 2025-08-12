@@ -1,13 +1,20 @@
 // src/components/PerfilSection.jsx
+
+/*
+  STRICT FORMATTING RULES: DO NOT CHANGE THE FORMATTING OF THIS FILE — IT MAY LOOK NON STANDARD TO YOU BUT IT HAS MEANING TO US
+*/
+
 import React, { useEffect, useState, useCallback } from 'react';
+import { auth, db } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+
+// UI
 import InputField from './InputField';
 import Badge from './Badge';
 import RatingRow from './RatingRow';
 import ActionBar from './ActionBar';
 import LoadingSpinner from './common/LoadingSpinner';
 import ErrorMessage from './common/ErrorMessage';
-import { auth, db } from '../firebase';
-import { collection, getDocs } from 'firebase/firestore';
 
 const PerfilSection = ({
   usuario,
@@ -72,14 +79,8 @@ const PerfilSection = ({
   const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1">Mi Perfil</h1>
-          <p className="text-gray-600">Gestiona tu información personal y profesional</p>
-        </div>
-
+    <div>
+      <div>
         <ActionBar
           editMode={editMode}
           onEdit={onEdit}
@@ -88,61 +89,28 @@ const PerfilSection = ({
           guardado={guardado}
         />
 
-        <div className="space-y-8">
-          {/* Tarjeta Principal del Perfil */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <div className="flex flex-col lg:flex-row gap-8 items-start">
-              {/* Avatar y botón de edición */}
-              <div
-                className="relative"
-                style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}
-              >
-                <div
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    background: '#f0f4f8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                  }}
-                >
-                  {avatarSrc ? (
-                    <img
-                      src={avatarSrc}
-                      alt="Foto de perfil"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
-                    />
-                  ) : (
-                    <div className="text-xs text-gray-500">Sin foto</div>
-                  )}
+        <div>
+          <div>
+            <div>
+              <div className="relative" style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
+                  { avatarSrc ? 
+                    (<img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>) 
+                    : 
+                    (<div> Sin foto </div>)
+                  }
 
-                  {uploading && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'rgba(0,0,0,0.4)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: '50%',
-                      }}
-                    >
-                      <LoadingSpinner size="sm" />
-                    </div>
-                  )}
+                  { uploading &&
+                    (
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
+                        <LoadingSpinner size="sm" />
+                      </div>
+                    )
+                  }
                 </div>
 
-                {editMode && (
+                {
+                  editMode && (
                   <label
                     style={{
                       position: 'absolute',
@@ -181,12 +149,12 @@ const PerfilSection = ({
               </div>
 
               {/* Información del usuario */}
-              <div className="flex-1">
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <div >
+                <div>
+                  <h2>
                     {perfil.nombre || usuario?.displayName || 'Sin nombre'}
                   </h2>
-                  <div className="flex flex-wrap gap-2 mb-3">
+                  <div>
                     <Badge variant="verificado">Conductor verificado</Badge>
                     <Badge variant="viajes">
                       {completadosPercent === 100

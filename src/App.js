@@ -6,11 +6,15 @@ import { onAuthStateChanged } from "firebase/auth";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
 
-// ✅ CozyGlow
+// UI Copmonents
 import CozySpinner from "./components/cozyglow/components/Spinners/CozySpinner/CozySpinner";
+import "./components/ui/SearchBar/SearchBar.module.css";
+
+// Styles
 import "./styles/cozyglow/cozyglow.css";
 import "./styles/cozyglow/color_themes/mvclassic.css";
-import "./App.css"; // dejalo último
+import "./styles/cozyglow/color_themes/hazbyn.css"; // Override MeVoy-Classic with Hazbyn
+import "./App.css";
 
 // UI
 import Login from "./components/Login";
@@ -24,6 +28,7 @@ import ViajeroDashboard from "./components/ViajeroDashboard";
 // Hooks
 import useConductorData from "./hooks/useConductorData";
 import usePerfilViajeroMinimo from "./hooks/usePerfilViajeroMinimo";
+import { SearchBar } from "./components/ui/SearchBar/SearchBar";
 
 export default function App() {
   const [usuario, setUsuario] = useState(null);
@@ -112,6 +117,7 @@ export default function App() {
       </ThemeProvider>
     );
   }
+
   if (!usuario) {
     return (
       <ThemeProvider>
@@ -119,6 +125,8 @@ export default function App() {
       </ThemeProvider>
     );
   }
+
+  // ?? What's this?
   if (rol === "viajero" && loadingPerfil) {
     return (
       <ThemeProvider>
@@ -127,11 +135,13 @@ export default function App() {
     );
   }
 
-  // App (layout anterior)
+  // App
   return (
     <ThemeProvider>
+      <Header rol={rol} onToggleRol={handleToggleRol} />
       <div className="app-container">
-        <Header rol={rol} onToggleRol={handleToggleRol} />
+        <div style={{width: "1200px"}}></div>
+        <SearchBar/>
 
         {rol === "conductor" ? (
           <ConductorDashboard viajes={viajes} reservas={reservas} />

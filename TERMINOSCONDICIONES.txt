@@ -1,0 +1,147 @@
+TÉRMINOS Y CONDICIONES DE USO DE MeVoy
+Última actualización: 6 de agosto de 2025
+
+1. Definiciones
+1.1. “MeVoy” o “la Plataforma”: sitio web y app móvil operados por MeVoy S.R.L.
+1.2. “Usuario”: toda persona que accede a la Plataforma, sea “Conductor” o “Pasajero”.
+1.3. “Conductor”: Usuario que ofrece un viaje compartido.
+1.4. “Pasajero”: Usuario que reserva una plaza en un viaje compartido.
+1.5. “Operador”: MeVoy S.R.L., CUIT XX-XXXXXXXX-X, con domicilio en Montecarlo, Misiones.
+1.6. “Servicio”: la puesta a disposición de tecnología para la publicación de viajes, reserva de plazas y procesamiento de pagos.
+
+2. Aceptación de los Términos
+Al registrarte o usar la Plataforma, aceptás sin reservas estos Términos. Si no estás de acuerdo, no podés usar MeVoy.
+
+3. Objeto
+La Plataforma conecta conductores y pasajeros para compartir gastos de viaje. MeVoy facilita la interacción, publicación de anuncios, comunicación y pago, pero no presta el servicio de transporte.
+
+4. Registro y obligaciones de los Usuarios
+4.1. Edad y capacidad: solo mayores de 18 años.
+4.2. Información veraz: debés proveer datos completos y actualizarlos (nombre, DNI, teléfono, foto, domicilio).
+4.3. Cuenta y contraseña: sos responsable de su uso y custodia.
+4.4. Aceptación de políticas: debés aceptar aquí estos Términos y la Política de Privacidad.
+
+5. Verificación de antecedentes y requisitos de los Conductores
+5.1. Para ser Conductor es requisito:
+
+Poseer licencia de conducir vigente.
+
+Tener seguro automotor (responsabilidad civil) que cubra viajes compartidos.
+
+Presentar certificado de antecedentes penales y de tránsito (vigente a la fecha de publicación).
+5.2. MeVoy podrá solicitar renovación de certificados cada 6 meses.
+5.3. Si detectamos coincidencias con delitos graves (p.ej. violencia de género, abusos) o infracciones graves, podremos suspender o expulsar la cuenta y notificar a autoridades.
+
+6. Publicación y clasificación de viajes
+6.1. Condiciones mínimas para publicar un viaje:
+(i) licencia válida; (ii) vehículo propio o con consentimiento; (iii) seguro activo; (iv) no actuar como profesional; (v) plazas con cinturón; (vi) cupo ≤ asientos legales; (vii) no duplicar anuncios; (viii) vehículo en buen estado e ITV vigente.
+6.2. Orden de resultados:
+
+Por fecha y hora (más cercano primero).
+
+Por precio (ascendente).
+El Usuario puede seleccionar otros filtros (duración, proximidad, precio).
+
+7. Formación del contrato de transporte
+7.1. Cadena contractual:
+
+El contrato de transporte se perfecciona directamente entre Conductor y Pasajero al aceptar la reserva y efectuar el pago.
+
+MeVoy no es parte de ese contrato: su rol es mero intermediario para publicar anuncios, facilitar la comunicación y procesar pagos.
+7.2. Implicaciones:
+
+MeVoy no garantiza ni presta el servicio; no responde por calidad, retrasos, incumplimientos ni actos de terceros.
+
+Cualquier controversia contractual nace de la relación Conductor–Pasajero.
+
+8. Procesamiento de pagos y comisiones
+8.1. Los pagos se realizan íntegramente vía Mercado Pago (o pasarela que disponga la Plataforma).
+8.2. Split Payments: se aplica:
+
+Comisión de MeVoy: 10% del valor del viaje.
+
+Resto (90%) → Conductor.
+
+Diezmo (opcional): del 10% se puede destinar un 1% al fin que designes mediante una transferencia adicional automática desde tu cuenta al destinatario del diezmo.
+8.3. Gastos de gestión: se detallan en la sección de pago antes de confirmar la reserva.
+
+9. Cancelaciones y reembolsos
+9.1. Por parte del Conductor: cancelación hasta 15′ tras hora de encuentro → reembolso total al Pasajero; MeVoy retiene tarifa de gestión.
+9.2. Por parte del Pasajero:
+
+24 h antes: reembolso del 100% de la contribución; MeVoy retiene tarifa de gestión.
+
+Entre 24 h y > 30 ′ tras confirmación: 50% de la contribución; MeVoy retiene tarifa.
+
+≤ 30 ′ tras confirmación o no‐show > 15 ′: sin reembolso; Conductor recibe 100% de la contribución.
+9.3. Los reembolsos se procesan mediante la misma pasarela de pago.
+
+10. Moderación de opiniones
+10.1. Tras cada viaje, Conductor y Pasajero pueden calificarse mutuamente (1–5).
+10.2. Tienen 14 días para responder a una opinión recibida; luego se cierra el hilo.
+10.3. Opiniones ≤ 3/5 pueden ser respondidas hasta un plazo de 30 días.
+10.4. Antes de publicar, el sistema filtra automatizado y luego puede revisarse manual si se reporta contenido inapropiado.
+
+11. Responsabilidades y exoneraciones
+11.1. Exención de MeVoy:
+
+No somos transportista ni aseguradora.
+
+No respondemos por accidentes, pérdida de bienes, daños o delitos cometidos por Usuarios.
+11.2. Seguro recomendado: Conductores deben contar con póliza con cobertura a terceros, recomendándose cobertura amplia de conductor y ocupantes.
+11.3. Indemnización: Usuario indemnizará a MeVoy por cualquier reclamo, demanda o daño derivado de su uso de la Plataforma.
+
+12. Código de conducta
+12.1. Prohibido:
+
+Discriminación, acoso, violencia física o sexual.
+
+Conducir bajo influencia de alcohol o drogas.
+
+Ofensas, amenazas o incitación al odio.
+12.2. Sanciones:
+
+Reportes graves → suspensión inmediata.
+
+Delitos (p.ej. violación) → expulsión definitiva + notificación a autoridades.
+
+13. Seguridad y mecanismos de denuncia
+13.1. Botón de pánico en la app que notifica a contactos de confianza y línea de emergencias.
+13.2. Canal de denuncias: soporte@mevoy.app, con plazo de respuesta ≤ 48 h.
+13.3. Cooperación con autoridades en caso de delitos.
+
+14. Tratamiento de datos personales
+14.1. Se aplican la Ley 25.326 (Argentina) y normas concordantes.
+14.2. Finalidades: gestión de usuarios, pagos, notificaciones y mejora del servicio.
+14.3. Derechos ARCO: contacto a privacidad@mevoy.app.
+14.4. Compartimos datos con Mercado Pago, verificadoras de antecedentes y autoridades cuando sea legalmente requerido.
+14.5. Nuestro detalle completo está en la Política de Privacidad.
+
+15. Política de Cookies
+15.1. ¿Qué son? archivos de texto o rastreadores que almacenan datos de navegación.
+15.2. Tipos:
+
+Esenciales: permiten login, seguridad y función básica.
+
+Rendimiento: analítica (p.ej. Firebase Analytics).
+
+Marketing y segmentación: publicidad dirigida.
+15.3. Gestión: banner inicial con opciones; podés revocar tu consentimiento en el pie de página de la Plataforma.
+15.4. Duración: máximo 25 meses.
+15.5. Actualizaciones: cambiaremos esta Política y publicaremos la fecha de revisión.
+
+16. Modificaciones de los Términos
+MeVoy podrá modificar estos Términos. Te avisaremos con ≥ 15 días de antelación por mail y/o notificación en la app. El uso continuado implica aceptación de la versión actualizada.
+
+17. Legislación aplicable y jurisdicción
+Estos Términos se rigen por la ley argentina. Para cualquier controversia, las partes se someten a la jurisdicción de los tribunales ordinarios de la ciudad de Oberá, Misiones, con renuncia a cualquier otro fuero.
+
+18. Contacto
+Cualquier duda o reclamo podés dirigirlo a:
+
+soporte@mevoy.app
+
+MeVoy S.R.L., Antonio Arredondo 7852, Montecarlo, Misiones.
+
+Este documento integra todos los aspectos esenciales: registro, verificación, contrato, pagos, responsabilidad, cancelaciones, opinión, datos y cookies.
+Recomendación: validarlo y adaptarlo con tu asesor legal antes de ponerlo en producción.

@@ -1,0 +1,107 @@
+
+/*
+    CozyGlow Natura **Experimental**
+*/
+
+
+:root {
+    /* === Primitive Colors === */
+    --color-leaf-50: #f2f6f2;
+    --color-leaf-100: #d6e3d6;
+    --color-leaf-200: #b3cbb3;
+    --color-leaf-300: #8fb38f;
+    --color-leaf-400: #6c9b6c;
+    --color-leaf-500: #4e7f4e; /* Primary */
+    --color-leaf-600: #3e663e;
+    --color-leaf-700: #2f4e2f;
+    --color-leaf-800: #203620;
+    --color-leaf-900: #152415;
+    --color-earth-50: #faf6f2;
+    --color-earth-100: #f0e3d6;
+    --color-earth-200: #e2c9ad;
+    --color-earth-300: #d4b07a;
+    --color-earth-400: #c59646;
+    --color-earth-500: #a97b32; /* Secondary */
+    --color-earth-600: #896328;
+    --color-earth-700: #6a4c1e;
+    --color-earth-800: #4b3614;
+    --color-earth-900: #2d200a;
+    --color-sky-50: #f2f6fa;
+    --color-sky-100: #d9e4f4;
+    --color-sky-200: #b3caeb;
+    --color-sky-300: #8daee0;
+    --color-sky-400: #6a93d4;
+    --color-sky-500: #4a7bd1; /* Primary */
+    --color-sky-600: #3c66ad; /* Primary */
+    --color-sky-700: #2f5289;
+    --color-sky-800: #223d64;
+    --color-sky-900: #162a44;
+    --color-gray-50: #ececec;
+    --color-gray-100: #d2d2d4;
+    --color-gray-200: #b8b8bb;
+    --color-gray-300: #9e9ea3;
+    --color-gray-400: #84848a;
+    --color-gray-500: #6a6a70;
+    --color-gray-600: #515156;
+    --color-gray-700: #39393d;
+    --color-gray-800: #242427;
+    --color-gray-900: #18181a;
+    --color-green-500: #4b7d64; /* Success */
+    --color-yellow-500: #d2a752; /* Warning */
+    --color-yellow-600: #b28b40; /* Warning */
+    --color-red-500: #b35c5c; /* Danger */
+    --color-red-600: #914a4a; /* Danger */
+    --color-blue-500: #5b7fa3; /* Info */
+
+    /* === Vibrant Nature Semantic === */
+    --color-primary: var(--color-leaf-500);           /* Vibrant green for main actions */
+    --color-primary-hover: var(--color-leaf-400);     /* Lighter green for hover */
+    --color-on-primary: #ffffff;                      /* White text on primary */
+
+    --color-secondary: var(--color-earth-500);        /* Earthy brown for secondary actions */
+    --color-secondary-hover: var(--color-earth-400);  /* Same or lighter brown for hover */
+    --color-on-secondary: #ffffff;                    /* White text on secondary */
+
+    --color-neutral: var(--color-gray-400);           /* Muted gray for neutral elements */
+    --color-success: var(--color-green-500);          /* Green for success */
+    --color-warning: var(--color-yellow-500);         /* Yellow for warning */
+    --color-danger: var(--color-red-500);             /* Red for danger */
+    --color-info: var(--color-sky-500);               /* Blue for info */
+
+    --color-success-hover: var(--color-green-600);          /* Green for success */
+    --color-warning-hover: var(--color-yellow-600);         /* Yellow for warning */
+    --color-danger-hover: var(--color-red-600);             /* Red for danger */
+    --color-info-hover: var(--color-sky-600);               /* Blue for info */
+
+    --color-on-neutral: var(--color-gray-900);
+    --color-on-success: #ffffff;
+    --color-on-warning: #ffffff;
+    --color-on-danger: #ffffff;
+    --color-on-info: #ffffff;
+
+    --color-surface: var(--color-leaf-50);            /* Very light green for backgrounds */
+    --color-on-surface: var(--color-gray-900);
+
+    --color-surface-alt: var(--color-sky-100);        /* Light blue for alternate surfaces */
+    --color-on-surface-alt: var(--color-gray-900);
+
+    --color-surface-hover: var(--color-leaf-100);     /* Slightly more green for hover */
+    --color-on-surface-hover: var(--color-gray-900);
+
+    --color-overlay: rgba(76, 127, 78, 0.04);         /* Soft green overlay */
+
+    --color-border: var(--color-leaf-200);            /* Soft green border */
+    --color-border-strong: var(--color-leaf-400);     /* Stronger green border */
+    --color-divider: var(--color-gray-200);
+
+    --color-focus-ring: var(--color-sky-300);         /* Blue focus ring */
+    --color-selection: var(--color-sky-100);          /* Light blue selection */
+
+    /* Text colors */
+    --color-text-primary: var(--color-leaf-700);      /* Deep green for main text */
+    --color-text-secondary: var(--color-earth-600);   /* Earthy brown for secondary text */
+    --color-text-disabled: var(--color-gray-400);
+    --color-text-on-primary: #ffffff;
+    --color-text-on-secondary: #ffffff;
+    --color-text-on-danger: #ffffff;
+}

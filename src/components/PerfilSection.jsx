@@ -16,6 +16,7 @@ import ActionBar from './ActionBar';
 import LoadingSpinner from './common/LoadingSpinner';
 import ErrorMessage from './common/ErrorMessage';
 
+
 const PerfilSection = ({
   usuario,
   perfil,
@@ -94,18 +95,20 @@ const PerfilSection = ({
             <div>
               <div className="relative" style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
                 <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
-                  { avatarSrc ? 
-                    (<img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>) 
+                  { 
+                    avatarSrc ? 
+                      (<img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>) 
                     : 
-                    (<div> Sin foto </div>)
+                      (<div> Sin foto </div>)
                   }
 
-                  { uploading &&
-                    (
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
-                        <LoadingSpinner size="sm" />
-                      </div>
-                    )
+                  { 
+                    uploading &&
+                      (
+                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
+                          <LoadingSpinner size="sm" />
+                        </div>
+                      )
                   }
                 </div>
 
@@ -148,45 +151,59 @@ const PerfilSection = ({
                 )}
               </div>
 
+              <div>
+                  <InputField
+                    label="Acerca de mí"
+                    type="textarea"
+                    value={perfil.descripcion || ''}
+                    onChange={(e) => onPerfilChange('descripcion', e.target.value)}
+                    readOnly={!editMode}
+                    placeholder="Cuéntanos algo sobre ti, tus gustos, música favorita, etc."
+                  />
+                </div>
+
               {/* Información del usuario */}
               <div >
                 <div>
                   <h2>
                     {perfil.nombre || usuario?.displayName || 'Sin nombre'}
                   </h2>
-                  <div>
+                  <div style={{display: "flex", alignItems: "center", gap: "5px"}}>
                     <Badge variant="verificado">Conductor verificado</Badge>
-                    <Badge variant="viajes">
-                      {completadosPercent === 100
-                        ? '100% viajes completados'
-                        : `${completadosPercent}% viajes completados`}
-                    </Badge>
+                    <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
                     <Badge variant="rapido">Responde rápido</Badge>
                   </div>
-                  <div className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-4">
-                      <span>
-                        <strong>Último viaje:</strong> {perfil.ultimoViaje || 'N/A'}
-                      </span>
-                      <span>
-                        <strong>Tasa de respuesta:</strong> {Math.round((perfil.tasaRespuesta || 0) * 100)}%
-                      </span>
-                    </div>
+                  <div>
+                    <table>
+                      <tr>
+                        <td style={{fontWeight: "600"}}>Viajes:</td>
+                        <td style={{width: "1rem"}}></td>
+                        <td>{"Nunca viajó"}</td>
+                      </tr>
+                      <tr>
+                        <td style={{fontWeight: "600"}}>Último viaje:</td>
+                        <td style={{width: "1rem"}}></td>
+                        <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
+                      </tr>
+                      <tr>
+                        <td style={{fontWeight: "600"}}>Tasa de respuesta: </td>
+                        <td style={{width: "1rem"}}></td>
+                        <td>{Math.round((perfil.tasaRespuesta) * 100) || "--"}%</td>
+                      </tr>
+                    </table>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Secciones con recuadros separados */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-            <div className="space-y-10">
-              {/* Información Personal */}
-              <div className="border-2 border-blue-200 rounded-xl p-6 bg-blue-50">
-                <h3 className="text-xl font-semibold text-blue-800 mb-6 border-b-2 border-blue-300 pb-3">
+          <div>
+            <div>
+              <div>
+                <h3>
                   Información Personal
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                   <InputField
                     label="WhatsApp"
                     type="text"
@@ -202,17 +219,6 @@ const PerfilSection = ({
                     onChange={(e) => onPerfilChange('fechaNacimiento', e.target.value)}
                     readOnly={!editMode}
                     placeholder="Selecciona tu fecha de nacimiento"
-                  />
-                </div>
-                
-                <div className="mt-6">
-                  <InputField
-                    label="Acerca de mí"
-                    type="textarea"
-                    value={perfil.descripcion || ''}
-                    onChange={(e) => onPerfilChange('descripcion', e.target.value)}
-                    readOnly={!editMode}
-                    placeholder="Cuéntanos algo sobre ti, tus gustos, música favorita, etc."
                   />
                 </div>
               </div>

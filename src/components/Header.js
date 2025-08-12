@@ -8,6 +8,7 @@ import { auth } from "../firebase";
 import logo from "../assets/logo/logo_light.png";
 import pfp from "../assets/ui/profile_picture_placeholder.png";
 
+
 export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
   const { usuario } = useUser() || {};
 

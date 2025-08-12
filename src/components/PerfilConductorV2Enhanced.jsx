@@ -277,29 +277,12 @@ export default function PerfilConductorV2Enhanced({
           transition-all duration-300 ease-in-out
         `}
       >
-        {/* Breadcrumb */}
-        <nav className="mb-6">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <span className="hover:text-blue-600 cursor-pointer transition-colors">
-              Panel
-            </span>
-            <span className="text-gray-400">›</span>
-            <span className="text-gray-900 font-medium">{activeTab}</span>
-          </div>
-        </nav>
 
         {/* Contenido de la pestaña activa */}
-        <div className="transition-opacity duration-300 ease-in-out opacity-100">
+        <div>
           {renderTabContent()}
         </div>
       </main>
-
-      {/* Footer opcional */}
-      <footer className="mt-16 bg-white border-t border-gray-200">
-        <div className="max-w-4xl mx-auto py-6 px-4 text-center text-gray-500 text-sm">
-          <p>© 2024 Tu Plataforma de Viajes Compartidos</p>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -17,6 +17,7 @@ import "./styles/cozyglow/color_themes/hazbyn.css"; // Override MeVoy-Classic wi
 import "./App.css";
 
 // UI
+import Copyright from "./components/common/Copyright"
 import Login from "./components/Login";
 import Header from "./components/Header";
 import VerificacionVehiculosAdmin from "./components/vehicleVerification/VerificacionVehiculosAdmin";
@@ -140,7 +141,6 @@ export default function App() {
     <ThemeProvider>
       <Header rol={rol} onToggleRol={handleToggleRol} />
       <div className="app-container">
-        <div style={{width: "1200px"}}></div>
         <SearchBar/>
 
         {rol === "conductor" ? (
@@ -157,6 +157,7 @@ export default function App() {
           <VerificacionVehiculosAdmin />
         )}
       </div>
+      <Copyright />
     </ThemeProvider>
   );
 }

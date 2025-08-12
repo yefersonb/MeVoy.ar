@@ -24,9 +24,7 @@ export default function ActionBar({
         display: "flex",
         justifyContent: "flex-end",
         gap: 10,
-        background: "var(--color-surface)",
         color: "var(--color-text-on-surface)",
-        borderBottom: "1px solid #e2e8f0",
         padding: "1rem 0 0.5rem 0",
         marginBottom: 16,
       }}

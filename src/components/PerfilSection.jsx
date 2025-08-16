@@ -7,6 +7,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { auth, db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { useVerificacionConductor } from '../hooks/useVerificacionConductor';
+
 
 // UI
 import InputField from './InputField';
@@ -45,6 +47,21 @@ const PerfilSection = ({
     amabilidad: 0,
     limpieza: 0,
   };
+
+// ESTO ES LO QUE HAY Q SACAR SI NO QUEDA BIEN % de perfil (suma foto, bio, whatsapp, fecha, vehículo y % de verificación de documentos)
+const { percent: _verDocPct } = useVerificacionConductor(usuario?.uid);
+const hasFoto = !!(preview || perfil.fotoURL || usuario?.photoURL);
+const perfilPercent = (() => {
+  let p = 0;
+  if (hasFoto) p += 15;                       // foto
+  if (perfil?.descripcion) p += 10;           // bio
+  if (perfil?.whatsapp) p += 10;              // contacto
+  if (perfil?.fechaNacimiento) p += 10;       // fecha nac.
+  if (vehiculos && vehiculos.length > 0) p += 20; // ≥1 vehículo
+  const docs = Math.max(0, Math.min(100, _verDocPct || 0));
+  p += Math.round(docs * 0.35);               // documentos (DNI/licencia/selfie) hasta +35
+  return Math.min(100, p);
+})();
 
   const loadVehiculos = useCallback(async () => {
     setLoadingVehiculos(true);
@@ -166,7 +183,21 @@ const PerfilSection = ({
               <div >
                 <div>
                   <h2>
-                    {perfil.nombre || usuario?.displayName || 'Sin nombre'}
+                      {perfil.nombre || usuario?.displayName || 'Sin nombre'}
+  			  {perfil.nombre || usuario?.displayName || 'Sin nombre'}
+ 			 <span style={{ marginLeft: 8, verticalAlign: 'middle' }}>
+			    {perfilPercent < 100 ? (
+   			   <button
+   			     onClick={() => { window.location.hash = 'verificacion'; }}
+    			    style={{ border: 'none', background: 'transparent', padding: 0, margin: 0, cursor: 'pointer' }}
+   			     title="Completá tu verificación"
+   					   >
+ 			       <Badge variant="viajes">{`Perfil ${perfilPercent}%`}</Badge>
+ 				     </button>
+  					  ) : (
+  			    <Badge variant="viajes">{`Perfil ${perfilPercent}%`}</Badge>
+ 				   )}
+			  </span>
                   </h2>
                   <div style={{display: "flex", alignItems: "center", gap: "5px"}}>
                     <Badge variant="verificado">Conductor verificado</Badge>

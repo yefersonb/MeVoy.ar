@@ -10,6 +10,8 @@ import PerfilSection from "./PerfilSection";
 import ViajesSection from "./ViajesSection";
 import VehiculosConductor from "./VehiculosConductor";
 import NuevoViaje from "./NuevoViaje";
+import VerificacionConductorWizard from "./VerificacionConductorWizard";
+
 
 // hash routing suave
 import useHashSection from "../hooks/useHashSection";
@@ -19,7 +21,7 @@ import EnviosDelViaje from "./EnviosDelViaje";
 import EnviosDisponibles from "./EnviosDisponibles";
 
 // 👇 NUEVO: agregamos "Envíos"
-const menuItems = ["Perfil", "Vehículos", "Reservas", "Envíos", "Nuevo Viaje"];
+const menuItems = ["Perfil", "Verificación", "Vehículos", "Reservas", "Envíos", "Nuevo Viaje"];
 
 export default function PerfilConductorV2Enhanced({
   viajes: viajesProp,
@@ -36,6 +38,7 @@ export default function PerfilConductorV2Enhanced({
       "mis-vehiculos": "Vehículos",
       reservas: "Reservas",
       envios: "Envíos",
+      verificacion: "Verificación",
       "nuevo-viaje": "Nuevo Viaje",
       perfil: "Perfil",
     }[h] || menuItems[0]);
@@ -45,6 +48,7 @@ export default function PerfilConductorV2Enhanced({
       Vehículos: "mis-vehiculos",
       Reservas: "reservas",
       Envíos: "envios",
+      Verificación: "verificacion",
       "Nuevo Viaje": "nuevo-viaje",
       Perfil: "perfil",
     }[t] || "perfil");
@@ -150,7 +154,25 @@ export default function PerfilConductorV2Enhanced({
           />
         );
 
-      case "Vehículos":
+case "Verificación":
+  return (
+    <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
+      <div className="bg-gradient-to-r from-violet-600 to-violet-700 px-6 py-4">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+          <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-sm">🪪</span>
+          Verificación de identidad
+        </h1>
+        <p className="text-violet-100 mt-1">Cargá tu DNI y licencia paso a paso.</p>
+      </div>
+      <div className="p-6">
+        <VerificacionConductorWizard onExit={() => handleTabChange("Perfil")} />
+      </div>
+    </section>
+  );
+
+
+ 
+     case "Vehículos":
         return (
           <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">

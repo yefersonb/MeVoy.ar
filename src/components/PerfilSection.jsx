@@ -107,7 +107,7 @@ const perfilPercent = (() => {
           {/* Foto de perfil */}
           <div style={{ flex: "1 1 12rem", maxWidth: "20%", minWidth: "180px", flexShrink: 0, marginTop: "0.5rem", position: "relative" }}>
             <Avatar/>
-            <div style={{position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#00000080", border: "1px solid #ffffff60", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
+            <div style={{position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#0d690d80", border: "1px solid #00ff1560", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
               <License size="80%"/>
             </div>
           </div>

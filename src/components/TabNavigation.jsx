@@ -6,7 +6,7 @@ const TabButton = ({ active, children, onClick }) => (
     onClick={onClick}
     style={{
       cursor: "pointer",
-      color: active ? "#2563eb" : "#444",
+      color: active ? "var(--color-primary)" : "#444",
       fontWeight: 500,
       fontSize: "1.05rem",
       position: "relative",
@@ -15,9 +15,9 @@ const TabButton = ({ active, children, onClick }) => (
       transition: "color 0.2s ease",
       display: "inline-block",
     }}
-    onMouseEnter={(e) => (e.currentTarget.style.color = "#2563eb")}
+    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
     onMouseLeave={(e) =>
-      (e.currentTarget.style.color = active ? "#2563eb" : "#444")
+      (e.currentTarget.style.color = active ? "var(--color-primary)" : "#444")
     }
   >
     {children}
@@ -28,7 +28,7 @@ const TabButton = ({ active, children, onClick }) => (
         right: 0,
         bottom: 0,
         height: 2,
-        background: "#2563eb",
+        background: "var(--color-primary)",
         transform: active ? "scaleX(1)" : "scaleX(0)",
         transformOrigin: "left",
         transition: "transform 0.3s",
@@ -71,7 +71,7 @@ const TabNavigation = ({
         <button
           onClick={onCreateTrip}
           style={{
-            background: "#2563eb",
+            background: "var(--color-primary)",
             color: "#fff",
             padding: "0.5rem 1rem",
             borderRadius: 8,

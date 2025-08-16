@@ -107,10 +107,30 @@ const perfilPercent = (() => {
           guardado={guardado}
         />
 
-        <div>
+        
+        <div style={{width: "100%", padding: "0.5rem", display: "flex", gap: "1rem"}}>
+          {/* Foto de perfil */}
+          <div style={{ width: "20%", borderRadius: "50%", overflow: "hidden" }}>
+            <img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>
+          </div>
+
+          {/* Detalles */}
+          <div style={{display: "flex", flexDirection: "column"}}>
+            <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
+            <div style={{fontSize: "1.2rem", marginBottom: "1rem"}}> {perfil.descripcion || ''} </div>
+            <div style={{display: "flex", gap: "1rem"}}>
+              {/* ToDo: Generar dinámicamente: */}
+              <Badge variant="verificado">Conductor verificado</Badge>
+              <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
+              <Badge variant="rapido">Responde rápido</Badge>
+            </div>
+          </div>
+        </div>
+
+        <div style={{marginTop: "5rem"}}>
           <div>
-            <div>
-              <div className="relative" style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
+            <div className="primary" style={{ display: "flex" }}>
+              <div style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
                 <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
                   { 
                     avatarSrc ? 
@@ -167,10 +187,9 @@ const perfilPercent = (() => {
                   </label>
                 )}
               </div>
-
               <div>
                   <InputField
-                    label="Acerca de mí"
+                    label="" // Acerca de mi... pero mejor que no diga nada por ahora.
                     type="textarea"
                     value={perfil.descripcion || ''}
                     onChange={(e) => onPerfilChange('descripcion', e.target.value)}
@@ -178,7 +197,6 @@ const perfilPercent = (() => {
                     placeholder="Cuéntanos algo sobre ti, tus gustos, música favorita, etc."
                   />
                 </div>
-
               {/* Información del usuario */}
               <div >
                 <div>
@@ -255,27 +273,27 @@ const perfilPercent = (() => {
               </div>
 
               {/* Valoraciones */}
-              <div className="border-2 border-green-200 rounded-xl p-6 bg-green-50">
-                <h3 className="text-xl font-semibold text-green-800 mb-6 border-b-2 border-green-300 pb-3">
+              <div>
+                <h3>
                   Valoraciones de Conductores
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
+                <div>
+                  <div>
                     <RatingRow label="Conducción" value={valoraciones.conduccion} />
                     <RatingRow label="Puntualidad" value={valoraciones.puntualidad} />
                   </div>
-                  <div className="space-y-4">
+                  <div>
                     <RatingRow label="Amabilidad" value={valoraciones.amabilidad} />
                     <RatingRow label="Limpieza" value={valoraciones.limpieza} />
                   </div>
                 </div>
                 
-                <div className="mt-6 p-4 bg-green-200 rounded-lg border-2 border-green-400">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center text-green-800">
-                      <span className="font-medium">{perfil.viajesCompletados || 0} viajes completados</span>
+                <div>
+                  <div>
+                    <div>
+                      <span>{perfil.viajesCompletados || 0} viajes completados</span>
                     </div>
-                    <div className="text-green-700 font-bold">
+                    <div>
                       {completadosPercent}% de éxito
                     </div>
                   </div>
@@ -283,43 +301,45 @@ const perfilPercent = (() => {
               </div>
 
               {/* Vehículos */}
-              <div className="border-2 border-purple-200 rounded-xl p-6 bg-purple-50">
-                <h3 className="text-xl font-semibold text-purple-800 mb-6 border-b-2 border-purple-300 pb-3">
-                  Mis Vehículos
-                </h3>
+              <div>
+                <h3> Mis Vehículos </h3>
                 {loadingVehiculos ? (
-                  <div className="flex items-center justify-center py-8">
+                  <div>
                     <LoadingSpinner size="md" text="Cargando vehículos..." />
                   </div>
                 ) : vehiculos.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-gray-600 mb-2">No tienes vehículos registrados</p>
-                    <p className="text-sm text-gray-500">
+                  <div>
+                    <p>No tienes vehículos registrados</p>
+                    <p>
                       Agrega tu primer vehículo en la pestaña <strong>Vehículos</strong> para comenzar a ofrecer viajes.
                     </p>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {vehiculos.map((vehiculo) => (
-                      <div
-                        key={vehiculo.id}
-                        className="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
-                      >
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                          <span className="text-purple-600 text-lg">🚗</span>
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900">
-                            {vehiculo.modelo || 'Sin modelo especificado'}
-                          </div>
-                          {vehiculo.patente && (
-                            <div className="text-sm text-gray-600">
-                              Patente: {vehiculo.patente}
+                )
+                :
+                (
+                  <div>
+                    {
+                      vehiculos.map
+                      (
+                        (vehiculo) =>
+                        (
+                          <div key={vehiculo.id}>
+                            <div>
+                              <span>🚗</span>
                             </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                            <div>
+                              <div> {vehiculo.modelo || 'Sin modelo especificado'} </div>
+                              {
+                                vehiculo.patente &&
+                                (
+                                  <div> Patente: {vehiculo.patente} </div>
+                                )
+                              }
+                            </div>
+                          </div>
+                        )
+                      )
+                    }
                   </div>
                 )}
               </div>

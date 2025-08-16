@@ -1,19 +1,20 @@
-// src/App.js — App limpia (sin rutas nuevas)
 import React, { useState, useEffect } from "react";
 import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
-import { ThemeProvider } from "./contexts/ThemeContext";
+// Pages
+import PageProfile from "./pages/Profile"
 
 // UI Copmonents
 import CozySpinner from "./components/cozyglow/components/Spinners/CozySpinner/CozySpinner";
 import "./components/ui/SearchBar/SearchBar.module.css";
 
 // Styles
+import { ThemeProvider } from "./contexts/ThemeContext";
 import "./styles/cozyglow/cozyglow.css";
 import "./styles/cozyglow/color_themes/mvclassic.css";
-import "./styles/cozyglow/color_themes/hazbyn.css"; // Override MeVoy-Classic with Hazbyn
+//import "./styles/cozyglow/color_themes/hazbyn.css"; // Override MeVoy-Classic with Hazbyn
 import "./App.css";
 
 // UI
@@ -137,6 +138,16 @@ export default function App() {
   }
 
   // App
+  /*
+    return (
+      <ThemeProvider>
+        <Header rol={rol} onToggleRol={handleToggleRol} />
+        <div style={{marginTop: "3.5rem"}}>
+          <PageProfile />
+        </div>
+      </ThemeProvider>
+    )
+  */
   return (
     <ThemeProvider>
       <Header rol={rol} onToggleRol={handleToggleRol} />

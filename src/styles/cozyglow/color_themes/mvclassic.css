@@ -1,8 +1,8 @@
 :root {
   /* SEE PRIMITIVES.CSS */
   /* === Light Theme Semantic === */ 
-  --color-primary: var(--color-blue-500);
-  --color-primary-hover: var(--color-blue-100);
+  --color-primary: #e90549;
+  --color-primary-hover: #ad0336;
   --color-on-primary: var(--color-blue-600);
 
   --color-secondary: var(--color-green-500);
@@ -10,8 +10,8 @@
   --color-on-secondary: var(--color-green-600);
 
   --color-neutral: var(--color-gray-500);
-  --color-success: var(--color-success-500);
-  --color-warning: var(--color-warning-500);
+  --color-success: #31b117;
+  --color-warning: #ffbb0000;
   --color-danger: var(--color-danger-500);
   --color-info: var(--color-info-500);
 
@@ -21,7 +21,7 @@
   --color-on-danger: var(--color-danger-500);
   --color-on-info: var(--color-info-500);
 
-  --color-surface: var(--color-gray-50);
+  --color-surface: #ffffff;
   --color-on-surface: var(--color-gray-900);
 
   --color-surface-alt: var(--color-gray-100);

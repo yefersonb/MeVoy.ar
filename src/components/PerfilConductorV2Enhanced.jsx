@@ -279,9 +279,8 @@ case "Verificación":
 
   // ===== RENDER PRINCIPAL =====
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-      {/* Header con navegación */}
-      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+    <div>
+      <div>
         <TabNavigation
           activeTab={activeTab}
           onTabChange={handleTabChange}
@@ -292,13 +291,7 @@ case "Verificación":
       </div>
 
       {/* Contenido principal */}
-      <main
-        className={`
-          max-w-4xl mx-auto py-8 
-          ${isMobile ? "px-4" : "px-6"} 
-          transition-all duration-300 ease-in-out
-        `}
-      >
+      <main>
 
         {/* Contenido de la pestaña activa */}
         <div>

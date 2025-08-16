@@ -1,40 +1,28 @@
 // src/components/TabNavigation.jsx
 import React from 'react';
 
+
+// ToDo: Modificar el TabButton para que use CSS en lugar de MouseEvents
 const TabButton = ({ active, children, onClick }) => (
-  <span
+  <div
     onClick={onClick}
+    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
+    onMouseLeave={(e) => (e.currentTarget.style.color = active ? "var(--color-primary)" : "#444")}
     style={{
       cursor: "pointer",
       color: active ? "var(--color-primary)" : "#444",
       fontWeight: 500,
       fontSize: "1.05rem",
-      position: "relative",
-      marginRight: "2.5rem",
-      paddingBottom: 6,
-      transition: "color 0.2s ease",
-      display: "inline-block",
-    }}
-    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-    onMouseLeave={(e) =>
-      (e.currentTarget.style.color = active ? "var(--color-primary)" : "#444")
-    }
-  >
+      borderBottom: active ? "2px solid var(--color-primary)" : "2px solid #00000020",
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "border 0.1s"
+    }}>
     {children}
-    <span
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 2,
-        background: "var(--color-primary)",
-        transform: active ? "scaleX(1)" : "scaleX(0)",
-        transformOrigin: "left",
-        transition: "transform 0.3s",
-      }}
-    />
-  </span>
+  </div>
 );
 
 const TabNavigation = ({
@@ -44,28 +32,16 @@ const TabNavigation = ({
   onCreateTrip,
   userRole,
 }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingLeft: "2rem",
-      paddingTop: "2rem",
-      marginBottom: "2rem",
-      borderBottom: "1px solid #e2e8f0",
-    }}
-  >
-    <div style={{ display: "flex", gap: "0.5rem" }}>
-      {menuItems.map((item) => (
-        <TabButton
-          key={item}
-          active={activeTab === item}
-          onClick={() => onTabChange(item)}
-        >
-          {item}
-        </TabButton>
-      ))}
+  <div>
+    <div style={{ width: "100%", height: "4rem", display: "flex" }}>
+      {
+        menuItems.map((item) => (
+          <TabButton key={item} active={activeTab === item} onClick={() => onTabChange(item)}> {item} </TabButton>
+        ))
+      }
     </div>
+
+    {/* ToDo: Esto hay que moverlo a otro lado. No pertenece al TabNav */}
     {userRole === "conductor" && (
       <div>
         <button

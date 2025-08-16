@@ -5,14 +5,14 @@ import styles from "./SearchBar.module.css";
 import { Search } from "react-feather"
 
 
-export function SearchBar({ value, onChange, placeholder = "Buscar..." }) {
+export function SearchBar({ value, onChange, placeholder = "Buscar viajes..." }) {
   return (
     <div style={{width: "100%", position: "relative", display: "inline-block"}}>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Buscar..."
+        placeholder={placeholder}
         className={styles['search-bar']}
       />
       <Search

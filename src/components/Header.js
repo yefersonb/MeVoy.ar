@@ -75,24 +75,13 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
       <div className="header-container">
         <div className="header">
           <img src={logo} alt="MeVoy Logo" style={{ height: "70%" }} />
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "calc(100% - 2rem)",
-              gap: "0.8rem",
-              height: "100%",
-              padding: 0,
-            }}
-          >
-            <div>
-              <span id="header-hola">Hola, </span>
-              {nombre}
-              <span id="header-hola-exclamation">!</span>
-            </div>
-
+          <div>
+            <span id="header-hola">Hola, </span>
+            {nombre}
+            <span id="header-hola-exclamation">!</span>
+          </div>
+          
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.8rem", height: "100%", padding: 0}}>
             {/* Avatar + caret */}
             <button
                 ref={btnRef}

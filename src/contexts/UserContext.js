@@ -1,3 +1,13 @@
+/*
+  ToDo: Esto modulo debería ser capaz de darnos:
+  * Nombre completo
+  * Nombre de usuario
+  * Foto de pefil (Con fallback incluido)
+  * ...
+  
+  Considerar las vulnerabilidades de seguridad de usar este contexto en el frontend
+*/
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";

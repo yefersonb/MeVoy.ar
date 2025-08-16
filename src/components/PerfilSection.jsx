@@ -18,7 +18,8 @@ import ActionBar from './ActionBar';
 import Spinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
 import ErrorMessage from './common/ErrorMessage';
 import Avatar from "./ui/Avatar"
-
+import UserCard from "./UserCard"
+import { License } from "./cozyglow/icons/License"
 
 const PerfilSection = ({
   usuario,
@@ -99,6 +100,31 @@ const perfilPercent = (() => {
 
   return (
     <div>
+      {/* NUEVA TARJETA DE PERFIL */}
+      {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx — Debería usar el contexto de perfil */}
+
+        <div style={{width: "100%", padding: "3rem 0.5rem 0.5rem 0.5rem", display: "flex", gap: "1rem", alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap"}}>
+          {/* Foto de perfil */}
+          <div style={{ flex: "1 1 12rem", maxWidth: "20%", minWidth: "180px", flexShrink: 0, marginTop: "0.5rem", position: "relative" }}>
+            <Avatar/>
+            <div style={{position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#00000080", border: "1px solid #ffffff60", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
+              <License size="80%"/>
+            </div>
+          </div>
+          
+          {/* Detalles */}
+          <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>
+              <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
+              <div style={{fontSize: "1.2rem", marginBottom: "1rem", borderLeft: "2px solid #00000030", padding: "1rem", maxHeight: "15rem", overflow: "auto"}}> {perfil.descripcion || ''} </div>
+              <div style={{display: "flex", gap: "1rem"}}>
+              {/* ToDo: Generar dinámicamente: */}
+              <Badge variant="verificado">Conductor verificado</Badge>
+              <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
+              <Badge variant="rapido">Responde rápido</Badge>
+              </div>
+          </div>
+        </div>
+
       <ActionBar
         editMode={editMode}
         onEdit={onEdit}
@@ -107,23 +133,6 @@ const perfilPercent = (() => {
         guardado={guardado}
       />
 
-      {/* NUEVA TARJETA DE PERFIL */}
-      <div style={{width: "100%", padding: "0.5rem", display: "flex", gap: "1rem"}}>
-        {/* Foto de perfil */}
-        <Avatar/>
-        
-        {/* Detalles */}
-        <div>
-          <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
-          <div style={{fontSize: "1.2rem", marginBottom: "1rem", borderLeft: "2px solid #00000030", padding: "1rem"}}> {perfil.descripcion || ''} </div>
-          <div style={{display: "flex", gap: "1rem"}}>
-            {/* ToDo: Generar dinámicamente: */}
-            <Badge variant="verificado">Conductor verificado</Badge>
-            <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
-            <Badge variant="rapido">Responde rápido</Badge>
-          </div>
-        </div>
-      </div>
 
       {/* Viaja tarjeta de perfil (Nos vamos a deshacer de ella pronto) */}
       <div style={{marginTop: "5rem"}}>

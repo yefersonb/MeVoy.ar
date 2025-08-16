@@ -14,6 +14,7 @@ import React from "react";
 
 // Icons
 import { Star, Clock } from "react-feather"
+import { License } from "./cozyglow/icons/License"
 
 const variantMap = {
   verificado: { bg: "#ecfdf5", color: "#047857", border: "#0ba579ff" },
@@ -31,12 +32,12 @@ const base_style = {
   height: "1.8rem"
 };
 
-// ToDo: Fix line height with icons
+// ToDo: Ajustar la altura de linea de los iconos, ahora mismo esto usa un simple hack
 export default function Badge({ children, variant = "", style = {} }) {
   const styles = variantMap[variant] || { bg: "#eef2f7", color: "#1f2d3d", border: "#0ba579ff" };
   return (
     <span style={{ background: styles.bg, border: "1px solid" + styles.border,color: styles.color, ...base_style }}>
-      {(variant == "verificado") && (" ✓ ")}
+      {(variant == "verificado") && (<License style={{height: "1rem", marginLeft: "-0.5rem"}}/>)}
       {(variant == "viajes") && (<Star style={{height: "1rem", marginLeft: "-0.5rem"}}/>)}
       {(variant == "rapido") && (<Clock style={{height: "1rem", marginLeft: "-0.5rem"}}/>)}
       {children}

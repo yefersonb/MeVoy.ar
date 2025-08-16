@@ -19,6 +19,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
     (usuario?.email ? usuario.email.split("@")[0] : "Invitado");
 
   const foto = usuario?.photoURL || pfp;
+  //const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
 
   const etiquetaRol = rol === "viajero" ? "Viajante" : "Conductor";
   const proximoRol = rol === "viajero" ? "conductor" : "viajero";

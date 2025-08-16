@@ -62,9 +62,17 @@ body {
         height: 3.5rem;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         color: var(--color-text-primary);
         gap: 0.5rem; 
     }
+    .header > .module {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; 
+    }
+
 
 .button {
     background-color: var(--color-surface);

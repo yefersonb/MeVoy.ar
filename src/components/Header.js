@@ -74,52 +74,57 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
     <div>
       <div className="header-container">
         <div className="header">
-          <img src={logo} alt="MeVoy Logo" style={{ height: "70%" }} />
-          <div>
-            <span id="header-hola">Hola, </span>
-            {nombre}
-            <span id="header-hola-exclamation">!</span>
-          </div>
-          
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.8rem", height: "100%", padding: 0}}>
-            {/* Avatar + caret */}
-            <button
-                ref={btnRef}
-                type="button"
-                aria-haspopup="menu"
-                aria-expanded={menuAbierto}
-                onClick={toggleMenu}
-                title="Menú de usuario"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.1rem",
-                  padding: "0.1rem",
-                  borderRadius: 999,
-                  border: "1px solid #e6e6e6",
-                  background: "#fff",
-                  cursor: "pointer",
-                  height: "100%"
-                }}
-              >
-              <div style={{height: "100%"}}>
-                <Avatar />
-              </div>
-              <Caret size="30px" direction={menuAbierto ? "up" : "down"}/>
-            </button>
+          <div className="module">
+            <img src={logo} alt="MeVoy Logo" style={{ height: "70%" }} />
+            <div>
+              <span id="header-hola">Hola, </span>
+              {nombre}
+              <span id="header-hola-exclamation">!</span>
+            </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", height: "100%", gap: "0.5rem" }}>
+          <div className="module">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.8rem", height: "100%", padding: 0}}>
+              {/* Avatar + caret */}
+              <button
+                  ref={btnRef}
+                  type="button"
+                  aria-haspopup="menu"
+                  aria-expanded={menuAbierto}
+                  onClick={toggleMenu}
+                  title="Menú de usuario"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.1rem",
+                    padding: "0.1rem",
+                    borderRadius: 999,
+                    border: "1px solid #e6e6e6",
+                    background: "#fff",
+                    cursor: "pointer",
+                    height: "100%"
+                  }}
+                >
+                <div style={{height: "100%"}}>
+                  <Avatar />
+                </div>
+                <Caret size="30px" direction={menuAbierto ? "up" : "down"}/>
+              </button>
+            </div>
             <button
-              type="button"
-              className="button borderless row neutral"
-              onClick={onToggleRol}
-              title={`Cambiar a ${proximoRol}`}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="arrow animated pointing-right"></div>
+                type="button"
+                className="button row neutral"
+                onClick={onToggleRol}
+                title={`Cambiar a ${proximoRol}`}
+                style={{ cursor: "pointer" }}
+              >
               <div>{etiquetaRol}</div>
             </button>
+          </div>
+        </div>
+
+        {/* ToDo: Este dropdown no debería estar acá. En su luar, debería ser un componente */}
+          <div style={{ display: "flex", alignItems: "center", height: "100%", gap: "0.5rem" }}>
 
             {/* Dejá este si querés redundancia; el menú ya incluye Cerrar sesión */}
             {onLogout && (
@@ -192,7 +197,6 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
               </button>
             </div>
           )}
-        </div>
       </div>
     </div>
   );

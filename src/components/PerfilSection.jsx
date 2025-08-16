@@ -15,7 +15,7 @@ import InputField from './InputField';
 import Badge from './Badge';
 import RatingRow from './RatingRow';
 import ActionBar from './ActionBar';
-import LoadingSpinner from './common/LoadingSpinner';
+import Spinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
 import ErrorMessage from './common/ErrorMessage';
 import Avatar from "./ui/Avatar"
 
@@ -92,7 +92,7 @@ const perfilPercent = (() => {
     loadVehiculos();
   }, [loadVehiculos]);
 
-  if (loading) return <LoadingSpinner size="md" text="Cargando perfil..." />;
+  if (loading) return <Spinner/>;
   if (error) return <ErrorMessage error={error} />;
 
   const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
@@ -115,7 +115,7 @@ const perfilPercent = (() => {
         {/* Detalles */}
         <div>
           <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
-          <div style={{fontSize: "1.2rem", marginBottom: "1rem", maxWidth: "60%"}}> {perfil.descripcion || ''} </div>
+          <div style={{fontSize: "1.2rem", marginBottom: "1rem", borderLeft: "2px solid #00000030", padding: "1rem"}}> {perfil.descripcion || ''} </div>
           <div style={{display: "flex", gap: "1rem"}}>
             {/* ToDo: Generar dinámicamente: */}
             <Badge variant="verificado">Conductor verificado</Badge>
@@ -142,7 +142,7 @@ const perfilPercent = (() => {
                   uploading &&
                     (
                       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
-                        <LoadingSpinner size="sm" />
+                        <Spinner/>
                       </div>
                     )
                 }
@@ -304,7 +304,7 @@ const perfilPercent = (() => {
               <h3> Mis Vehículos </h3>
               {loadingVehiculos ? (
                 <div>
-                  <LoadingSpinner size="md" text="Cargando vehículos..." />
+                  <Spinner/>
                 </div>
               ) : vehiculos.length === 0 ? (
                 <div>

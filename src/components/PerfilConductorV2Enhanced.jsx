@@ -280,24 +280,14 @@ case "Verificación":
   // ===== RENDER PRINCIPAL =====
   return (
     <div>
-      <div>
-        <TabNavigation
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          menuItems={menuItems}
-          onCreateTrip={handleCreateTrip}
-          userRole={usuario?.rol}
-        />
-      </div>
-
-      {/* Contenido principal */}
-      <main>
-
-        {/* Contenido de la pestaña activa */}
-        <div>
-          {renderTabContent()}
-        </div>
-      </main>
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        menuItems={menuItems}
+        onCreateTrip={handleCreateTrip}
+        userRole={usuario?.rol}
+      />
+      {renderTabContent()}
     </div>
   );
 }

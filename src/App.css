@@ -28,6 +28,4 @@ html, body {
   width: 100%;
   max-width: 1200px;
   margin-top: 4rem; /* Leave space for the header */
-  display: flex;
-  flex-direction: column;
 }

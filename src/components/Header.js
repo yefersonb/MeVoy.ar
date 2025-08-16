@@ -74,7 +74,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
     <div>
       <div className="header-container">
         <div className="header">
-          <img src={logo} alt="MeVoy Logo" style={{ height: "100%" }} />
+          <img src={logo} alt="MeVoy Logo" style={{ height: "70%" }} />
 
           <div
             style={{
@@ -104,17 +104,19 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: 8,
-                  padding: "0 8px 0 0",
+                  gap: "0.1rem",
+                  padding: "0.1rem",
                   borderRadius: 999,
                   border: "1px solid #e6e6e6",
                   background: "#fff",
-                  height: 40,
                   cursor: "pointer",
+                  height: "100%"
                 }}
               >
-              <Avatar />
-              <Caret direction={menuAbierto ? "up" : "down"}/>
+              <div style={{height: "100%"}}>
+                <Avatar />
+              </div>
+              <Caret size="30px" direction={menuAbierto ? "up" : "down"}/>
             </button>
           </div>
 

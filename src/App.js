@@ -154,19 +154,21 @@ export default function App() {
       <div className="app-container">
         <SearchBar/>
 
-        {rol === "conductor" ? (
-          <ConductorDashboard viajes={viajes} reservas={reservas} />
-        ) : rol === "viajero" ? (
-          <ViajeroDashboard
-            usuario={usuario}
-            viajes={[]}                // tu flujo original
-            perfilCompleto={perfilCompleto}
-            viajeReservado={viajeReservado}
-            onReservar={reservarViaje}
-          />
-        ) : (
-          <VerificacionVehiculosAdmin />
-        )}
+        {
+          rol === "conductor" ? (<ConductorDashboard viajes={viajes} reservas={reservas} />)
+          : rol === "viajero" ?
+            (
+              <ViajeroDashboard
+                usuario={usuario}
+                viajes={[]}                // tu flujo original
+                perfilCompleto={perfilCompleto}
+                viajeReservado={viajeReservado}
+                onReservar={reservarViaje}
+              />
+            )
+            : 
+            (<VerificacionVehiculosAdmin />)
+        }
       </div>
       <Copyright />
     </ThemeProvider>

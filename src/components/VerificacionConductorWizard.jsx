@@ -11,24 +11,14 @@
 // • Sube archivos a Firebase Storage con barra de progreso
 // • Muestra barra de avance global y estado por paso
 // • Permite retomar donde quedó (resume)
-// • Diseño simple con clases utilitarias (Tailwind friendly)
+// • Diseño simple (funciona con o sin Tailwind)
 //
 // Requisitos:
 //  - Tener configurado Firebase en src/firebase.js exportando { auth, db, storage }
-//  - Firestore colección: "verificacionesConductor" doc por uid
-//  - Storage: "verificacionesConductor/{uid}/{docKey}/archivo"
-//  - Reglas (orientativas):
-//      allow write: if request.auth != null && request.auth.uid == resource.id (ajustar a tu modelo)
-//
-// Cómo usar:
-//  import VerificacionConductorWizard from "./components/VerificacionConductorWizard";
-//  <VerificacionConductorWizard onExit={() => navigate('/perfil-conductor')} />
-//
-// Integración con tu flujo:
-//  - En PerfilConductorV2, agregar un botón "Verificar identidad" que lleve a esta vista.
-//  - Cuando status === 'verified' mostrar badge "Verificado".
+//  - Firestore colección: "verificaciones" doc por uid
+//  - Storage: "verificaciones/{uid}/{docKey}/archivo"
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { auth, db, storage } from '../firebase';
 import {
   doc,
@@ -44,6 +34,10 @@ import {
 } from 'firebase/storage';
 
 export default function VerificacionConductorWizard({ onExit }) {
+  // Unificados con reglas
+  const COLL = 'verificaciones';
+  const STORAGE_ROOT = 'verificaciones';
+
   const user = auth.currentUser;
   const uid = user?.uid;
 
@@ -74,7 +68,7 @@ export default function VerificacionConductorWizard({ onExit }) {
           setLoading(false);
           return;
         }
-        const ref = doc(db, 'verificacionesConductor', uid);
+        const ref = doc(db, COLL, uid);
         const snap = await getDoc(ref);
         if (snap.exists()) {
           const d = snap.data();
@@ -90,10 +84,8 @@ export default function VerificacionConductorWizard({ onExit }) {
             selfie: d.selfieURL || '',
           });
           setStatus(d.status || 'incomplete');
-          // Si hay paso guardado, retomamos
           if (typeof d.step === 'number') setStep(d.step);
         } else {
-          // Doc inicial
           await setDoc(ref, {
             status: 'incomplete',
             createdAt: serverTimestamp(),
@@ -125,7 +117,7 @@ export default function VerificacionConductorWizard({ onExit }) {
     setSaving(true);
     setError('');
     try {
-      const ref = doc(db, 'verificacionesConductor', uid);
+      const ref = doc(db, COLL, uid);
       await updateDoc(ref, {
         nombreCompleto: datos.nombreCompleto,
         dniNumero: datos.dniNumero,
@@ -147,7 +139,6 @@ export default function VerificacionConductorWizard({ onExit }) {
   };
 
   const goNext = async () => {
-    // Validación por paso
     if (step === 0) {
       if (!datos.nombreCompleto || !datos.dniNumero) {
         setError('Completá tu nombre y DNI para continuar.');
@@ -181,7 +172,7 @@ export default function VerificacionConductorWizard({ onExit }) {
     setSaving(true);
     setError('');
     try {
-      const ref = doc(db, 'verificacionesConductor', uid);
+      const ref = doc(db, COLL, uid);
       await updateDoc(ref, {
         nombreCompleto: datos.nombreCompleto,
         dniNumero: datos.dniNumero,
@@ -205,7 +196,6 @@ export default function VerificacionConductorWizard({ onExit }) {
 
   const handleFile = async (key, file) => {
     if (!file || !uid) return;
-    // Validaciones rápidas
     const maxMB = 8;
     if (file.size > maxMB * 1024 * 1024) {
       alert(`El archivo supera ${maxMB} MB.`);
@@ -217,7 +207,7 @@ export default function VerificacionConductorWizard({ onExit }) {
       return;
     }
 
-    const path = `verificacionesConductor/${uid}/${key}/${Date.now()}-${file.name}`;
+    const path = `${STORAGE_ROOT}/${uid}/${key}/${Date.now()}-${file.name}`;
     const ref = storageRef(storage, path);
     const task = uploadBytesResumable(ref, file, { contentType: file.type });
 
@@ -234,15 +224,13 @@ export default function VerificacionConductorWizard({ onExit }) {
         const url = await getDownloadURL(task.snapshot.ref);
         setUrls((prev) => ({ ...prev, [key]: url }));
         setUploading((u) => ({ ...u, [key]: 100 }));
-        // Guardado rápido
         try {
-          await updateDoc(doc(db, 'verificacionesConductor', uid), {
+          await updateDoc(doc(db, COLL, uid), {
             [`${key}URL`]: url,
             updatedAt: serverTimestamp(),
           });
         } catch (e) {
-          // Si todavía no existe el doc por algún motivo, lo creamos
-          await setDoc(doc(db, 'verificacionesConductor', uid), {
+          await setDoc(doc(db, COLL, uid), {
             [`${key}URL`]: url,
             updatedAt: serverTimestamp(),
           }, { merge: true });
@@ -256,7 +244,7 @@ export default function VerificacionConductorWizard({ onExit }) {
     if (idx === 0) return !!(datos.nombreCompleto && datos.dniNumero);
     if (idx === 1) return !!(urls.dniFrente && urls.dniDorso);
     if (idx === 2) return !!(urls.licFrente && urls.licDorso);
-    if (idx === 3) return !!urls.selfie; // opcional: podrías permitir skip
+    if (idx === 3) return !!urls.selfie; // opcional
     return false;
   };
 
@@ -272,10 +260,10 @@ export default function VerificacionConductorWizard({ onExit }) {
       <header className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Verificación de identidad (Conductor)</h1>
-          <p className="text-sm text-gray-500">Estado: <StatusBadge status={status} /></p>
+          <p className="text-sm" style={{color:'#6b7280'}}>Estado: <StatusBadge status={status} /></p>
         </div>
         {onExit && (
-          <button className="px-3 py-2 rounded-xl border hover:bg-gray-50" onClick={onExit}>Salir</button>
+          <button className="px-3 py-2 rounded-xl border" onClick={onExit}>Salir</button>
         )}
       </header>
 
@@ -284,7 +272,9 @@ export default function VerificacionConductorWizard({ onExit }) {
       <Stepper steps={steps} current={step} isDone={pasoCompletado} />
 
       {error && (
-        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">{error}</div>
+        <div className="mt-3 p-3" style={{ background:'#FEF2F2', border:'1px solid #FEE2E2', borderRadius:12, color:'#991B1B' }}>
+          <span style={{fontSize:12}}>{error}</span>
+        </div>
       )}
 
       <div className="mt-4">
@@ -320,20 +310,20 @@ export default function VerificacionConductorWizard({ onExit }) {
       </div>
 
       <div className="mt-6 flex items-center justify-between">
-        <button className="px-3 py-2 rounded-xl border hover:bg-gray-50" onClick={goBack} disabled={step===0}>Atrás</button>
+        <button className="px-3 py-2 rounded-xl border" onClick={goBack} disabled={step===0}>Atrás</button>
         <div className="flex items-center gap-2">
           <button className="px-3 py-2 rounded-xl border" onClick={completarPasoActual} disabled={saving}>{saving? 'Guardando...' : 'Guardar'}</button>
           {step < totalSteps - 1 ? (
-            <button className="px-4 py-2 rounded-xl bg-black text-white" onClick={goNext}>Siguiente</button>
+            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'#fff'}} onClick={goNext}>Siguiente</button>
           ) : (
-            <button className="px-4 py-2 rounded-xl bg-black text-white" onClick={onSubmit} disabled={status==='pending'}>
+            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'#fff'}} onClick={onSubmit} disabled={status==='pending'}>
               {status==='pending' ? 'En revisión' : 'Enviar a revisión'}
             </button>
           )}
         </div>
       </div>
 
-      <p className="text-xs text-gray-500 mt-4">Tus datos y documentos se guardan de forma segura. Solo los verá el equipo de verificación.</p>
+      <p className="text-xs" style={{color:'#6b7280', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verá el equipo de verificación.</p>
     </div>
   );
 }
@@ -341,8 +331,8 @@ export default function VerificacionConductorWizard({ onExit }) {
 // ----------------- Subcomponentes -----------------
 function Splash({ text }) {
   return (
-    <div className="h-64 flex items-center justify-center">
-      <div className="text-sm text-gray-600">{text || 'Cargando...'}</div>
+    <div style={{height:256}} className="flex items-center justify-center">
+      <div className="text-sm" style={{color:'#4b5563'}}>{text || 'Cargando...'}</div>
     </div>
   );
 }
@@ -351,18 +341,68 @@ function EmptyCard({ title, children }) {
   return (
     <div className="max-w-lg mx-auto p-6 border rounded-2xl">
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <div className="text-sm text-gray-700">{children}</div>
+      <div className="text-sm" style={{color:'#374151'}}>{children}</div>
     </div>
   );
 }
 
-function Progress({ value=0 }) {
+function Progress({
+  value = 0,
+  height = 10,                 // alto de la barra
+  trackColor = '#E5E7EB',      // color del fondo (gris claro)
+  barColor = '#9CA3AF',        // color de la barra (gris medio)
+  showLabel = true             // mostrar % centrado
+}) {
+  const pct = Math.min(100, Math.max(0, Math.round(value)));
+  const textColor = pct >= 50 ? '#FFFFFF' : '#111827'; // blanco si hay bastante relleno
+
   return (
-    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-      <div className="h-full bg-black" style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
+    <div
+      role="progressbar"
+      aria-valuenow={pct}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height,
+        background: trackColor,
+        borderRadius: 9999,
+        overflow: 'hidden'
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: `${pct}%`,
+          background: barColor,
+          transition: 'width 240ms ease',
+        }}
+      />
+      {showLabel && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12,
+            fontWeight: 600,
+            color: textColor,
+            // una sombra suave para legibilidad sobre ambos fondos
+            textShadow: '0 1px 2px rgba(0,0,0,0.25)',
+            userSelect: 'none'
+          }}
+        >
+          {pct}%
+        </div>
+      )}
     </div>
   );
 }
+
 
 function Stepper({ steps, current, isDone }) {
   return (
@@ -370,11 +410,17 @@ function Stepper({ steps, current, isDone }) {
       {steps.map((s, i) => {
         const done = isDone(i);
         const active = i === current;
+        const base = { display:'inline-flex', alignItems:'center', justifyContent:'center', width:24, height:24, borderRadius:'9999px', border:'1px solid #D1D5DB' };
+        const style = done
+          ? { ...base, background:'#16A34A', color:'#fff', borderColor:'#16A34A' }
+          : active
+          ? { ...base, background:'#000', color:'#fff', borderColor:'#000' }
+          : base;
         return (
           <li key={s.key} className="flex items-center gap-2">
-            <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full border ${done ? 'bg-green-600 text-white border-green-600' : active ? 'bg-black text-white border-black' : ''}`}>{done ? '✓' : i+1}</span>
-            <span className={active ? 'font-medium' : 'text-gray-500'}>{s.label}</span>
-            {i < steps.length - 1 && <span className="mx-1 text-gray-300">›</span>}
+            <span style={style}>{done ? '✓' : i+1}</span>
+            <span style={{fontWeight: active ? 600 : 400, color: active ? '#111827' : '#6B7280'}}>{s.label}</span>
+            {i < steps.length - 1 && <span className="mx-1" style={{color:'#D1D5DB'}}>›</span>}
           </li>
         );
       })}
@@ -394,7 +440,7 @@ function PasoDatos({ datos, setDatos }) {
         <label className="block text-sm font-medium">Número de DNI</label>
         <input className="mt-1 w-full border rounded-xl px-3 py-2" value={datos.dniNumero}
                onChange={(e)=>setDatos(v=>({...v, dniNumero:e.target.value.replace(/\D/g,'')}))} inputMode="numeric" placeholder="Ej. 30123456" />
-        <p className="text-xs text-gray-500 mt-1">Usamos estos datos solo para verificar tu identidad.</p>
+        <p className="text-xs" style={{color:'#6b7280', marginTop:4}}>Usamos estos datos solo para verificar tu identidad.</p>
       </div>
     </div>
   );
@@ -425,7 +471,7 @@ function PasoSelfie({ url, uploading, onFile }) {
       <DocTile label="Selfie de verificación" url={url} progress={uploading} onSelect={onFile} hint="Tomá una selfie sosteniendo tu DNI (opcional, acelera la verificación)." />
       <div className="p-4 border rounded-2xl">
         <h4 className="font-medium">Consejos</h4>
-        <ul className="list-disc ml-5 text-sm mt-2 text-gray-700">
+        <ul className="list-disc ml-5 text-sm" style={{color:'#374151', marginTop:8}}>
           <li>Buena luz, sin reflejos.</li>
           <li>Foto nítida y completa, que se lean los datos.</li>
           <li>Formatos admitidos: JPG, PNG, WebP, HEIC. Máx 8MB.</li>
@@ -449,7 +495,7 @@ function PasoResumen({ datos, urls, status }) {
         <Thumb label="Licencia Dorso" url={urls.licDorso} />
         <Thumb label="Selfie" url={urls.selfie} />
       </div>
-      <div className="p-3 bg-gray-50 border rounded-2xl text-sm text-gray-600">
+      <div className="p-3" style={{ background:'#F9FAFB', border:'1px solid #E5E7EB', borderRadius:12, color:'#4B5563', fontSize:14 }}>
         Estado actual: <StatusBadge status={status} /> — Al enviar, quedará <strong>En revisión</strong> por un admin.
       </div>
     </div>
@@ -459,103 +505,117 @@ function PasoResumen({ datos, urls, status }) {
 function KeyVal({ k, v }) {
   return (
     <div className="border rounded-2xl p-3">
-      <div className="text-xs uppercase text-gray-500">{k}</div>
+      <div className="text-xs" style={{textTransform:'uppercase', color:'#6B7280'}}>{k}</div>
       <div className="text-sm">{v}</div>
     </div>
   );
 }
 
 function Thumb({ label, url }) {
+  // Alto fijo chico para miniatura del resumen
+  const boxStyle = { height: 96, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', borderRadius: 12, border:'1px solid #E5E7EB' };
+  const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
+
   return (
     <div className="border rounded-2xl p-3">
-      <div className="text-xs text-gray-500 mb-2">{label}</div>
-      {url ? (
-        <img src={url} alt={label} className="w-full h-36 object-cover rounded-xl border" />
-      ) : (
-        <div className="h-36 flex items-center justify-center text-gray-400 border rounded-xl">Sin archivo</div>
-      )}
+      <div className="text-xs" style={{color:'#6B7280', marginBottom:8}}>{label}</div>
+      <div style={boxStyle}>
+        {url ? (
+          <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
+            <img src={url} alt={label} style={imgStyle} />
+          </a>
+        ) : (
+          <div style={{color:'#9CA3AF'}}>Sin archivo</div>
+        )}
+      </div>
     </div>
   );
 }
 
 function StatusBadge({ status }) {
   const map = {
-    incomplete: { text: 'Incompleto', cls: 'bg-gray-200 text-gray-800' },
-    pending: { text: 'En revisión', cls: 'bg-yellow-200 text-yellow-900' },
-    verified: { text: 'Verificado', cls: 'bg-green-200 text-green-900' },
-    rejected: { text: 'Rechazado', cls: 'bg-red-200 text-red-900' },
+    incomplete: { text: 'Incompleto', bg:'#E5E7EB', fg:'#1F2937' },
+    pending:    { text: 'En revisión', bg:'#FEF3C7', fg:'#92400E' },
+    verified:   { text: 'Verificado', bg:'#BBF7D0', fg:'#065F46' },
+    rejected:   { text: 'Rechazado',  bg:'#FECACA', fg:'#7F1D1D' },
   };
   const s = map[status] || map.incomplete;
-  return <span className={`px-2 py-0.5 rounded-full text-xs ${s.cls}`}>{s.text}</span>;
+  return (
+    <span style={{ padding:'2px 8px', borderRadius:999, fontSize:12, background:s.bg, color:s.fg }}>
+      {s.text}
+    </span>
+  );
 }
 
 function DocTile({ label, url, onSelect, progress, hint }) {
+  const fileRef = useRef(null);
+
+  const openPicker = () => fileRef.current?.click();
+
+  const handleChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) onSelect(file);
+    e.target.value = '';
+  };
+
+  // Drag & drop opcional
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) onSelect(file);
+  };
+  const handleDragOver = (e) => e.preventDefault();
+
+  // Alto fijo chico para que NO se vean gigantes (aplica siempre)
+  const previewBoxStyle = { height: 160, background:'#F9FAFB', border:'1px solid #E5E7EB', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' };
+  const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
+
   return (
     <div className="p-4 border rounded-2xl">
       <div className="flex items-center justify-between mb-2">
         <div>
           <div className="text-sm font-medium">{label}</div>
-          {hint && <div className="text-xs text-gray-500">{hint}</div>}
+          {hint && <div className="text-xs" style={{color:'#6B7280'}}>{hint}</div>}
         </div>
         {url && <a className="text-xs underline" href={url} target="_blank" rel="noreferrer">Ver</a>}
       </div>
 
-      <div className="aspect-[4/3] bg-gray-50 border rounded-xl flex items-center justify-center overflow-hidden">
+      <div
+        style={previewBoxStyle}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
         {url ? (
-          <img src={url} alt={label} className="w-full h-full object-cover" />
+          <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
+            <img src={url} alt={label} style={imgStyle} />
+          </a>
         ) : (
-          <span className="text-gray-400 text-sm">Sin archivo</span>
+          <span className="text-gray-400 text-sm" style={{color:'#9CA3AF'}}>Soltá una imagen acá o usá “Subir foto”</span>
         )}
       </div>
 
+      {/* Input real, lo oculto con style para no depender de Tailwind */}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleChange}
+        style={{ display:'none' }}
+      />
+
       <div className="mt-3 flex items-center gap-2">
-        <label className="inline-flex items-center px-3 py-2 border rounded-xl cursor-pointer hover:bg-gray-50">
-          <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e)=> onSelect(e.target.files?.[0])} />
+        <button
+          type="button"
+          className="px-3 py-2 border rounded-xl hover:bg-gray-50"
+          onClick={openPicker}
+        >
           Subir foto
-        </label>
+        </button>
         {typeof progress === 'number' && (
-          <span className="text-xs text-gray-500">{progress}%</span>
+          <span className="text-xs" style={{color:'#6B7280'}}>{progress}%</span>
         )}
       </div>
     </div>
   );
-}
-
-
-// ===============================
-// EXTRA: Badge + Hook de Verificación
-// Archivos: src/hooks/useVerificacionConductor.js y src/components/VerificationBadge.jsx
-// Uso: mostrar un badge clickeable cerca del nombre del conductor. Si no está verificado, abre el wizard.
-// ===============================
-
-// src/hooks/useVerificacionConductor.js
-// -------------------------------------
-// Lee Firestore en tiempo real y devuelve { loading, status, percent, data }
-// status: incomplete | pending | verified | rejected
-export function useVerificacionConductor(uid) {
-  const React = require('react');
-  const { useEffect, useState } = React;
-  const { db } = require('../firebase');
-  const { doc, onSnapshot } = require('firebase/firestore');
-
-  const [state, setState] = useState({ loading: true, status: 'incomplete', percent: 0, data: null });
-
-  useEffect(() => {
-    if (!uid) { setState({ loading:false, status:'incomplete', percent:0, data:null }); return; }
-    const ref = doc(db, 'verificacionesConductor', uid);
-    const unsub = onSnapshot(ref, (snap) => {
-      const d = snap.data() || {};
-      const status = d.status || 'incomplete';
-      let done = 0; const total = 4; // datos, DNI, licencia, selfie(opcional)
-      if (d.nombreCompleto && d.dniNumero) done++;
-      if (d.dniFrenteURL && d.dniDorsoURL) done++;
-      if (d.licenciaFrenteURL && d.licenciaDorsoURL) done++;
-      if (d.selfieURL) done++;
-      const percent = Math.min(100, Math.round((done/total)*100));
-      setState({ loading:false, status, percent, data: d });
-    }, () => setState({ loading:false, status:'incomplete', percent:0, data:null }));
-    return () => unsub();
-  }, [uid]);
-
-  return state;
 }

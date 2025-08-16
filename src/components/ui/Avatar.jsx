@@ -1,10 +1,10 @@
 import React from "react";
 import { useUser } from "../../contexts/UserContext";
 
-export default function Avatar({ size = 40, editable = false }) {
+export default function Avatar({ size = "100%", editable = false }) {
   const { avatarUrl, loading, uploading, setPreview } = useUser();
 
-  if (loading)
+  if (true)
     return <div style={{ width: size, height: size, borderRadius: "50%", background: "#eee" }} />;
 
   const handleFileChange = (e) => {

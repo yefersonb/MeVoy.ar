@@ -108,20 +108,17 @@ const perfilPercent = (() => {
           guardado={guardado}
         />
 
-        {/* Nueva tarjeta de perfil */}
+        {/* NUEVA TARJETA DE PERFIL */}
         <div style={{width: "100%", padding: "0.5rem", display: "flex", gap: "1rem"}}>
           {/* Foto de perfil */}
-
           <div style={{ width: "40px", height: "40px", aspectRatio: "1 / 1", borderRadius: "50%", overflow: "hidden" }}>
             <Avatar />
           </div>
 
           {/* Detalles */}
           <div>
-            <div style={{display: "flex", flexDirection: "column"}}>
-              <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
-              <div style={{fontSize: "1.2rem", marginBottom: "1rem", maxWidth: "60%"}}> {perfil.descripcion || ''} </div>
-            </div>
+            <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
+            <div style={{fontSize: "1.2rem", marginBottom: "1rem", maxWidth: "60%"}}> {perfil.descripcion || ''} </div>
             <div style={{display: "flex", gap: "1rem"}}>
               {/* ToDo: Generar dinámicamente: */}
               <Badge variant="verificado">Conductor verificado</Badge>

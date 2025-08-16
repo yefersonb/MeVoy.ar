@@ -7,6 +7,7 @@ import { auth } from "../firebase";
 // UI
 import logo from "../assets/logo/logo_light.png";
 import Avatar from "./ui/Avatar"
+import { Caret } from "./cozyglow/icons/Caret"
 
 
 export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
@@ -94,45 +95,26 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
 
             {/* Avatar + caret */}
             <button
-              ref={btnRef}
-              type="button"
-              aria-haspopup="menu"
-              aria-expanded={menuAbierto}
-              onClick={toggleMenu}
-              title="Menú de usuario"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "0 8px 0 0",
-                borderRadius: 999,
-                border: "1px solid #e6e6e6",
-                background: "#fff",
-                height: 40,
-                cursor: "pointer",
-              }}
-            >
-              <Avatar />
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+                ref={btnRef}
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={menuAbierto}
+                onClick={toggleMenu}
+                title="Menú de usuario"
                 style={{
-                  opacity: 0.6,
-                  transform: menuAbierto ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform .15s ease",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "0 8px 0 0",
+                  borderRadius: 999,
+                  border: "1px solid #e6e6e6",
+                  background: "#fff",
+                  height: 40,
+                  cursor: "pointer",
                 }}
               >
-                <path
-                  d="M7 10l5 5 5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <Avatar />
+              <Caret direction={menuAbierto ? "up" : "down"}/>
             </button>
           </div>
 

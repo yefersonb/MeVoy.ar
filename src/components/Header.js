@@ -6,7 +6,7 @@ import { auth } from "../firebase";
 
 // UI
 import logo from "../assets/logo/logo_light.png";
-import pfp from "../assets/ui/profile_picture_placeholder.png";
+import Avatar from "./ui/Avatar"
 
 
 export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
@@ -18,8 +18,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
     usuario?.perfil?.nombre ||
     (usuario?.email ? usuario.email.split("@")[0] : "Invitado");
 
-  const foto = usuario?.photoURL || pfp;
-  //const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
+  //const foto = usuario?.photoURL || pfp;
 
   const etiquetaRol = rol === "viajero" ? "Viajante" : "Conductor";
   const proximoRol = rol === "viajero" ? "conductor" : "viajero";
@@ -113,17 +112,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
                 cursor: "pointer",
               }}
             >
-              <img
-                src={foto}
-                alt="Foto de perfil"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  opacity: usuario?.photoURL ? 1 : 0.2,
-                }}
-              />
+              <Avatar />
               <svg
                 width="18"
                 height="18"

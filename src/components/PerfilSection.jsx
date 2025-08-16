@@ -17,6 +17,7 @@ import RatingRow from './RatingRow';
 import ActionBar from './ActionBar';
 import LoadingSpinner from './common/LoadingSpinner';
 import ErrorMessage from './common/ErrorMessage';
+import Avatar from "./ui/Avatar"
 
 
 const PerfilSection = ({
@@ -107,17 +108,20 @@ const perfilPercent = (() => {
           guardado={guardado}
         />
 
-        
+        {/* Nueva tarjeta de perfil */}
         <div style={{width: "100%", padding: "0.5rem", display: "flex", gap: "1rem"}}>
           {/* Foto de perfil */}
-          <div style={{ width: "20%", borderRadius: "50%", overflow: "hidden" }}>
-            <img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>
+
+          <div style={{ width: "40px", height: "40px", aspectRatio: "1 / 1", borderRadius: "50%", overflow: "hidden" }}>
+            <Avatar />
           </div>
 
           {/* Detalles */}
-          <div style={{display: "flex", flexDirection: "column"}}>
-            <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
-            <div style={{fontSize: "1.2rem", marginBottom: "1rem"}}> {perfil.descripcion || ''} </div>
+          <div>
+            <div style={{display: "flex", flexDirection: "column"}}>
+              <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
+              <div style={{fontSize: "1.2rem", marginBottom: "1rem", maxWidth: "60%"}}> {perfil.descripcion || ''} </div>
+            </div>
             <div style={{display: "flex", gap: "1rem"}}>
               {/* ToDo: Generar dinámicamente: */}
               <Badge variant="verificado">Conductor verificado</Badge>
@@ -127,6 +131,7 @@ const perfilPercent = (() => {
           </div>
         </div>
 
+        {/* Viaja tarjeta de perfil (Nos vamos a deshacer de ella pronto) */}
         <div style={{marginTop: "5rem"}}>
           <div>
             <div className="primary" style={{ display: "flex" }}>

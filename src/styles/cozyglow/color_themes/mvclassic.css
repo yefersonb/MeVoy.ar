@@ -9,10 +9,10 @@
   --color-secondary-hover: var(--color-green-100);
   --color-on-secondary: var(--color-green-600);
 
-  --color-neutral: var(--color-gray-500);
+  --color-neutral: #aaaaaa;
   --color-success: #31b117;
-  --color-warning: #ffbb0000;
-  --color-danger: var(--color-danger-500);
+  --color-warning: #ffbb00;
+  --color-danger: #e90549;
   --color-info: var(--color-info-500);
 
   --color-on-neutral: var(--color-gray-900);

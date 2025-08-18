@@ -24,6 +24,7 @@ html, body {
 
 /* Core App */
 .app-container {
+  width: 100%;
   max-width: 1200px;
   margin-top: 4rem; /* Leave space for the header */
 }

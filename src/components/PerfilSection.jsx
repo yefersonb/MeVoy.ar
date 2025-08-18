@@ -104,7 +104,7 @@ const perfilPercent = (() => {
   const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
 
   return (
-    <div>
+    <div style={{padding: "0 10px"}}>
       {/* NUEVA TARJETA DE PERFIL */}
       {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx — Debería usar el contexto de perfil */}
 

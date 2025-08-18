@@ -9,16 +9,15 @@ const TabButton = ({ active, children, onClick }) => (
     onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
     onMouseLeave={(e) => (e.currentTarget.style.color = active ? "var(--color-primary)" : "#444")}
     style={{
-      width: "100%",
-      height: "4rem",
-      padding: "1rem",
+      height: "3rem",
+      padding: "1rem 0.5rem",
       display: "flex",
+      flexGrow: 1,
       alignItems: "center",
       justifyContent: "center",
       textAlign: "center",
       color: active ? "var(--color-primary)" : "#444",
       fontWeight: 500,
-      fontSize: "1.05rem",
       borderBottom: active ? "2px solid var(--color-primary)" : "2px solid #00000020",
       transition: "border 0.1s",
       cursor: "pointer"
@@ -35,7 +34,7 @@ const TabNavigation = ({
   userRole,
 }) => (
   <div>
-    <div style={{ width: "100%", display: "flex" }}>
+    <div style={{ display: "flex", overflow: "auto" }}>
       {
         menuItems.map((item) => (
           <TabButton key={item} active={activeTab === item} onClick={() => onTabChange(item)}> {item} </TabButton>

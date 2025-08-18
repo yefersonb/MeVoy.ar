@@ -137,7 +137,8 @@ export default function PerfilConductorV2Enhanced({
 
   // ===== RENDER CONDICIONAL DE CONTENIDO =====
   const renderTabContent = () => {
-    switch (activeTab) {
+    switch (activeTab)
+    {
       case "Perfil":
         return (
           <PerfilSection
@@ -156,21 +157,21 @@ export default function PerfilConductorV2Enhanced({
           />
         );
 
-case "Verificación":
-  return (
-    <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
-      <div className="bg-gradient-to-r from-violet-600 to-violet-700 px-6 py-4">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-          <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-sm">🪪</span>
-          Verificación de identidad
-        </h1>
-        <p className="text-violet-100 mt-1">Cargá tu DNI y licencia paso a paso.</p>
-      </div>
-      <div className="p-6">
-        <VerificacionConductorWizard onExit={() => handleTabChange("Perfil")} />
-      </div>
-    </section>
-  );
+      case "Verificación":
+        return (
+          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
+            <div className="bg-gradient-to-r from-violet-600 to-violet-700 px-6 py-4">
+              <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-sm">🪪</span>
+                Verificación de identidad
+              </h1>
+              <p className="text-violet-100 mt-1">Cargá tu DNI y licencia paso a paso.</p>
+            </div>
+            <div className="p-6">
+              <VerificacionConductorWizard onExit={() => handleTabChange("Perfil")} />
+            </div>
+          </section>
+        );
 
 
  
@@ -276,7 +277,7 @@ case "Verificación":
 
       default:
         return null;
-    }
+    } // FIN SWITCH
   };
 
   // ===== RENDER PRINCIPAL =====

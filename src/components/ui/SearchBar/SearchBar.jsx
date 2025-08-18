@@ -7,7 +7,7 @@ import { Search } from "react-feather"
 
 export function SearchBar({ value, onChange, placeholder = "Buscar viajes..." }) {
   return (
-    <div style={{width: "calc(100% - 1rem)", position: "relative", display: "inline-block"}}>
+    <div style={{width: "calc(100% - 2rem)", margin: "auto", position: "relative"}}>
       <input
         className={styles['search-bar']}
         type="text"

@@ -1,5 +1,6 @@
 import React from "react";
 import { useUser } from "../../contexts/UserContext";
+import { AlignJustify } from "react-feather";
 
 export default function Avatar({ size = "100%", editable = false }) {
   const { avatarUrl, loading, uploading, setPreview } = useUser();
@@ -21,7 +22,9 @@ export default function Avatar({ size = "100%", editable = false }) {
       height: size,
       borderRadius: "50%",
       overflow: "hidden",
-      display: "inline-block",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
     }}>
       {avatarUrl ? (
         <img

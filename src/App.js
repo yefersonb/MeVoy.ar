@@ -8,12 +8,12 @@ import PageProfile from "./pages/Profile"
 
 // UI Copmonents
 import CozySpinner from "./components/cozyglow/components/Spinners/CozySpinner/CozySpinner";
-import "./components/ui/SearchBar/SearchBar.module.css";
 
 // Styles
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./styles/cozyglow/cozyglow.css";
 import "./styles/cozyglow/color_themes/mvclassic.css";
+import "./styles/markdown.css"
 //import "./styles/cozyglow/color_themes/hazbyn.css"; // Override MeVoy-Classic with Hazbyn
 import "./App.css";
 

@@ -120,7 +120,22 @@ const perfilPercent = (() => {
           <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>
             <PerfilProgress progress= {perfilPercent} click = {() => { window.location.hash = 'verificacion'; }}/>
             <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
-            <div style={{fontSize: "1rem", marginBottom: "1rem", borderLeft: "2px solid #00000030", padding: "0 1rem", maxHeight: "20rem", overflow: "auto"}}> <Markdown>{perfil.descripcion || ''}</Markdown></div>
+
+            {/* About Me + editor */}
+            <div className='markdown-field' style={{fontSize: "1rem", marginBottom: "1rem", borderLeft: "3px solid #00000030", borderRadius: "3px", padding: "0 1rem", maxHeight: "20rem", overflow: "auto"}}> <Markdown>{perfil.descripcion || ''}</Markdown></div>
+            {editMode && (            
+              <div style={{boxShadow: "inset 0 2px 4px #0002", borderRadius: "10px",  position: "relative"}}>
+                <InputField
+                  label="" // Acerca de mi... pero mejor que no diga nada por ahora.
+                  type="textarea"
+                  value={perfil.descripcion || ''}
+                  onChange={(e) => onPerfilChange('descripcion', e.target.value)}
+                  readOnly={!editMode}
+                  placeholder="Contanos algo sobre vos, tus gustos, música favorita, etc."
+                />
+              </div>
+            )}
+
             <div style={{display: "flex", gap: "1rem"}}>
             {/* ToDo: Generar dinámicamente: */}
             <Badge variant="verificado">Conductor verificado</Badge>
@@ -140,104 +155,7 @@ const perfilPercent = (() => {
 
 
       {/* Viaja tarjeta de perfil (Nos vamos a deshacer de ella pronto) — Por ahora está escondida */}
-      <div style={{marginTop: "5rem", display: "hidden"}}>
-        <div>
-          <div className="primary" style={{ display: "flex" }}>
-            <div style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
-              <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
-                { 
-                  avatarSrc ? 
-                    (<img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>) 
-                  : 
-                    (<div> Sin foto </div>)
-                }
-
-                { 
-                  uploading &&
-                    (
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
-                        <Spinner/>
-                      </div>
-                    )
-                }
-              </div>
-
-              {
-                editMode && (
-                <label
-                  style={{
-                    position: 'absolute',
-                    bottom: -6,
-                    right: -6,
-                    background: '#fff',
-                    borderRadius: '50%',
-                    padding: 6,
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  aria-label="Cambiar foto de perfil"
-                  title="Cambiar foto"
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={onPhotoSelected}
-                    disabled={uploading}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      opacity: 0,
-                      cursor: 'pointer',
-                    }}
-                  />
-                  <Edit3 />
-                </label>
-              )}
-            </div>
-            <div>
-              <InputField
-                label="" // Acerca de mi... pero mejor que no diga nada por ahora.
-                type="textarea"
-                value={perfil.descripcion || ''}
-                onChange={(e) => onPerfilChange('descripcion', e.target.value)}
-                readOnly={!editMode}
-                placeholder="Cuéntanos algo sobre ti, tus gustos, música favorita, etc."
-              />
-            </div>
-
-            {/* Información del usuario */}
-            <div >
-              <div>
-                <div>
-                  <table>
-                    <tr>
-                      <td style={{fontWeight: "600"}}>Viajes:</td>
-                      <td style={{width: "1rem"}}></td>
-                      <td>{"Nunca viajó"}</td>
-                    </tr>
-                    <tr>
-                      <td style={{fontWeight: "600"}}>Último viaje:</td>
-                      <td style={{width: "1rem"}}></td>
-                      <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
-                    </tr>
-                    <tr>
-                      <td style={{fontWeight: "600"}}>Tasa de respuesta: </td>
-                      <td style={{width: "1rem"}}></td>
-                      <td>{Math.round((perfil.tasaRespuesta) * 100) || "--"}%</td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div style={{marginTop: "5rem"}}>
         <div>
           <div>
             <div>
@@ -338,6 +256,93 @@ const perfilPercent = (() => {
           </div>
         </div>
       </div>
+
+      <div>
+          <div className="primary" style={{ display: "flex" }}>
+            <div style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
+              <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
+                { 
+                  avatarSrc ? 
+                    (<img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>) 
+                  : 
+                    (<div> Sin foto </div>)
+                }
+
+                { 
+                  uploading &&
+                    (
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
+                        <Spinner/>
+                      </div>
+                    )
+                }
+              </div>
+
+              {
+                editMode && (
+                <label
+                  style={{
+                    position: 'absolute',
+                    bottom: -6,
+                    right: -6,
+                    background: '#fff',
+                    borderRadius: '50%',
+                    padding: 6,
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  aria-label="Cambiar foto de perfil"
+                  title="Cambiar foto"
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={onPhotoSelected}
+                    disabled={uploading}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      opacity: 0,
+                      cursor: 'pointer',
+                    }}
+                  />
+                  <Edit3 />
+                </label>
+              )}
+            </div>
+            
+            {/* Información del usuario */}
+            <div >
+              <div>
+                <div>
+                  <table>
+                    <tr>
+                      <td style={{fontWeight: "600"}}>Viajes:</td>
+                      <td style={{width: "1rem"}}></td>
+                      <td>{"Nunca viajó"}</td>
+                    </tr>
+                    <tr>
+                      <td style={{fontWeight: "600"}}>Último viaje:</td>
+                      <td style={{width: "1rem"}}></td>
+                      <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
+                    </tr>
+                    <tr>
+                      <td style={{fontWeight: "600"}}>Tasa de respuesta: </td>
+                      <td style={{width: "1rem"}}></td>
+                      <td>{Math.round((perfil.tasaRespuesta) * 100) || "--"}%</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   );
 };

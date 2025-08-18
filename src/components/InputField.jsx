@@ -37,7 +37,7 @@ export default function InputField({
     padding: "8px 10px",
     transition: "border 0.18s, box-shadow 0.18s",
     boxShadow: "none",
-    minHeight: 38,
+    minHeight: 50,
     cursor: !readOnly ? "text" : "default",
     marginBottom: 2,
   };

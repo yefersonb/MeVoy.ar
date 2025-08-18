@@ -1,0 +1,11 @@
+.markdown-field hr {
+    opacity: 0.2;
+}
+
+.markdown-field blockquote {
+    border-left: 3px solid #0005;
+    border-radius: 3px;
+    padding: 0.1rem 1rem;
+    margin: 1rem 0;
+    opacity: 0.7;
+}

@@ -153,7 +153,7 @@ export default function App() {
       <Header rol={rol} onToggleRol={handleToggleRol} />
       <div className="app-container">
 
-        {/* ToDo: La barra de búsqueda debería ser movida a la página principal. Hay que crear una PageMain.jsx */}
+        {/* ToDo: La barra de búsqueda debería ser movida a la página principal. ¿ Tal vez crear un PageMain.jsx ? */}
         <SearchBar/>
 
         {

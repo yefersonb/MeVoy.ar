@@ -17,8 +17,13 @@ import RatingRow from './RatingRow';
 import ActionBar from './ActionBar';
 import Spinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
 import ErrorMessage from './common/ErrorMessage';
-import Avatar from "./ui/Avatar"
 import UserCard from "./UserCard"
+import PerfilProgress from './ui/PerfilProgress/PerfilProgress';
+
+// Icons an dutilities
+import Markdown from 'react-markdown';
+import Avatar from "./ui/Avatar"
+import { Edit3 } from 'react-feather';
 import { License } from "./cozyglow/icons/License"
 
 const PerfilSection = ({
@@ -102,7 +107,6 @@ const perfilPercent = (() => {
     <div>
       {/* NUEVA TARJETA DE PERFIL */}
       {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx — Debería usar el contexto de perfil */}
-
         <div style={{width: "100%", padding: "3rem 0.5rem 0.5rem 0.5rem", display: "flex", gap: "1rem", alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap"}}>
           {/* Foto de perfil */}
           <div style={{ flex: "1 1 12rem", maxWidth: "20%", minWidth: "180px", flexShrink: 0, marginTop: "0.5rem", position: "relative" }}>
@@ -114,14 +118,15 @@ const perfilPercent = (() => {
           
           {/* Detalles */}
           <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>
-              <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
-              <div style={{fontSize: "1.2rem", marginBottom: "1rem", borderLeft: "2px solid #00000030", padding: "1rem", maxHeight: "15rem", overflow: "auto"}}> {perfil.descripcion || ''} </div>
-              <div style={{display: "flex", gap: "1rem"}}>
-              {/* ToDo: Generar dinámicamente: */}
-              <Badge variant="verificado">Conductor verificado</Badge>
-              <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
-              <Badge variant="rapido">Responde rápido</Badge>
-              </div>
+            <PerfilProgress progress= {perfilPercent} click = {() => { window.location.hash = 'verificacion'; }}/>
+            <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
+            <div style={{fontSize: "1rem", marginBottom: "1rem", borderLeft: "2px solid #00000030", padding: "0 1rem", maxHeight: "20rem", overflow: "auto"}}> <Markdown>{perfil.descripcion || ''}</Markdown></div>
+            <div style={{display: "flex", gap: "1rem"}}>
+            {/* ToDo: Generar dinámicamente: */}
+            <Badge variant="verificado">Conductor verificado</Badge>
+            <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
+            <Badge variant="rapido">Responde rápido</Badge>
+            </div>
           </div>
         </div>
 
@@ -134,8 +139,8 @@ const perfilPercent = (() => {
       />
 
 
-      {/* Viaja tarjeta de perfil (Nos vamos a deshacer de ella pronto) */}
-      <div style={{marginTop: "5rem"}}>
+      {/* Viaja tarjeta de perfil (Nos vamos a deshacer de ella pronto) — Por ahora está escondida */}
+      <div style={{marginTop: "5rem", display: "hidden"}}>
         <div>
           <div className="primary" style={{ display: "flex" }}>
             <div style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
@@ -191,45 +196,24 @@ const perfilPercent = (() => {
                       cursor: 'pointer',
                     }}
                   />
-                  <div style={{ fontSize: 14, lineHeight: 1 }}>✎</div>
+                  <Edit3 />
                 </label>
               )}
             </div>
             <div>
-                <InputField
-                  label="" // Acerca de mi... pero mejor que no diga nada por ahora.
-                  type="textarea"
-                  value={perfil.descripcion || ''}
-                  onChange={(e) => onPerfilChange('descripcion', e.target.value)}
-                  readOnly={!editMode}
-                  placeholder="Cuéntanos algo sobre ti, tus gustos, música favorita, etc."
-                />
-              </div>
+              <InputField
+                label="" // Acerca de mi... pero mejor que no diga nada por ahora.
+                type="textarea"
+                value={perfil.descripcion || ''}
+                onChange={(e) => onPerfilChange('descripcion', e.target.value)}
+                readOnly={!editMode}
+                placeholder="Cuéntanos algo sobre ti, tus gustos, música favorita, etc."
+              />
+            </div>
+
             {/* Información del usuario */}
             <div >
               <div>
-                <h2>
-                    {perfil.nombre || usuario?.displayName || 'Sin nombre'}
-        {perfil.nombre || usuario?.displayName || 'Sin nombre'}
-      <span style={{ marginLeft: 8, verticalAlign: 'middle' }}>
-        {perfilPercent < 100 ? (
-          <button
-            onClick={() => { window.location.hash = 'verificacion'; }}
-            style={{ border: 'none', background: 'transparent', padding: 0, margin: 0, cursor: 'pointer' }}
-            title="Completá tu verificación"
-              >
-            <Badge variant="viajes">{`Perfil ${perfilPercent}%`}</Badge>
-            </button>
-            ) : (
-          <Badge variant="viajes">{`Perfil ${perfilPercent}%`}</Badge>
-          )}
-      </span>
-                </h2>
-                <div style={{display: "flex", alignItems: "center", gap: "5px"}}>
-                  <Badge variant="verificado">Conductor verificado</Badge>
-                  <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
-                  <Badge variant="rapido">Responde rápido</Badge>
-                </div>
                 <div>
                   <table>
                     <tr>

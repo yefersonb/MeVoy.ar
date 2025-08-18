@@ -8,6 +8,8 @@
 /*
   ToDo:
     * Implement as actual badges, using icons and better styles.
+
+  ToDo: Refactorizar para usar un Badge Manager
 */
 
 import React from "react";

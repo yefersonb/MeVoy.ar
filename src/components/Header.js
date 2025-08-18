@@ -1,4 +1,3 @@
-// src/components/Header.js
 import React from "react";
 import { useUser } from "../contexts/UserContext";
 import { signOut } from "firebase/auth";

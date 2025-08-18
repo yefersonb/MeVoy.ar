@@ -16,10 +16,28 @@ export default function Avatar({ size = "100%", editable = false }) {
   };
 
   return (
-    avatarUrl ? (
-      <img src={avatarUrl} alt="Foto de perfil" style={{ width: size, height: size, objectFit: "cover", borderRadius: "50%"}} />
-    ) : (
-      <div style={{ width: size, height: size, background: "#eee", borderRadius: "50%" }}></div>
-    )
+    <div style={{
+      width: size,
+      height: size,
+      borderRadius: "50%",
+      overflow: "hidden",
+      display: "inline-block",
+    }}>
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt="Foto de perfil"
+          style={{
+            width: "100%",
+            height: "100%",
+            aspectRatio: "1 / 1",
+            objectFit: "cover", // Keeps the image ratio but crops it
+            objectPosition: "center", // Ensures the image is centered if it gets cropped
+          }}
+        />
+      ) : (
+        <div style={{ width: "100%", height: "100%", background: "#eee" }}></div>
+      )}
+    </div>
   );
 }

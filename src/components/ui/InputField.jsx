@@ -1,6 +1,6 @@
 import React from "react";
 
-/**
+/*
  * InputField reutilizable para formularios.
  * Props:
  * - label: texto del label
@@ -12,18 +12,20 @@ import React from "react";
  * - placeholder: string
  * - name: id/for para accesibilidad
  */
+
 export default function InputField({
-  label,
-  type = "text",
-  value,
-  onChange,
-  options = [],
-  readOnly = false,
-  disabled = false,
-  placeholder = "",
-  name,
-  ...rest
-}) {
+                                    label,
+                                    type = "text",
+                                    value,
+                                    onChange,
+                                    options = [],
+                                    readOnly = false,
+                                    disabled = false,
+                                    placeholder = "",
+                                    name,
+                                    ...rest
+                                  }) {
+
   const inputId = name || label.replace(/\s+/g, "-").toLowerCase();
 
   const baseStyle = {
@@ -43,8 +45,8 @@ export default function InputField({
   };
 
   const focusStyle = {
-    border: "1.5px solid #2563eb",
-    boxShadow: "0 0 0 1px #2563eb, 0 1px 4px #2563eb10",
+    border: "1.5px solid var(--color-primary)",
+    boxShadow: "0 0 0 1px var(--color-primary), 0 1px 4px #2563eb10",
   };
 
   const [isFocused, setIsFocused] = React.useState(false);

@@ -11,7 +11,7 @@ import { useVerificacionConductor } from '../hooks/useVerificacionConductor';
 
 
 // UI
-import InputField from './InputField';
+import InputField from './ui/InputField';
 import Badge from './Badge';
 import RatingRow from './RatingRow';
 import ActionBar from './ActionBar';
@@ -107,86 +107,75 @@ const perfilPercent = (() => {
     <div>
       {/* NUEVA TARJETA DE PERFIL */}
       {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx — Debería usar el contexto de perfil */}
-        <div style={{width: "100%", padding: "3rem 0.5rem 0.5rem 0.5rem", display: "flex", gap: "1rem", alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap"}}>
-          {/* Foto de perfil */}
-          <div style={{ flex: "1 1 12rem", maxWidth: "20%", minWidth: "180px", flexShrink: 0, marginTop: "0.5rem", position: "relative" }}>
-            <Avatar/>
-            <div style={{position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#0d690d80", border: "1px solid #00ff1560", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
-              <License size="80%"/>
-            </div>
+
+      {/* Barra de progreso del perfil */}
+      <div style={{padding: "2rem 0"}}>
+        <PerfilProgress progress= {perfilPercent} click = {() => { window.location.hash = 'verificacion'; }}/>
+      </div>
+        
+      {/* Tarjeta */}
+      <div style={{width: "100%", padding: "0.5rem", display: "flex", gap: "1rem", alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap"}}>
+        {/* Foto de perfil */}
+        <div style={{ flex: "1 1 12rem", maxWidth: "20%", minWidth: "180px", flexShrink: 0, marginTop: "0.5rem", position: "relative" }}>
+          <Avatar/>
+          <div style={{position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#0d690d80", border: "1px solid #00ff1560", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
+            <License size="80%"/>
           </div>
-          
-          {/* Detalles */}
-          <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>
-            <PerfilProgress progress= {perfilPercent} click = {() => { window.location.hash = 'verificacion'; }}/>
-            <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
+        </div>
+        
+        <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>
+          {/* Presentación */}
+          <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
 
-            {/* About Me + editor */}
-            <div className='markdown-field' style={{fontSize: "1rem", marginBottom: "1rem", borderLeft: "3px solid #00000030", borderRadius: "3px", padding: "0 1rem", maxHeight: "20rem", overflow: "auto"}}> <Markdown>{perfil.descripcion || ''}</Markdown></div>
-            {editMode && (            
-              <div style={{boxShadow: "inset 0 2px 4px #0002", borderRadius: "10px",  position: "relative"}}>
-                <InputField
-                  label="" // Acerca de mi... pero mejor que no diga nada por ahora.
-                  type="textarea"
-                  value={perfil.descripcion || ''}
-                  onChange={(e) => onPerfilChange('descripcion', e.target.value)}
-                  readOnly={!editMode}
-                  placeholder="Contanos algo sobre vos, tus gustos, música favorita, etc."
-                />
-              </div>
-            )}
+          {/* AboutMe + editor */}
+          <div className='markdown-field' style={{fontSize: "1rem", marginBottom: "1rem", maxHeight: "20rem", overflow: "auto"}}> <Markdown>{perfil.descripcion || ''}</Markdown></div>
+          {editMode && (            
+            <div style={{boxShadow: "inset 0 2px 4px #0002", borderRadius: "10px",  position: "relative"}}>
+              <InputField
+                label="" // Acerca de mi... pero mejor que no diga nada por ahora.
+                type="textarea"
+                value={perfil.descripcion || ''}
+                onChange={(e) => onPerfilChange('descripcion', e.target.value)}
+                readOnly={!editMode}
+                placeholder="Contanos algo sobre vos, tus gustos, música favorita, etc."
+              />
+            </div>
+          )}
 
-            <div style={{display: "flex", gap: "1rem"}}>
+          {/* Insignias */}
+          <div style={{display: "flex", gap: "1rem"}}>
             {/* ToDo: Generar dinámicamente: */}
             <Badge variant="verificado">Conductor verificado</Badge>
             <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
             <Badge variant="rapido">Responde rápido</Badge>
-            </div>
           </div>
-        </div>
-
-      <ActionBar
-        editMode={editMode}
-        onEdit={onEdit}
-        onSave={onSave}
-        onCancel={onCancel}
-        guardado={guardado}
-      />
-
-
-      {/* Viaja tarjeta de perfil (Nos vamos a deshacer de ella pronto) — Por ahora está escondida */}
-      <div style={{marginTop: "5rem"}}>
-        <div>
+          {/* Fin Presentación */}
+        
+          {/* Información personal */}
           <div>
+            {/* ToDo: Reemplazar estos inputs por _vistas_. Sólo usar Inputs en un panel de edición — Ésto permite mantener tarjetas generalizadas para todos -> menos código */}
             <div>
-              <h3>
-                Información Personal
-              </h3>
-              <div>
-                <InputField
-                  label="WhatsApp"
-                  type="text"
-                  value={perfil.whatsapp || ''}
-                  onChange={(e) => onPerfilChange('whatsapp', e.target.value)}
-                  readOnly={!editMode}
-                  placeholder="Ingresa tu número de WhatsApp"
-                />
-                <InputField
-                  label="Fecha de nacimiento"
-                  type="date"
-                  value={perfil.fechaNacimiento || ''}
-                  onChange={(e) => onPerfilChange('fechaNacimiento', e.target.value)}
-                  readOnly={!editMode}
-                  placeholder="Selecciona tu fecha de nacimiento"
-                />
-              </div>
+              <InputField
+                label="WhatsApp"
+                type="text"
+                value={perfil.whatsapp || ''}
+                onChange={(e) => onPerfilChange('whatsapp', e.target.value)}
+                readOnly={!editMode}
+                placeholder="Ingresa tu número de WhatsApp"
+              />
+              <InputField
+                label="Fecha de nacimiento"
+                type="date"
+                value={perfil.fechaNacimiento || ''}
+                onChange={(e) => onPerfilChange('fechaNacimiento', e.target.value)}
+                readOnly={!editMode}
+                placeholder="Selecciona tu fecha de nacimiento"
+              />
             </div>
 
             {/* Valoraciones */}
             <div>
-              <h3>
-                Valoraciones de Conductores
-              </h3>
+              <h3> Valoraciones de Conductores </h3>
               <div>
                 <div>
                   <RatingRow label="Conducción" value={valoraciones.conduccion} />
@@ -199,16 +188,11 @@ const perfilPercent = (() => {
               </div>
               
               <div>
-                <div>
-                  <div>
-                    <span>{perfil.viajesCompletados || 0} viajes completados</span>
-                  </div>
-                  <div>
-                    {completadosPercent}% de éxito
-                  </div>
-                </div>
+                <span> {perfil.viajesCompletados || 0} viajes completados </span>
+                <div> {completadosPercent}% de éxito </div>
               </div>
             </div>
+            {/* Fin Valoraciones */}
 
             {/* Vehículos */}
             <div>
@@ -253,97 +237,77 @@ const perfilPercent = (() => {
                 </div>
               )}
             </div>
+            {/* Fin Vehiculos */ }
           </div>
+          {/* Fin Información personal */}
         </div>
       </div>
+      {/* Fin Tarjeta */}
 
+      {/* ToDo: Eliminar. Esto debería ser parte de la tarjeta _o_ debería haber un menu de edición */}
+      <ActionBar
+        editMode={editMode}
+        onEdit={onEdit}
+        onSave={onSave}
+        onCancel={onCancel}
+        guardado={guardado}
+      />
+
+      {/* Vieja tarjeta de perfil (Nos vamos a deshacer de ella pronto) — Por ahora está escondida */}
       <div>
           <div className="primary" style={{ display: "flex" }}>
             <div style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
               <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
-                { 
-                  avatarSrc ? 
-                    (<img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>) 
-                  : 
-                    (<div> Sin foto </div>)
+                {avatarSrc
+                  ?(<img src={avatarSrc} alt="Foto de perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}/>) 
+                  :(<div> Sin foto </div>)
                 }
 
-                { 
-                  uploading &&
-                    (
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
-                        <Spinner/>
-                      </div>
-                    )
-                }
+                {uploading && (
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', }}>
+                    <Spinner/>
+                  </div>
+                )}
               </div>
 
-              {
-                editMode && (
-                <label
-                  style={{
-                    position: 'absolute',
-                    bottom: -6,
-                    right: -6,
-                    background: '#fff',
-                    borderRadius: '50%',
-                    padding: 6,
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
+              { editMode && (
+                <label style={{ position: 'absolute', bottom: -6, right: -6, background: '#fff', borderRadius: '50%', padding: 6, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   aria-label="Cambiar foto de perfil"
-                  title="Cambiar foto"
-                >
+                  title="Cambiar foto">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={onPhotoSelected}
                     disabled={uploading}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      opacity: 0,
-                      cursor: 'pointer',
-                    }}
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pacity: 0, cursor: 'pointer' }}
                   />
-                  <Edit3 />
+                  <Edit3 /> {/* El ícono del lapiz */}
                 </label>
               )}
             </div>
             
             {/* Información del usuario */}
-            <div >
-              <div>
-                <div>
-                  <table>
-                    <tr>
-                      <td style={{fontWeight: "600"}}>Viajes:</td>
-                      <td style={{width: "1rem"}}></td>
-                      <td>{"Nunca viajó"}</td>
-                    </tr>
-                    <tr>
-                      <td style={{fontWeight: "600"}}>Último viaje:</td>
-                      <td style={{width: "1rem"}}></td>
-                      <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
-                    </tr>
-                    <tr>
-                      <td style={{fontWeight: "600"}}>Tasa de respuesta: </td>
-                      <td style={{width: "1rem"}}></td>
-                      <td>{Math.round((perfil.tasaRespuesta) * 100) || "--"}%</td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
+            <table>
+              <tr>
+                <td style={{fontWeight: "600"}}>Viajes:</td>
+                <td style={{width: "1rem"}}></td>
+                <td>{"Nunca viajó"}</td>
+              </tr>
+              <tr>
+                <td style={{fontWeight: "600"}}>Último viaje:</td>
+                <td style={{width: "1rem"}}></td>
+                <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
+              </tr>
+              <tr>
+                <td style={{fontWeight: "600"}}>Tasa de respuesta: </td>
+                <td style={{width: "1rem"}}></td>
+                <td>{Math.round((perfil.tasaRespuesta) * 100) || "--"}%</td>
+              </tr>
+            </table>
           </div>
         </div>
-    </div>
+      </div>
+      /* Fin Vieja Tarjeta */
   );
 };
 

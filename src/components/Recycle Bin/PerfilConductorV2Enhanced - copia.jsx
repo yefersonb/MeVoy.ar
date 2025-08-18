@@ -5,7 +5,7 @@ import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import VehiculosConductor from "./VehiculosConductor";
 import ReservasRecibidas from "./ReservasRecibidas";
-import InputField from "./InputField";
+import InputField from "./ui/InputField";
 import Badge from "./Badge";
 import RatingRow from "./RatingRow";
 import ActionBar from "./ActionBar";

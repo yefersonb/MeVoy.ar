@@ -1,7 +1,7 @@
 // src/components/PerfilViajeroPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { useUser } from "../contexts/UserContext";
-import InputField from "./InputField";
+import InputField from "./ui/InputField";
 import ActionBar from "./ActionBar";
 import LoadingSpinner from "./common/LoadingSpinner";
 import ErrorMessage from "./common/ErrorMessage";

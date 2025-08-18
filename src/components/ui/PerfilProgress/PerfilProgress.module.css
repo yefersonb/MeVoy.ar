@@ -8,12 +8,12 @@
 }
 
 .container:hover #arrow {
-    transform: translate(20px, 2px);
+    transform: translate(20px, 1px);
 }
 
 #arrow {
     transition: 0.2s;
-    transform: translate(10px, 2px);
+    transform: translate(10px, 1px);
 }
 
 .progressbar{

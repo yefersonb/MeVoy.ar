@@ -3,6 +3,7 @@ import { ArrowRight } from "react-feather";
 import styles from "./PerfilProgress.module.css"
 
 export default function PerfilProgress({progress, click}) {
+    if(progress == "100") return;
     return (
         <div className={styles.container} onClick={click}>
             <div style={{display: "flex", alignItems: "center", justifyContent: "flex-start", margin: "5px"}}>

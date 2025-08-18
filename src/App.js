@@ -30,7 +30,7 @@ import ViajeroDashboard from "./components/ViajeroDashboard";
 // Hooks
 import useConductorData from "./hooks/useConductorData";
 import usePerfilViajeroMinimo from "./hooks/usePerfilViajeroMinimo";
-import { SearchBar } from "./components/ui/SearchBar/SearchBar";
+import PageMain from "./pages/Main";
 
 export default function App() {
   const [usuario, setUsuario] = useState(null);
@@ -153,8 +153,7 @@ export default function App() {
       <Header rol={rol} onToggleRol={handleToggleRol} />
       <div className="app-container">
 
-        {/* ToDo: La barra de búsqueda debería ser movida a la página principal. ¿ Tal vez crear un PageMain.jsx ? */}
-        <SearchBar/>
+        <PageMain rol={rol} />
 
         {
           rol === "conductor" ? (<ConductorDashboard viajes={viajes} reservas={reservas} />)

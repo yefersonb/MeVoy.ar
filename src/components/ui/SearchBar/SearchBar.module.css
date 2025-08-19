@@ -1,7 +1,7 @@
-
+﻿
 .search-bar {
     width: 100%;
-    background-color: #ffffff30;
+    background-color: color-mix(in srgb, var(--cg-surface) 19%, transparent);
     box-shadow: 0px 4px 4px #74747410;
     border: 1px solid #00000030;
     height: 3rem;

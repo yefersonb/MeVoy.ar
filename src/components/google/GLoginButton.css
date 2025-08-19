@@ -1,4 +1,4 @@
-.gsi-material-button {
+﻿.gsi-material-button {
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -76,7 +76,7 @@
 
 .gsi-material-button:disabled {
   cursor: default;
-  background-color: #ffffff61;
+  background-color: color-mix(in srgb, var(--cg-surface) 38%, transparent);
 }
 
 .gsi-material-button:disabled .gsi-material-button-state {

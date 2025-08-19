@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 /*
  * InputField reutilizable para formularios.
@@ -6,7 +6,7 @@ import React from "react";
  * - label: texto del label
  * - type: "text", "date", "select", "textarea"
  * - value: valor actual
- * - onChange: función de cambio (e => ...)
+ * - onChange: funciÃ³n de cambio (e => ...)
  * - options: opciones para select (array de strings)
  * - readOnly / disabled: boolean
  * - placeholder: string
@@ -45,8 +45,8 @@ export default function InputField({
   };
 
   const focusStyle = {
-    border: "1.5px solid var(--color-primary)",
-    boxShadow: "0 0 0 1px var(--color-primary), 0 1px 4px #2563eb10",
+    border: "1.5px solid var(--cg-primary)",
+    boxShadow: "0 0 0 1px var(--cg-primary), 0 1px 4px var(--cg-shadow-sm)",
   };
 
   const [isFocused, setIsFocused] = React.useState(false);
@@ -143,3 +143,4 @@ export default function InputField({
     </div>
   );
 }
+

@@ -22,7 +22,7 @@ const colors = {
   error: '#c0392b',
 };
 const radius = 8;
-const shadow = '0 2px 8px rgba(0,0,0,0.05)';
+const shadow = 'var(--cg-shadow-sm)';
 
 const shared = {
   input: {
@@ -846,4 +846,5 @@ const VehiculosConductor = () => {
 };
 
 export default VehiculosConductor;
+
 

@@ -41,7 +41,7 @@ export default function ActionBar({
             fontWeight: 600,
             cursor: "pointer",
             fontSize: "1rem",
-            boxShadow: "0 1px 6px #2563eb11",
+            boxShadow: "var(--cg-shadow-sm)",
             transition: "background 0.18s",
           }}
         >
@@ -88,3 +88,4 @@ export default function ActionBar({
     </div>
   );
 }
+

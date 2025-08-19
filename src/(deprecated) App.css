@@ -14,7 +14,7 @@
   --bg: var(--cg-bg);
   --card-bg: var(--cg-surface);
   --radius: 0.75rem;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow: var(--cg-shadow-sm);
   --text: var(--cg-text);
   --muted: var(--cg-text-muted);
   --hover-bg: var(--cg-hover);
@@ -284,3 +284,4 @@ html, body {
 
 /* hace que â€œCerrar sesiÃ³nâ€ quede claro como acciÃ³n final */
 .user-menu__footer { margin-top: 2px; }
+

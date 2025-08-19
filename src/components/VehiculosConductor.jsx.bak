@@ -1,4 +1,4 @@
-﻿// src/components/VehiculosConductor.jsx
+// src/components/VehiculosConductor.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { db, storage } from '../firebase';
@@ -13,9 +13,9 @@ import {
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const colors = {
-  primary: 'var(--cg-primary-700)',
+  primary: '#2563eb',
   secondary: '#f8fafc',
-  accent: 'var(--cg-surface)',
+  accent: '#fff',
   border: '#e2e8f0',
   text: '#1e293b',
   label: '#64748b',
@@ -79,13 +79,13 @@ const ActionButton = ({ children, variant = 'neutral', disabled = false, onClick
   const variants = {
     primary: {
       background: colors.primary,
-      color: 'var(--cg-surface)',
+      color: '#fff',
       border: `1px solid ${colors.primary}`,
     },
     neutral: {
       background: '#f1f5f9',
-      color: 'var(--cg-primary-700)',
-      border: '1px solid var(--cg-primary-700)',
+      color: '#2563eb',
+      border: '1px solid #2563eb',
     },
     destructive: {
       background: '#ffe3e3',
@@ -94,7 +94,7 @@ const ActionButton = ({ children, variant = 'neutral', disabled = false, onClick
     },
     success: {
       background: '#22c55e',
-      color: 'var(--cg-surface)',
+      color: '#fff',
       border: '1px solid #22c55e',
     },
   };
@@ -147,7 +147,7 @@ const SubTab = ({ active, label, onClick, count }) => (
       padding: '8px 16px',
       border: 'none',
       background: active ? colors.primary : '#f1f5f9',
-      color: active ? 'var(--cg-surface)' : '#334155',
+      color: active ? '#fff' : '#334155',
       borderRadius: 6,
       cursor: 'pointer',
       fontWeight: 600,
@@ -211,7 +211,7 @@ const VehiculosConductor = () => {
       const snap = await getDocs(collection(db, 'usuarios', usuario.uid, 'vehiculos'));
       setVehiculos(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     } catch (e) {
-      console.error('Error cargando vehÃ­culos:', e);
+      console.error('Error cargando vehículos:', e);
     } finally {
       setLoadingVehiculos(false);
     }
@@ -264,8 +264,8 @@ const VehiculosConductor = () => {
       await loadVehiculos();
       setActiveSubTab('gestionar');
     } catch (e) {
-      console.error('Error aÃ±adiendo vehÃ­culo:', e);
-      alert('No se pudo agregar el vehÃ­culo.');
+      console.error('Error añadiendo vehículo:', e);
+      alert('No se pudo agregar el vehículo.');
     } finally {
       setSavingNuevo(false);
     }
@@ -414,7 +414,7 @@ const VehiculosConductor = () => {
       await loadVehiculos();
       cancelEdit(veh.id);
     } catch (e) {
-      console.error('Error guardando ediciÃ³n:', e);
+      console.error('Error guardando edición:', e);
       alert('No se pudieron guardar los cambios.');
     } finally {
       setEditStates((s) => ({
@@ -426,24 +426,24 @@ const VehiculosConductor = () => {
 
   const eliminarVehiculo = async (vehId) => {
     if (!usuario) return;
-    const ok = window.confirm('QuerÃ©s eliminar ese vehÃ­culo? Esta acciÃ³n no se puede deshacer.');
+    const ok = window.confirm('Querés eliminar ese vehículo? Esta acción no se puede deshacer.');
     if (!ok) return;
     try {
       await deleteDoc(firestoreDoc(db, 'usuarios', usuario.uid, 'vehiculos', vehId));
       await loadVehiculos();
     } catch (e) {
-      console.error('Error eliminando vehÃ­culo:', e);
-      alert('No se pudo eliminar el vehÃ­culo.');
+      console.error('Error eliminando vehículo:', e);
+      alert('No se pudo eliminar el vehículo.');
     }
   };
 
   return (
     <div style={{ marginTop: 28, fontFamily: 'inherit' }}>
       <div style={{ marginBottom: 24, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-        <SubTab active={activeSubTab === 'agregar'} label="Agregar vehÃ­culo" onClick={() => setActiveSubTab('agregar')} />
+        <SubTab active={activeSubTab === 'agregar'} label="Agregar vehículo" onClick={() => setActiveSubTab('agregar')} />
         <SubTab
           active={activeSubTab === 'gestionar'}
-          label="Modificar / Eliminar vehÃ­culo"
+          label="Modificar / Eliminar vehículo"
           count={vehiculos.length}
           onClick={() => setActiveSubTab('gestionar')}
         />
@@ -465,8 +465,8 @@ const VehiculosConductor = () => {
         >
           {/* encabezado de agregar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: colors.primary }}>Agregar vehÃ­culo</div>
-            <div style={{ fontSize: 13, color: '#555' }}>CompletÃ¡ los datos para registrar un nuevo vehÃ­culo.</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: colors.primary }}>Agregar vehículo</div>
+            <div style={{ fontSize: 13, color: '#555' }}>Completá los datos para registrar un nuevo vehículo.</div>
           </div>
 
           {/* campos en grid */}
@@ -480,7 +480,7 @@ const VehiculosConductor = () => {
             {[
               { key: 'marca', label: 'Marca' },
               { key: 'modelo', label: 'Modelo' },
-              { key: 'anio', label: 'AÃ±o' },
+              { key: 'anio', label: 'Año' },
               { key: 'color', label: 'Color' },
               { key: 'patente', label: 'Patente' },
             ].map(({ key, label }) => (
@@ -532,7 +532,7 @@ const VehiculosConductor = () => {
               <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
                 <div style={{ flex: '1 1 150px' }}>
                   <FilePicker
-                    label="CÃ©dula de automotor"
+                    label="Cédula de automotor"
                     accept="image/*,application/pdf"
                     file={filesNuevo.cedulaFile}
                     onSelect={(f) => setFilesNuevo((fprev) => ({ ...fprev, cedulaFile: f }))}
@@ -541,7 +541,7 @@ const VehiculosConductor = () => {
                     <div style={{ fontSize: 12, color: '#555' }}>Subiendo...</div>
                   )}
                   {uploadStatusNuevo.cedulaFile === 'error' && (
-                    <div style={{ fontSize: 12, color: colors.error }}>FallÃ³ la carga</div>
+                    <div style={{ fontSize: 12, color: colors.error }}>Falló la carga</div>
                   )}
                 </div>
                 <div style={{ flex: '1 1 150px' }}>
@@ -555,7 +555,7 @@ const VehiculosConductor = () => {
                     <div style={{ fontSize: 12, color: '#555' }}>Subiendo...</div>
                   )}
                   {uploadStatusNuevo.seguroFile === 'error' && (
-                    <div style={{ fontSize: 12, color: colors.error }}>FallÃ³ la carga</div>
+                    <div style={{ fontSize: 12, color: colors.error }}>Falló la carga</div>
                   )}
                 </div>
                 <div style={{ flex: '1 1 150px' }}>
@@ -569,14 +569,14 @@ const VehiculosConductor = () => {
                     <div style={{ fontSize: 12, color: '#555' }}>Subiendo...</div>
                   )}
                   {uploadStatusNuevo.vtvFile === 'error' && (
-                    <div style={{ fontSize: 12, color: colors.error }}>FallÃ³ la carga</div>
+                    <div style={{ fontSize: 12, color: colors.error }}>Falló la carga</div>
                   )}
                 </div>
               </div>
             </div>
             <div>
               <FilePicker
-                label="Foto del vehÃ­culo"
+                label="Foto del vehículo"
                 accept="image/*"
                 file={filesNuevo.imagenFile}
                 onSelect={(f) => setFilesNuevo((fprev) => ({ ...fprev, imagenFile: f }))}
@@ -592,7 +592,7 @@ const VehiculosConductor = () => {
                 <div style={{ fontSize: 12, color: '#555' }}>Subiendo imagen...</div>
               )}
               {uploadStatusNuevo.imagenFile === 'error' && (
-                <div style={{ fontSize: 12, color: colors.error }}>FallÃ³ la carga de la imagen</div>
+                <div style={{ fontSize: 12, color: colors.error }}>Falló la carga de la imagen</div>
               )}
             </div>
           </div>
@@ -600,7 +600,7 @@ const VehiculosConductor = () => {
           {/* acciones */}
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <ActionButton onClick={agregarVehiculo} variant="neutral" disabled={savingNuevo}>
-              {savingNuevo ? 'Guardando...' : 'Agregar vehÃ­culo'}
+              {savingNuevo ? 'Guardando...' : 'Agregar vehículo'}
             </ActionButton>
             <ActionButton
               onClick={() => {
@@ -620,7 +620,7 @@ const VehiculosConductor = () => {
       {activeSubTab === 'gestionar' && (
         <div>
           {loadingVehiculos ? (
-            <div style={{ color: '#555' }}>Cargando vehÃ­culos...</div>
+            <div style={{ color: '#555' }}>Cargando vehículos...</div>
           ) : (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {vehiculos.map((v) => {
@@ -630,7 +630,7 @@ const VehiculosConductor = () => {
                   <li key={v.id} style={{ ...shared.card, alignItems: 'start' }}>
                     {v.imagenURL && (
                       <div style={{ flex: '0 0 160px' }}>
-                        <img src={v.imagenURL} alt="VehÃ­culo" style={shared.image} />
+                        <img src={v.imagenURL} alt="Vehículo" style={shared.image} />
                       </div>
                     )}
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -695,7 +695,7 @@ const VehiculosConductor = () => {
 
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                              <div style={{ fontWeight: 500 }}>Foto del vehÃ­culo</div>
+                              <div style={{ fontWeight: 500 }}>Foto del vehículo</div>
                               <FilePicker
                                 label=""
                                 accept="image/*"
@@ -715,7 +715,7 @@ const VehiculosConductor = () => {
                                     v.imagenURL && (
                                       <img
                                         src={v.imagenURL}
-                                        alt="VehÃ­culo"
+                                        alt="Vehículo"
                                         style={{ width: 120, borderRadius: 6, objectFit: 'cover' }}
                                       />
                                     )
@@ -726,12 +726,12 @@ const VehiculosConductor = () => {
                                 <div style={{ fontSize: 12, color: '#555' }}>Subiendo imagen...</div>
                               )}
                               {editState.uploadStatus?.imagenFile === 'error' && (
-                                <div style={{ fontSize: 12, color: colors.error }}>FallÃ³ la carga</div>
+                                <div style={{ fontSize: 12, color: colors.error }}>Falló la carga</div>
                               )}
                             </div>
                             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
                               {[
-                                { key: 'cedulaFile', label: 'CÃ©dula de automotor' },
+                                { key: 'cedulaFile', label: 'Cédula de automotor' },
                                 { key: 'seguroFile', label: 'Seguro' },
                                 { key: 'vtvFile', label: 'VTV' },
                               ].map(({ key, label }) => (
@@ -760,7 +760,7 @@ const VehiculosConductor = () => {
                                     <div style={{ fontSize: 12, color: '#555' }}>Subiendo...</div>
                                   )}
                                   {editState.uploadStatus?.[key] === 'error' && (
-                                    <div style={{ fontSize: 12, color: colors.error }}>FallÃ³ la carga</div>
+                                    <div style={{ fontSize: 12, color: colors.error }}>Falló la carga</div>
                                   )}
                                 </div>
                               ))}
@@ -792,7 +792,7 @@ const VehiculosConductor = () => {
                               <strong>Modelo:</strong> {v.modelo}
                             </div>
                             <div>
-                              <strong>AÃ±o:</strong> {v.anio}
+                              <strong>Año:</strong> {v.anio}
                             </div>
                             <div>
                               <strong>Color:</strong> {v.color}
@@ -808,7 +808,7 @@ const VehiculosConductor = () => {
                           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 4 }}>
                             {v.cedulaURL && (
                               <a href={v.cedulaURL} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: colors.primary }}>
-                                Ver CÃ©dula
+                                Ver Cédula
                               </a>
                             )}
                             {v.seguroURL && (
@@ -846,4 +846,3 @@ const VehiculosConductor = () => {
 };
 
 export default VehiculosConductor;
-

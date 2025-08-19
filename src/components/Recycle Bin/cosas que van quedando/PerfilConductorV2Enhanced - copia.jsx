@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -16,7 +16,7 @@ const TabButton = ({ active, children, onClick }) => (
     onClick={onClick}
     style={{
       cursor: "pointer",
-      color: active ? "#2563eb" : "#444",
+      color: active ? "var(--cg-primary-700)" : "#444",
       fontWeight: 500,
       fontSize: "1.05rem",
       position: "relative",
@@ -25,9 +25,9 @@ const TabButton = ({ active, children, onClick }) => (
       transition: "color 0.2s ease",
       display: "inline-block",
     }}
-    onMouseEnter={(e) => (e.currentTarget.style.color = "#2563eb")}
+    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cg-primary-700)")}
     onMouseLeave={(e) =>
-      (e.currentTarget.style.color = active ? "#2563eb" : "#444")
+      (e.currentTarget.style.color = active ? "var(--cg-primary-700)" : "#444")
     }
   >
     {children}
@@ -38,7 +38,7 @@ const TabButton = ({ active, children, onClick }) => (
         right: 0,
         bottom: 0,
         height: 2,
-        background: "#2563eb",
+        background: "var(--cg-primary-700)",
         transform: active ? "scaleX(1)" : "scaleX(0)",
         transformOrigin: "left",
         transition: "transform 0.3s",
@@ -70,7 +70,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
   });
   const [original, setOriginal] = useState({});
   const [guardado, setGuardado] = useState(false);
-  const menuItems = ["Perfil", "Vehículos", "Reservas"];
+  const menuItems = ["Perfil", "VehÃ­culos", "Reservas"];
   const [activeTab, setActiveTab] = useState(menuItems[0]);
   const [editMode, setEditMode] = useState(false);
 
@@ -89,7 +89,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
         // Si el data.fotoURL existe, actualiza el previewPhoto
         if (data.fotoURL) {
           // Si quieres forzar el preview, puedes llamar al handler con un objeto falso,
-          // pero realmente deberías setPreviewPhoto(data.fotoURL);
+          // pero realmente deberÃ­as setPreviewPhoto(data.fotoURL);
           setTimeout(() => {
             // Sincroniza el hook si el usuario cambia de perfil con foto
             handlePhotoSelected({ target: { files: [] } });
@@ -227,7 +227,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                       position: "absolute",
                       bottom: -6,
                       right: -6,
-                      background: "#fff",
+                      background: "var(--cg-surface)",
                       borderRadius: "50%",
                       padding: 4,
                       cursor: "pointer",
@@ -246,11 +246,11 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                     <Badge variant="verificado">Conductor verificado</Badge>
                     <Badge variant="viajes">100% viajes completados</Badge>
-                    <Badge variant="rapido">Responde rápido</Badge>
+                    <Badge variant="rapido">Responde rÃ¡pido</Badge>
                   </div>
                 </div>
                 <div style={{ fontSize: "0.8rem", marginTop: 4, color: "#555" }}>
-                  Último viaje: {perfil.ultimoViaje} • Tasa de respuesta:{" "}
+                  Ãšltimo viaje: {perfil.ultimoViaje} â€¢ Tasa de respuesta:{" "}
                   {Math.round((perfil.tasaRespuesta || 0) * 100)}%
                 </div>
               </div>
@@ -281,7 +281,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                 placeholder="Sin datos"
               />
               <InputField
-                label="Modelo de Vehículo"
+                label="Modelo de VehÃ­culo"
                 type="text"
                 value={perfil.modeloVehiculo || ""}
                 onChange={(e) => handlePerfilChange("modeloVehiculo", e.target.value)}
@@ -298,7 +298,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
               />
               <div style={{ gridColumn: "1 / span 2" }}>
                 <InputField
-                  label="Acerca de mí"
+                  label="Acerca de mÃ­"
                   type="textarea"
                   value={perfil.descripcion || ""}
                   onChange={(e) => handlePerfilChange("descripcion", e.target.value)}
@@ -320,7 +320,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 140 }}>
-                    <RatingRow label="Conducción" value={valoraciones.conduccion} />
+                    <RatingRow label="ConducciÃ³n" value={valoraciones.conduccion} />
                     <RatingRow label="Puntualidad" value={valoraciones.puntualidad} />
                   </div>
                   <div style={{ flex: 1, minWidth: 140 }}>
@@ -329,15 +329,15 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                   </div>
                 </div>
                 <div style={{ fontSize: "0.85rem", color: "#555" }}>
-                  {perfil.viajesCompletados} viajes completados • {completadosPercent}% éxito
+                  {perfil.viajesCompletados} viajes completados â€¢ {completadosPercent}% Ã©xito
                 </div>
               </div>
             </div>
           </section>
         )}
-        {activeTab === "Vehículos" && (
+        {activeTab === "VehÃ­culos" && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Mis Vehículos</h1>
+            <h1 className="text-2xl font-bold mb-4">Mis VehÃ­culos</h1>
             <VehiculosConductor viajes={viajes} reservas={reservas} />
           </section>
         )}

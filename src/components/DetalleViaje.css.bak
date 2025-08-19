@@ -1,4 +1,4 @@
-﻿/* src/components/DetalleViaje.css */
+/* src/components/DetalleViaje.css */
 
 /* --- Overlay ----------------------------------------------------------- */
 .dv-overlay {
@@ -14,12 +14,12 @@
 
 /* --- Modal ------------------------------------------------------------- */
 .dv-modal {
-  position: relative;            /* ðŸ”§ Necesario para que .dv-close (position:absolute) quede anclado a este contenedor */
-  background: var(--cg-surface);
+  position: relative;            /* 🔧 Necesario para que .dv-close (position:absolute) quede anclado a este contenedor */
+  background: #ffffff;
   border-radius: 1rem;           /* extra-rounded corners */
   width: min(92vw, 560px);
   max-height: 90vh;              /* limita la altura al 90% del viewport */
-  overflow-y: auto;              /* ðŸ”§ permite scroll vertical interno cuando el contenido excede max-height */
+  overflow-y: auto;              /* 🔧 permite scroll vertical interno cuando el contenido excede max-height */
   overflow-x: hidden;            /* oculta cualquier desbordamiento horizontal */
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   display: flex;
@@ -31,8 +31,8 @@
 /* --- Close button ------------------------------------------------------ */
 .dv-close {
   position: absolute;            /* usa el position:relative de .dv-modal para posicionarse */
-  top: 10px;                     /* ajusta la separaciÃ³n superior */
-  right: 14px;                   /* ajusta la separaciÃ³n derecha */
+  top: 10px;                     /* ajusta la separación superior */
+  right: 14px;                   /* ajusta la separación derecha */
   border: none;
   background: transparent;
   font-size: 1.5rem;
@@ -103,15 +103,15 @@ h2 {
 }
 
 .dv-actions button:last-child {
-  background: var(--cg-primary);   /* Tailwind blue-500 */
-  color: var(--cg-surface);
+  background: #3b82f6;   /* Tailwind blue-500 */
+  color: #fff;
 }
 .dv-actions button:last-child:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 .dv-actions button:last-child:not(:disabled):hover {
-  background: var(--cg-primary-700);   /* blue-600 */
+  background: #2563eb;   /* blue-600 */
 }
 
 /* --- Responsive tweaks ------------------------------------------------- */
@@ -120,4 +120,3 @@ h2 {
     width: 95vw;               /* ajusta ancho en pantallas muy chicas */
   }
 }
-

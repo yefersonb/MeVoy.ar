@@ -1,4 +1,4 @@
-﻿// src/components/menus/UserMenuPortal.jsx
+// src/components/menus/UserMenuPortal.jsx
 import React from "react";
 import { createPortal } from "react-dom";
 
@@ -10,14 +10,14 @@ const itemStyle = {
   padding: "10px 12px",
   borderRadius: 12,
   textDecoration: "none",
-  color: "var(--cg-text)",
+  color: "#111",
   background: "transparent",
   border: "none",
   cursor: "pointer",
   textAlign: "left",
 };
 
-const dividerStyle = { height: 1, background: "var(--cg-border)", margin: "6px 4px" };
+const dividerStyle = { height: 1, background: "#eee", margin: "6px 4px" };
 
 export default function UserMenuPortal({
   open,
@@ -32,8 +32,8 @@ export default function UserMenuPortal({
   const DEFAULT_ITEMS = [
     { label: "Perfil", href: "#perfil" },
     { label: "Reservas", href: "#reservas" },
-    { label: "VehÃ­culos", href: "#mis-vehiculos" },
-    { label: "EnvÃ­os", href: "#envios" },
+    { label: "Vehículos", href: "#mis-vehiculos" },
+    { label: "Envíos", href: "#envios" },
     { label: "Nuevo viaje", href: "#nuevo-viaje" },
   ];
   const links = items && items.length ? items : DEFAULT_ITEMS;
@@ -90,8 +90,8 @@ export default function UserMenuPortal({
         minWidth: 260,
         maxWidth: 280,
         padding: 8,
-        background: "var(--cg-surface)",
-        border: "1px solid var(--cg-border)",
+        background: "#fff",
+        border: "1px solid #eee",
         borderRadius: 16,
         boxShadow: "0 10px 25px rgba(0,0,0,.08)",
       }}
@@ -105,14 +105,14 @@ export default function UserMenuPortal({
           right: 18,
           width: 12,
           height: 12,
-          background: "var(--cg-surface)",
+          background: "#fff",
           transform: "rotate(45deg)",
-          borderLeft: "1px solid var(--cg-border)",
-          borderTop: "1px solid var(--cg-border)",
+          borderLeft: "1px solid #eee",
+          borderTop: "1px solid #eee",
         }}
       />
 
-      {/* Links dinÃ¡micos */}
+      {/* Links dinámicos */}
       {links.map((it, idx) =>
         it?.type === "divider" ? (
           <div key={`div-${idx}`} style={dividerStyle} />
@@ -135,13 +135,12 @@ export default function UserMenuPortal({
         type="button"
         role="menuitem"
         onClick={onLogout}
-        style={{ ...itemStyle, color: "var(--cg-danger)" }}
+        style={{ ...itemStyle, color: "#b00020" }}
       >
-        Cerrar sesiÃ³n
+        Cerrar sesión
       </button>
     </div>
   );
 
   return createPortal(menu, document.body);
 }
-

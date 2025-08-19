@@ -1,4 +1,4 @@
-﻿/*
+/*
   *OUTDATED COLORS* - OVERRIDEN BY COZYGLOW
   ToDo: Update all references to these colors in the codebase to point to CozyGlow's standard variables.
 
@@ -8,21 +8,21 @@
 */
 
 :root {
-  --primary: var(--cg-primary);
-  --primary-hover: var(--cg-primary-700);
-  --secondary: var(--cg-secondary);
-  --bg: var(--cg-bg);
-  --card-bg: var(--cg-surface);
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #41b18f;
+  --bg: #f9fafb;
+  --card-bg: #ffffff;
   --radius: 0.75rem;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --text: var(--cg-text);
-  --muted: var(--cg-text-muted);
-  --hover-bg: var(--cg-hover);
+  --text: #1f2937;
+  --muted: #6b7280;
+  --hover-bg: #e0e7ff;
   --transition: 0.2s ease;
   --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* Reset y configuraciÃ³n base para pantalla completa */
+/* Reset y configuración base para pantalla completa */
 * {
   box-sizing: border-box;
 }
@@ -46,7 +46,7 @@ html, body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  min-height: 100dvh; /* Para mÃ³viles modernos */
+  min-height: 100dvh; /* Para móviles modernos */
   width: 100%;
   max-width: none;
   padding: 0;
@@ -61,83 +61,83 @@ html, body {
   align-items: center;
   margin-bottom: 1rem;
   gap: 0.5rem;
-  padding: 0 1rem; /* Padding interno para mÃ³viles */
+  padding: 0 1rem; /* Padding interno para móviles */
 }
 
 .user-actions {
   display: flex;
   gap: 0.5rem;
-  flex-wrap: wrap; /* Para que los botones se adapten en pantallas pequeÃ±as */
+  flex-wrap: wrap; /* Para que los botones se adapten en pantallas pequeñas */
 }
 
 .link-btn {
   background: none;
   border: none;
-  color: var(--cg-text);
+  color: var(--text);
   font-weight: 500;
   font-family: inherit;
   font-size: 0.95rem;
   cursor: pointer;
   padding: 0.5rem;
   margin: 0;
-  transition: color var(--cg-transition-fast);
-  border-radius: var(--cg-radius-md);
-  min-height: 44px; /* Mejor accesibilidad tÃ¡ctil en mÃ³viles */
+  transition: color var(--transition);
+  border-radius: var(--radius);
+  min-height: 44px; /* Mejor accesibilidad táctil en móviles */
 }
 
 .link-btn:hover {
-  color: var(--cg-primary);
-  background-color: var(--cg-hover);
+  color: var(--primary);
+  background-color: var(--hover-bg);
 }
 
 /* Botones principales */
 .btn-rounded {
-  background-color: var(--cg-primary);
+  background-color: var(--primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 9999px;
   cursor: pointer;
   margin: 0.5rem 0;
-  transition: background-color var(--cg-transition-fast);
+  transition: background-color var(--transition);
   font-weight: 600;
   font-family: inherit;
   font-size: 1rem;
-  min-height: 44px; /* Mejor para tÃ¡ctil */
-  width: 100%; /* En mÃ³viles, botones a ancho completo */
-  max-width: 300px; /* LÃ­mite en pantallas grandes */
+  min-height: 44px; /* Mejor para táctil */
+  width: 100%; /* En móviles, botones a ancho completo */
+  max-width: 300px; /* Límite en pantallas grandes */
 }
 
 .btn-rounded:hover {
-  background-color: var(--cg-primary-700);
+  background-color: var(--primary-hover);
 }
 
 .highlight-hover {
-  transition: background-color var(--cg-transition-fast);
-  border-radius: var(--cg-radius-md);
+  transition: background-color var(--transition);
+  border-radius: var(--radius);
 }
 .highlight-hover:hover {
-  background-color: var(--cg-hover);
+  background-color: var(--hover-bg);
 }
 
-/* Utilidades pequeÃ±as */
+/* Utilidades pequeñas */
 .text-muted {
-  color: var(--cg-text-muted);
+  color: var(--muted);
 }
 
 .rounded-card {
-  border-radius: var(--cg-radius-md);
-  background: var(--cg-surface);
-  box-shadow: var(--cg-shadow-sm);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
   padding: 1rem;
   margin: 0.5rem;
-  transition: transform var(--cg-transition-fast), box-shadow var(--cg-transition-fast);
-  width: calc(100% - 1rem); /* Respeta mÃ¡rgenes laterales */
+  transition: transform var(--transition), box-shadow var(--transition);
+  width: calc(100% - 1rem); /* Respeta márgenes laterales */
 }
 
 .rounded-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--cg-shadow-lg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
 /* RESPONSIVE DESIGN */
@@ -147,7 +147,7 @@ html, body {
   }
   
   .btn-rounded {
-    width: auto; /* En desktop, botones de ancho automÃ¡tico */
+    width: auto; /* En desktop, botones de ancho automático */
   }
   
   .rounded-card {
@@ -173,14 +173,14 @@ html, body {
   }
 }
 
-/* Para tablets en orientaciÃ³n landscape */
+/* Para tablets en orientación landscape */
 @media (orientation: landscape) and (max-height: 768px) {
   .app-container {
     min-height: 100vh;
   }
 }
 
-/* Para dispositivos muy pequeÃ±os */
+/* Para dispositivos muy pequeños */
 @media (max-width: 320px) {
   .user-header {
     flex-direction: column;
@@ -196,8 +196,8 @@ html, body {
 .user-menu { position: relative; }
 .user-menu__btn {
   display:inline-flex; align-items:center; justify-content:center;
-  width:40px; height:40px; border-radius:999px; border:1px solid var(--cg-border);
-  background:var(--cg-surface); cursor:pointer;
+  width:40px; height:40px; border-radius:999px; border:1px solid #e6e6e6;
+  background:#fff; cursor:pointer;
 }
 .user-menu__btn img { width:100%; height:100%; border-radius:999px; object-fit:cover; }
 .avatar-fallback { font-weight:600; }
@@ -205,7 +205,7 @@ html, body {
 .user-menu__dropdown {
   position:absolute; top:calc(100% + 10px); right:0; z-index:30;
   width:280px; padding:8px;
-  background:var(--cg-surface); border:1px solid var(--cg-border); border-radius:16px;
+  background:#fff; border:1px solid #eee; border-radius:16px;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
   animation: menu-in .12s ease;
 }
@@ -215,14 +215,14 @@ html, body {
 .user-menu__item {
   display:flex; align-items:center; gap:10px;
   width:100%; padding:10px 12px; border-radius:12px; text-decoration:none;
-  color:var(--cg-text); background:transparent; border:none; cursor:pointer; text-align:left;
+  color:#111; background:transparent; border:none; cursor:pointer; text-align:left;
 }
-.user-menu__item:hover { background:var(--cg-hover); }
-.user-menu__item.danger { color:var(--cg-danger); }
-.user-menu__item.danger:hover { background:var(--cg-danger-bg); }
+.user-menu__item:hover { background:#f5f7fb; }
+.user-menu__item.danger { color:#b00020; }
+.user-menu__item.danger:hover { background:#fdecee; }
 
 .user-menu__divider {
-  height:1px; background:var(--cg-border); margin:6px 4px;
+  height:1px; background:#eee; margin:6px 4px;
 }
 
 .user-menu { position: relative; }
@@ -236,8 +236,8 @@ html, body {
   min-width: 260px;
   max-width: 280px;
   padding: 8px;
-  background: var(--cg-surface);
-  border: 1px solid var(--cg-border);
+  background: #fff;
+  border: 1px solid #eee;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
   display: flex;
@@ -245,16 +245,16 @@ html, body {
   animation: menu-in .12s ease;
 }
 
-/* â€œpicoâ€ del popup (como en la captura) */
+/* “pico” del popup (como en la captura) */
 .user-menu__pointer {
   position: absolute;
   top: -6px;
   right: 18px;
   width: 12px; height: 12px;
-  background: var(--cg-surface);
+  background: #fff;
   transform: rotate(45deg);
-  border-left: 1px solid var(--cg-border);
-  border-top: 1px solid var(--cg-border);
+  border-left: 1px solid #eee;
+  border-top: 1px solid #eee;
 }
 
 @keyframes menu-in {
@@ -270,17 +270,17 @@ html, body {
   padding: 10px 12px;
   border-radius: 12px;
   text-decoration: none;
-  color: var(--cg-text);
+  color: #111;
   background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
 }
-.user-menu__item:hover { background: var(--cg-hover); }
-.user-menu__item.danger { color: var(--cg-danger); }
-.user-menu__item.danger:hover { background: var(--cg-danger-bg); }
+.user-menu__item:hover { background: #f5f7fb; }
+.user-menu__item.danger { color: #b00020; }
+.user-menu__item.danger:hover { background: #fdecee; }
 
-.user-menu__divider { height: 1px; background: var(--cg-border); margin: 6px 4px; }
+.user-menu__divider { height: 1px; background: #eee; margin: 6px 4px; }
 
-/* hace que â€œCerrar sesiÃ³nâ€ quede claro como acciÃ³n final */
+/* hace que “Cerrar sesión” quede claro como acción final */
 .user-menu__footer { margin-top: 2px; }

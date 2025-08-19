@@ -1,4 +1,4 @@
-﻿// src/components/BuscadorViajes.jsx
+// src/components/BuscadorViajes.jsx
 import React, { useState } from "react";
 import DetalleViaje from "./DetalleViaje";
 import AutocompleteInput from "./AutocompleteInput";
@@ -29,7 +29,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     fontWeight: 500,
   };
 
-  // ---------- hook de bÃºsqueda ----------
+  // ---------- hook de búsqueda ----------
   const { resultados, loading: loadingHook, filters, setFilters, clear } = useViajesSearch();
 
   // UI controlada local
@@ -67,7 +67,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     return (lista || []).filter((v) => {
       const asientosOk = (v.asientos ?? 0) >= pasajeros;
 
-      // Momento (segÃºn hora)
+      // Momento (según hora)
       let momentoOk = true;
       if (momento) {
         const fechaViaje = getFechaHora(v);
@@ -123,7 +123,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
 
   const confirmarReserva = async (viajeId) => {
     if (!usuario) {
-      alert("IniciÃ¡ sesiÃ³n para reservar");
+      alert("Iniciá sesión para reservar");
       return;
     }
     if (!viajeId) {
@@ -133,10 +133,10 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     setLoadingAction(true);
     try {
       if (typeof onReservar === "function") {
-        // UsÃ¡ la lÃ³gica del padre (App.reservarViaje)
+        // Usá la lógica del padre (App.reservarViaje)
         await onReservar(viajeId);
       } else {
-        // Fallback local: crea reserva bÃ¡sica
+        // Fallback local: crea reserva básica
         const reservasCol = collection(db, "viajes", viajeId, "reservas");
         await addDoc(reservasCol, {
           viajanteUid: usuario.uid,
@@ -145,7 +145,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
           estadoReserva: "pendiente",
           creadoPor: usuario.uid,
         });
-        alert("Â¡Reserva creada! Esperando aprobaciÃ³n del conductor.");
+        alert("¡Reserva creada! Esperando aprobación del conductor.");
       }
       setDetalle(null);
       buscar(); // refresca resultados
@@ -189,7 +189,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         <label htmlFor="origen" style={labelStyle}>Origen</label>
         <AutocompleteInput
           id="origen"
-          placeholder="IngresÃ¡ origen"
+          placeholder="Ingresá origen"
           value={typeof origen === "object" ? origen.formatted_address : origen}
           onChange={setOrigen}
         />
@@ -199,7 +199,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         <label htmlFor="destino" style={labelStyle}>Destino</label>
         <AutocompleteInput
           id="destino"
-          placeholder="IngresÃ¡ destino"
+          placeholder="Ingresá destino"
           value={typeof destino === "object" ? destino.formatted_address : destino}
           onChange={setDestino}
         />
@@ -217,7 +217,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
       </div>
 
       <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="momento" style={labelStyle}>Momento del dÃ­a</label>
+        <label htmlFor="momento" style={labelStyle}>Momento del día</label>
         <select
           id="momento"
           value={momento}
@@ -225,9 +225,9 @@ export default function BuscadorViajes({ usuario, onReservar }) {
           style={inputStyle}
         >
           <option value="">Cualquiera</option>
-          <option value="manana">MaÃ±ana (06â€“12)</option>
-          <option value="tarde">Tarde (12â€“18)</option>
-          <option value="noche">Noche (18â€“06)</option>
+          <option value="manana">Mañana (06–12)</option>
+          <option value="tarde">Tarde (12–18)</option>
+          <option value="noche">Noche (18–06)</option>
         </select>
       </div>
 
@@ -268,7 +268,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
             }}
           >
             <div>
-              <label style={labelStyle}>Peso a enviar (kg) â€” opcional</label>
+              <label style={labelStyle}>Peso a enviar (kg) — opcional</label>
               <input
                 type="number"
                 min={0}
@@ -280,7 +280,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
               />
             </div>
             <div>
-              <label style={labelStyle}>Volumen (L) â€” opcional</label>
+              <label style={labelStyle}>Volumen (L) — opcional</label>
               <input
                 type="number"
                 min={0}
@@ -299,7 +299,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         onClick={buscar}
         disabled={loading}
         style={{
-          backgroundColor: "var(--cg-primary-700)",
+          backgroundColor: "#2563eb",
           color: "white",
           padding: "0.75rem",
           border: "none",
@@ -311,14 +311,14 @@ export default function BuscadorViajes({ usuario, onReservar }) {
           opacity: loading ? 0.7 : 1,
         }}
       >
-        {loading ? "Buscandoâ€¦" : "Buscar"}
+        {loading ? "Buscando…" : "Buscar"}
       </button>
 
       {/* Resultados */}
       <div style={{ marginTop: "1.5rem" }}>
         {listaFinal.length === 0 ? (
           <p style={{ color: "#4b5563" }}>
-            {loading ? "Cargando resultadosâ€¦" : `No hay viajes disponibles${soloPaquetes ? " que acepten paquetes" : ""}.`}
+            {loading ? "Cargando resultados…" : `No hay viajes disponibles${soloPaquetes ? " que acepten paquetes" : ""}.`}
           </p>
         ) : (
           listaFinal.map((v) => {
@@ -335,7 +335,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
                 }}
               >
                 <p style={{ fontWeight: 500 }}>
-                  {v.origen} â†’ {v.destino}
+                  {v.origen} → {v.destino}
                 </p>
                 {fechaViaje && (
                   <p style={{ fontSize: "0.875rem" }}>
@@ -358,11 +358,11 @@ export default function BuscadorViajes({ usuario, onReservar }) {
                       borderRadius: 999,
                     }}
                   >
-                    <span>ðŸ“¦ Acepta paquetes</span>
-                    <span>â€¢ Peso mÃ¡x: <strong>{v.pesoMax ?? "â€”"}</strong> kg</span>
-                    <span>â€¢ Volumen mÃ¡x: <strong>{v.volumenMax ?? "â€”"}</strong> L</span>
+                    <span>📦 Acepta paquetes</span>
+                    <span>• Peso máx: <strong>{v.pesoMax ?? "—"}</strong> kg</span>
+                    <span>• Volumen máx: <strong>{v.volumenMax ?? "—"}</strong> L</span>
                     {v.costoBasePaquete != null && (
-                      <span>â€¢ Desde <strong>${Number(v.costoBasePaquete).toLocaleString("es-AR")}</strong></span>
+                      <span>• Desde <strong>${Number(v.costoBasePaquete).toLocaleString("es-AR")}</strong></span>
                     )}
                   </div>
                 )}
@@ -373,7 +373,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
                     style={{
                       padding: "0.5rem 0.75rem",
                       borderRadius: "0.375rem",
-                      backgroundColor: "var(--cg-primary)",
+                      backgroundColor: "#3b82f6",
                       color: "white",
                       border: "none",
                       cursor: "pointer",
@@ -404,4 +404,3 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     </section>
   );
 }
-

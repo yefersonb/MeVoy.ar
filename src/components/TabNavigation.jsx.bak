@@ -1,4 +1,4 @@
-﻿// src/components/TabNavigation.jsx
+// src/components/TabNavigation.jsx
 import React from 'react';
 
 
@@ -49,7 +49,7 @@ const TabNavigation = ({
           onClick={onCreateTrip}
           style={{
             background: "var(--color-primary)",
-            color: "var(--cg-surface)",
+            color: "#fff",
             padding: "0.5rem 1rem",
             borderRadius: 8,
             fontWeight: 600,
@@ -66,4 +66,3 @@ const TabNavigation = ({
 );
 
 export default TabNavigation;
-

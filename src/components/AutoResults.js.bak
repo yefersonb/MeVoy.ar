@@ -1,7 +1,7 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 
 export default function AutoResults({ viajes = [], onReservar }) {
-  console.log("âš¡ï¸ AutoResults cargado. viajes:", viajes);
+  console.log("⚡️ AutoResults cargado. viajes:", viajes);
 
   const [openId, setOpenId] = useState(null);
   const [routeInfo, setRouteInfo] = useState({});
@@ -74,7 +74,7 @@ export default function AutoResults({ viajes = [], onReservar }) {
             >
               <div>
                 <strong>
-                  {v.origen} â†’ {v.destino}
+                  {v.origen} → {v.destino}
                 </strong>
                 <br />
                 <small>
@@ -88,12 +88,12 @@ export default function AutoResults({ viajes = [], onReservar }) {
                     : v.conductor}
                 </small>
               </div>
-              {/* El botÃ³n que despliega detalles/mapa */}
+              {/* El botón que despliega detalles/mapa */}
               <button
                 onClick={() => toggleDetails(v)}
                 style={{
                   background: "#007bff",
-                  color: "var(--cg-surface)",
+                  color: "#fff",
                   border: "none",
                   padding: "0.5rem",
                   borderRadius: 4,
@@ -110,20 +110,20 @@ export default function AutoResults({ viajes = [], onReservar }) {
                 style={{
                   marginTop: 8,
                   padding: 8,
-                  background: "var(--cg-surface)",
+                  background: "#fff",
                   borderRadius: 6,
                   boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
                 }}
               >
                 {!info ? (
-                  <p>Cargando detallesâ€¦</p>
+                  <p>Cargando detalles…</p>
                 ) : (
                   <>
                     <p>
-                      ðŸš— Distancia: {info.distancia} Â· â± DuraciÃ³n:{" "}
+                      🚗 Distancia: {info.distancia} · ⏱ Duración:{" "}
                       {info.duracion}
                     </p>
-                    <p>ðŸ’° Precio: ${price}</p>
+                    <p>💰 Precio: ${price}</p>
                     <img
                       src={mapUrl}
                       alt="Mini mapa"
@@ -136,7 +136,7 @@ export default function AutoResults({ viajes = [], onReservar }) {
                       onClick={() => onReservar(v.id)}
                       style={{
                         background: "#28a745",
-                        color: "var(--cg-surface)",
+                        color: "#fff",
                         border: "none",
                         padding: "0.5rem 1rem",
                         borderRadius: 4,
@@ -155,4 +155,3 @@ export default function AutoResults({ viajes = [], onReservar }) {
     </div>
   );
 }
-

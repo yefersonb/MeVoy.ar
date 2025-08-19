@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -12,7 +12,7 @@ const HoverSpan = ({ children, onClick }) => (
     className="cursor-pointer relative font-medium"
     style={{ color: '#444', fontSize: '1.05rem' }}
     onMouseEnter={e => {
-      e.currentTarget.style.color = 'var(--cg-primary-700)';
+      e.currentTarget.style.color = '#2563eb';
       const u = e.currentTarget.querySelector('.underline');
       if (u) u.style.transform = 'scaleX(1)';
     }}
@@ -24,7 +24,7 @@ const HoverSpan = ({ children, onClick }) => (
   >
     {children}
     <span
-      className="underline absolute bottom-[-4px] left-0 right-0 h-0.5 bg-[var(--cg-primary-700)]"
+      className="underline absolute bottom-[-4px] left-0 right-0 h-0.5 bg-[#2563eb]"
       style={{ transform: 'scaleX(0)', transformOrigin: 'left', transition: 'transform 0.3s ease' }}
     />
   </span>
@@ -41,7 +41,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
   });
   const [original, setOriginal] = useState({});
   const [guardado, setGuardado] = useState(false);
-  const menuItems = ["Perfil", "VehÃ­culos", "Reservas"];
+  const menuItems = ["Perfil", "Vehículos", "Reservas"];
   const [activeTab, setActiveTab] = useState(menuItems[0]);
 
   useEffect(() => {
@@ -68,18 +68,18 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
 
   const handleCancelar = () => setPerfil(original);
 
-  // Estilo para inputs y visualizaciÃ³n
+  // Estilo para inputs y visualización
   const fieldStyle = {
     minHeight: '40px',
     fontSize: '1.05rem',
-    backgroundColor: modo === "ver" ? "var(--cg-bg)" : undefined,
+    backgroundColor: modo === "ver" ? "#f9fafb" : undefined,
     border: modo === "ver" ? "none" : undefined,
     pointerEvents: modo === "ver" ? "none" : undefined
   };
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
-      {/* MenÃº lateral */}
+      {/* Menú lateral */}
       <aside className="w-48 bg-white border-r shadow-sm p-4">
         {menuItems.map(item => (
           <span
@@ -87,16 +87,16 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
             onClick={() => setActiveTab(item)}
             style={{
               display: 'block', marginBottom: '1rem', cursor: 'pointer',
-              color: activeTab === item ? 'var(--cg-primary-700)' : '#444',
+              color: activeTab === item ? '#2563eb' : '#444',
               fontWeight: 500, fontSize: '1.05rem', position: 'relative', transition: 'color 0.2s ease'
             }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--cg-primary-700)'}
-            onMouseLeave={e => e.currentTarget.style.color = activeTab === item ? 'var(--cg-primary-700)' : '#444'}
+            onMouseEnter={e => e.currentTarget.style.color = '#2563eb'}
+            onMouseLeave={e => e.currentTarget.style.color = activeTab === item ? '#2563eb' : '#444'}
           >
             {item}
             <span
               style={{
-                display:'block',height:'2px',backgroundColor:'var(--cg-primary-700)',position:'absolute',bottom:-4,
+                display:'block',height:'2px',backgroundColor:'#2563eb',position:'absolute',bottom:-4,
                 left:0,right:0,transform: activeTab===item?'scaleX(1)':'scaleX(0)',transformOrigin:'left',transition:'transform 0.3s ease'
               }}
             />
@@ -143,7 +143,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600">Modelo de VehÃ­culo</label>
+                <label className="block text-sm font-medium text-gray-600">Modelo de Vehículo</label>
                 {modo === "editar" ? (
                   <input
                     type="text"
@@ -178,7 +178,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
                 )}
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-600">Acerca de mÃ­</label>
+                <label className="block text-sm font-medium text-gray-600">Acerca de mí</label>
                 {modo === "editar" ? (
                   <textarea
                     rows={3}
@@ -204,9 +204,9 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
           </section>
         )}
 
-        {activeTab === 'VehÃ­culos' && (
+        {activeTab === 'Vehículos' && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Mis VehÃ­culos</h1>
+            <h1 className="text-2xl font-bold mb-4">Mis Vehículos</h1>
             <VehiculosConductor viajes={viajes} reservas={reservas} />
           </section>
         )}

@@ -7,7 +7,8 @@ import { usePerfilData } from "../hooks/usePerfilData";
 import { useViajesData } from "../hooks/useViajesData";
 import { useResponsive } from "../hooks/useResponsive";
 import usePhotoUpload from "../hooks/usePhotoUpload";
-import TabNavigation from "./TabNavigation";
+//import TabNavigation from "./TabNavigation";
+import TabNavigation from "./TabNavigation"; // removido: barra horizontal
 import PerfilSection from "./PerfilSection";
 import ViajesSection from "./ViajesSection";
 import VehiculosConductor from "./VehiculosConductor";
@@ -23,8 +24,8 @@ import EnviosDelViaje from "./EnviosDelViaje";
 import EnviosDisponibles from "./EnviosDisponibles";
 
 // 👇 NUEVO: agregamos "Envíos"
-const menuItems = ["Perfil", "Verificación", "Vehículos", "Reservas", "Envíos", "Nuevo Viaje"];
-
+//const menuItems = ["Perfil", "Verificación", "Vehículos", "Reservas", "Envíos", "Nuevo Viaje"];
+const DEFAULT_TAB = "Perfil"; // fallback estable sin depender de menuItems
 export default function PerfilConductorV2Enhanced({
   viajes: viajesProp,
   reservas: reservasProp,
@@ -43,7 +44,7 @@ export default function PerfilConductorV2Enhanced({
       verificacion: "Verificación",
       "nuevo-viaje": "Nuevo Viaje",
       perfil: "Perfil",
-    }[h] || menuItems[0]);
+    }[h] || DEFAULT_TAB);
 
   const hashFromTab = (t) =>
     ({
@@ -106,10 +107,7 @@ export default function PerfilConductorV2Enhanced({
     setEditMode(false);
   };
 
-  const handleCreateTrip = () => {
-    setActiveTab("Nuevo Viaje");
-    window.location.hash = "nuevo-viaje";
-  };
+
 
   const handleSave = async () => {
     try {
@@ -283,13 +281,7 @@ export default function PerfilConductorV2Enhanced({
   // ===== RENDER PRINCIPAL =====
   return (
     <div>
-      <TabNavigation
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        menuItems={menuItems}
-        onCreateTrip={handleCreateTrip}
-        userRole={usuario?.rol}
-      />
+      {/* Barra horizontal removida: navegación queda por hash via Header */}
       {renderTabContent()}
     </div>
   );

@@ -3,7 +3,7 @@ import { db } from "../firebase";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import DetalleViajante from "./DetalleViajante";
 
-// Abreviar ubicaciÃ³n
+// Abreviar ubicación
 const abreviarUbicacion = (ubic) => {
   if (!ubic) return ubic;
   return ubic
@@ -72,7 +72,7 @@ function ReservaItem({
     res.pasajeroNombre ||
     "Sin nombre";
 
-  // Mostrar UID o info de quien reservÃ³ si estÃ¡ disponible
+  // Mostrar UID o info de quien reservó si está disponible
   const quienReservo =
     perfilPasajero?.nombre ||
     res.pasajeroNombre ||
@@ -124,7 +124,7 @@ function ReservaItem({
           )}
         </div>
         <div style={{ flex: 1, minWidth: 120 }}>
-          {/* Nombre como botÃ³n (accesible) */}
+          {/* Nombre como botón (accesible) */}
           <div>
             {perfilPasajero ? (
               <button
@@ -166,7 +166,7 @@ function ReservaItem({
                 ).toLocaleString()
               : ""}
           </div>
-          {/* Mostrar quiÃ©n reservÃ³ */}
+          {/* Mostrar quién reservó */}
           <div style={{ fontSize: "0.89rem", color: "var(--color-primary-700)", marginTop: 2 }}>
             <span style={{ fontWeight: 400 }}>
               Reservado por: {quienReservo}
@@ -261,7 +261,7 @@ export default function ReservasRecibidas({
 
   // Eliminar reserva
   const handleEliminarReserva = async (res) => {
-    if (!window.confirm("Â¿Eliminar esta reserva?")) return;
+    if (!window.confirm("¿Eliminar esta reserva?")) return;
     try {
       if (res.viajeId && res.id) {
         await deleteDoc(doc(db, "viajes", res.viajeId, "reservas", res.id));
@@ -290,8 +290,8 @@ export default function ReservasRecibidas({
         (!reservas || (Array.isArray(reservas) && reservas.length === 0)) && (
           <div className="p-4 bg-yellow-50 rounded-md mb-4">
             <p className="text-sm text-yellow-800">
-              No se cargaron viajes ni reservas todavÃ­a. Asegurate de que el hook que
-              provee esos datos (useViajesData) haya corrido y que le pasÃ¡s los props correctos.
+              No se cargaron viajes ni reservas todavía. Asegurate de que el hook que
+              provee esos datos (useViajesData) haya corrido y que le pasás los props correctos.
             </p>
           </div>
       )}

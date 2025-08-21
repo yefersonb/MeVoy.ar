@@ -11,7 +11,7 @@
   --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* Reset y configuraciÃ³n base para pantalla completa */
+/* Reset y configuración base para pantalla completa */
 *, *::before, *::after {
   box-sizing: border-box;
 }

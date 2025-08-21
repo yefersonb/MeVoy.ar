@@ -1,21 +1,21 @@
 ﻿// src/components/VerificacionConductorWizard.jsx
 // ------------------------------------------------------------
 // Wizard paso a paso para que el CONDUCTOR cargue y verifique:
-// 1) Datos bÃ¡sicos (nombre, DNI)
+// 1) Datos básicos (nombre, DNI)
 // 2) Documento DNI (frente/dorso)
 // 3) Licencia de conducir (frente/dorso)
-// 4) Selfie de verificaciÃ³n (opcional pero recomendado)
-// 5) RevisiÃ³n y envÃ­o a verificaciÃ³n (status = "pending")
+// 4) Selfie de verificación (opcional pero recomendado)
+// 5) Revisión y envío a verificación (status = "pending")
 //
-// â€¢ Guarda progreso automÃ¡ticamente en Firestore
+// â€¢ Guarda progreso automáticamente en Firestore
 // â€¢ Sube archivos a Firebase Storage con barra de progreso
 // â€¢ Muestra barra de avance global y estado por paso
-// â€¢ Permite retomar donde quedÃ³ (resume)
-// â€¢ DiseÃ±o simple (funciona con o sin Tailwind)
+// â€¢ Permite retomar donde quedó (resume)
+// â€¢ Diseño simple (funciona con o sin Tailwind)
 //
 // Requisitos:
 //  - Tener configurado Firebase en src/firebase.js exportando { auth, db, storage }
-//  - Firestore colecciÃ³n: "verificaciones" doc por uid
+//  - Firestore colección: "verificaciones" doc por uid
 //  - Storage: "verificaciones/{uid}/{docKey}/archivo"
 
 import React, { useEffect, useMemo, useState, useRef } from 'react';
@@ -64,7 +64,7 @@ export default function VerificacionConductorWizard({ onExit }) {
     (async () => {
       try {
         if (!uid) {
-          setError('NecesitÃ¡s iniciar sesiÃ³n para verificar tu identidad.');
+          setError('Necesitás iniciar sesión para verificar tu identidad.');
           setLoading(false);
           return;
         }
@@ -94,7 +94,7 @@ export default function VerificacionConductorWizard({ onExit }) {
         }
       } catch (e) {
         console.error(e);
-        setError('No se pudo cargar tu verificaciÃ³n.');
+        setError('No se pudo cargar tu verificación.');
       } finally {
         if (mounted) setLoading(false);
       }
@@ -132,7 +132,7 @@ export default function VerificacionConductorWizard({ onExit }) {
       });
     } catch (e) {
       console.error(e);
-      setError('No se pudo guardar. RevisÃ¡ tu conexiÃ³n.');
+      setError('No se pudo guardar. Revisá tu conexión.');
     } finally {
       setSaving(false);
     }
@@ -141,19 +141,19 @@ export default function VerificacionConductorWizard({ onExit }) {
   const goNext = async () => {
     if (step === 0) {
       if (!datos.nombreCompleto || !datos.dniNumero) {
-        setError('CompletÃ¡ tu nombre y DNI para continuar.');
+        setError('Completá tu nombre y DNI para continuar.');
         return;
       }
     }
     if (step === 1) {
       if (!urls.dniFrente || !urls.dniDorso) {
-        setError('SubÃ­ frente y dorso del DNI.');
+        setError('Subí frente y dorso del DNI.');
         return;
       }
     }
     if (step === 2) {
       if (!urls.licFrente || !urls.licDorso) {
-        setError('SubÃ­ frente y dorso de la licencia.');
+        setError('Subí frente y dorso de la licencia.');
         return;
       }
     }
@@ -188,7 +188,7 @@ export default function VerificacionConductorWizard({ onExit }) {
       setStatus('pending');
     } catch (e) {
       console.error(e);
-      setError('No se pudo enviar a verificaciÃ³n.');
+      setError('No se pudo enviar a verificación.');
     } finally {
       setSaving(false);
     }
@@ -203,7 +203,7 @@ export default function VerificacionConductorWizard({ onExit }) {
     }
     const allowed = ['image/jpeg','image/png','image/webp','image/heic','image/heif'];
     if (!allowed.includes(file.type)) {
-      alert('Formato no soportado. SubÃ­ JPG/PNG/WebP/HEIC.');
+      alert('Formato no soportado. Subí JPG/PNG/WebP/HEIC.');
       return;
     }
 
@@ -248,10 +248,10 @@ export default function VerificacionConductorWizard({ onExit }) {
     return false;
   };
 
-  if (loading) return <Splash text="Cargando verificaciÃ³n..." />;
+  if (loading) return <Splash text="Cargando verificación..." />;
   if (!uid) return (
-    <EmptyCard title="IniciÃ¡ sesiÃ³n">
-      <p>TenÃ©s que iniciar sesiÃ³n para verificar tu identidad.</p>
+    <EmptyCard title="Iniciá sesión">
+      <p>Tenés que iniciar sesión para verificar tu identidad.</p>
     </EmptyCard>
   );
 
@@ -259,7 +259,7 @@ export default function VerificacionConductorWizard({ onExit }) {
     <div className="max-w-3xl mx-auto p-4">
       <header className="mb-4 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">VerificaciÃ³n de identidad (Conductor)</h1>
+          <h1 className="text-xl font-semibold">Verificación de identidad (Conductor)</h1>
           <p className="text-sm" style={{color:'var(--color-text-muted)'}}>Estado: <StatusBadge status={status} /></p>
         </div>
         {onExit && (
@@ -310,20 +310,20 @@ export default function VerificacionConductorWizard({ onExit }) {
       </div>
 
       <div className="mt-6 flex items-center justify-between">
-        <button className="px-3 py-2 rounded-xl border" onClick={goBack} disabled={step===0}>AtrÃ¡s</button>
+        <button className="px-3 py-2 rounded-xl border" onClick={goBack} disabled={step===0}>Atrás</button>
         <div className="flex items-center gap-2">
           <button className="px-3 py-2 rounded-xl border" onClick={completarPasoActual} disabled={saving}>{saving? 'Guardando...' : 'Guardar'}</button>
           {step < totalSteps - 1 ? (
             <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--color-surface)'}} onClick={goNext}>Siguiente</button>
           ) : (
             <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--color-surface)'}} onClick={onSubmit} disabled={status==='pending'}>
-              {status==='pending' ? 'En revisiÃ³n' : 'Enviar a revisiÃ³n'}
+              {status==='pending' ? 'En revisión' : 'Enviar a revisión'}
             </button>
           )}
         </div>
       </div>
 
-      <p className="text-xs" style={{color:'var(--color-text-muted)', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verÃ¡ el equipo de verificaciÃ³n.</p>
+      <p className="text-xs" style={{color:'var(--color-text-muted)', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verá el equipo de verificación.</p>
     </div>
   );
 }
@@ -437,7 +437,7 @@ function PasoDatos({ datos, setDatos }) {
                onChange={(e)=>setDatos(v=>({...v, nombreCompleto:e.target.value}))} placeholder="Tal como figura en tu DNI" />
       </div>
       <div>
-        <label className="block text-sm font-medium">NÃºmero de DNI</label>
+        <label className="block text-sm font-medium">Número de DNI</label>
         <input className="mt-1 w-full border rounded-xl px-3 py-2" value={datos.dniNumero}
                onChange={(e)=>setDatos(v=>({...v, dniNumero:e.target.value.replace(/\D/g,'')}))} inputMode="numeric" placeholder="Ej. 30123456" />
         <p className="text-xs" style={{color:'var(--color-text-muted)', marginTop:4}}>Usamos estos datos solo para verificar tu identidad.</p>
@@ -468,13 +468,13 @@ function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile })
 function PasoSelfie({ url, uploading, onFile }) {
   return (
     <div className="grid md:grid-cols-2 gap-4">
-      <DocTile label="Selfie de verificaciÃ³n" url={url} progress={uploading} onSelect={onFile} hint="TomÃ¡ una selfie sosteniendo tu DNI (opcional, acelera la verificaciÃ³n)." />
+      <DocTile label="Selfie de verificación" url={url} progress={uploading} onSelect={onFile} hint="Tomá una selfie sosteniendo tu DNI (opcional, acelera la verificación)." />
       <div className="p-4 border rounded-2xl">
         <h4 className="font-medium">Consejos</h4>
         <ul className="list-disc ml-5 text-sm" style={{color:'#374151', marginTop:8}}>
           <li>Buena luz, sin reflejos.</li>
-          <li>Foto nÃ­tida y completa, que se lean los datos.</li>
-          <li>Formatos admitidos: JPG, PNG, WebP, HEIC. MÃ¡x 8MB.</li>
+          <li>Foto nítida y completa, que se lean los datos.</li>
+          <li>Formatos admitidos: JPG, PNG, WebP, HEIC. Máx 8MB.</li>
         </ul>
       </div>
     </div>
@@ -496,7 +496,7 @@ function PasoResumen({ datos, urls, status }) {
         <Thumb label="Selfie" url={urls.selfie} />
       </div>
       <div className="p-3" style={{ background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, color:'#4B5563', fontSize:14 }}>
-        Estado actual: <StatusBadge status={status} /> â€” Al enviar, quedarÃ¡ <strong>En revisiÃ³n</strong> por un admin.
+        Estado actual: <StatusBadge status={status} /> â€” Al enviar, quedará <strong>En revisión</strong> por un admin.
       </div>
     </div>
   );
@@ -535,7 +535,7 @@ function Thumb({ label, url }) {
 function StatusBadge({ status }) {
   const map = {
     incomplete: { text: 'Incompleto', bg:'#E5E7EB', fg:'var(--color-text)' },
-    pending:    { text: 'En revisiÃ³n', bg:'#FEF3C7', fg:'#92400E' },
+    pending:    { text: 'En revisión', bg:'#FEF3C7', fg:'#92400E' },
     verified:   { text: 'Verificado', bg:'#BBF7D0', fg:'#065F46' },
     rejected:   { text: 'Rechazado',  bg:'#FECACA', fg:'#7F1D1D' },
   };
@@ -590,7 +590,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
             <img src={url} alt={label} style={imgStyle} />
           </a>
         ) : (
-          <span className="text-gray-400 text-sm" style={{color:'#9CA3AF'}}>SoltÃ¡ una imagen acÃ¡ o usÃ¡ â€œSubir fotoâ€</span>
+          <span className="text-gray-400 text-sm" style={{color:'#9CA3AF'}}>Soltá una imagen acá o usá â€œSubir fotoâ€</span>
         )}
       </div>
 

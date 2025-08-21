@@ -51,7 +51,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
   });
   const [original, setOriginal] = useState({});
   const [guardado, setGuardado] = useState(false);
-  const menuItems = ["Perfil", "VehÃ­culos", "Reservas"];
+  const menuItems = ["Perfil", "Vehículos", "Reservas"];
   const [activeTab, setActiveTab] = useState(menuItems[0]);
   const [editMode, setEditMode] = useState(false);
 
@@ -83,7 +83,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
     setEditMode(false);
   };
 
-  // Estilo para inputs y visualizaciÃ³n: discretos y sin bordes notables
+  // Estilo para inputs y visualización: discretos y sin bordes notables
   const inputStyle = {
     width: '100%',
     fontSize: '1rem',
@@ -166,7 +166,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                 />
               </div>
               <div>
-                <label style={labelStyle}>Modelo de VehÃ­culo</label>
+                <label style={labelStyle}>Modelo de Vehículo</label>
                 <input
                   type="text"
                   value={perfil.modeloVehiculo || ""}
@@ -192,7 +192,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                 </select>
               </div>
               <div style={{gridColumn: '1 / span 2'}}>
-                <label style={labelStyle}>Acerca de mÃ­</label>
+                <label style={labelStyle}>Acerca de mí</label>
                 <textarea
                   rows={3}
                   value={perfil.descripcion || ""}
@@ -267,9 +267,9 @@ export default function PerfilConductorV2({ viajes, reservas }) {
           </section>
         )}
 
-        {activeTab === 'VehÃ­culos' && (
+        {activeTab === 'Vehículos' && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Mis VehÃ­culos</h1>
+            <h1 className="text-2xl font-bold mb-4">Mis Vehículos</h1>
             <VehiculosConductor viajes={viajes} reservas={reservas} />
           </section>
         )}

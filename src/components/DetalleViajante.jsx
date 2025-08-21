@@ -22,7 +22,7 @@ const renderEstrellas = (reputacion, totalOpiniones) => {
         {tieneMedia ? "âœ¬" : ""}
       </span>
       <span style={{ color: "#888", marginLeft: 4, fontSize: 12 }}>
-        {reputacion.toFixed(1)} Â· {totalOpiniones} {totalOpiniones === 1 ? "opiniÃ³n" : "opiniones"}
+        {reputacion.toFixed(1)} Â· {totalOpiniones} {totalOpiniones === 1 ? "opinión" : "opiniones"}
       </span>
     </span>
   );
@@ -51,7 +51,7 @@ export default function DetalleViajante({
         if (snap.exists()) {
           const data = snap.data();
           console.log("Datos del perfil:", data); // Debug para ver los datos
-          console.log("URL de foto:", data.fotoPerfil); // Debug especÃ­fico para la foto
+          console.log("URL de foto:", data.fotoPerfil); // Debug específico para la foto
           setPerfil(data);
         }
 
@@ -79,7 +79,7 @@ export default function DetalleViajante({
     if (!esConductorQueDecide) return;
     setAccionando(true);
     try {
-      // ActualizÃ¡s el viaje con la decisiÃ³n: ejemplo simplificado
+      // Actualizás el viaje con la decisión: ejemplo simplificado
       await setDoc(
         doc(db, "viajes", viajeId),
         { estadoReserva: estado },
@@ -87,8 +87,8 @@ export default function DetalleViajante({
       );
       if (onDecision) onDecision(estado);
     } catch (e) {
-      console.error("Error guardando decisiÃ³n:", e);
-      alert("No se pudo registrar la decisiÃ³n.");
+      console.error("Error guardando decisión:", e);
+      alert("No se pudo registrar la decisión.");
     } finally {
       setAccionando(false);
     }
@@ -145,7 +145,7 @@ export default function DetalleViajante({
           borderRadius: '8px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
         }}>
-          No se encontrÃ³ el perfil.
+          No se encontró el perfil.
         </div>
       </div>
     );
@@ -182,7 +182,7 @@ export default function DetalleViajante({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* BotÃ³n cerrar */}
+        {/* Botón cerrar */}
         <button 
           onClick={onClose} 
           style={{
@@ -208,7 +208,7 @@ export default function DetalleViajante({
           Ã—
         </button>
 
-        {/* TÃ­tulo */}
+        {/* Título */}
         <h2 style={{
           margin: '0 0 24px 0',
           fontSize: '24px',
@@ -273,7 +273,7 @@ export default function DetalleViajante({
               
               {perfil.direccion && (
                 <p style={{ margin: '0 0 8px 0', fontSize: '16px' }}>
-                  <strong style={{ color: '#374151' }}>DirecciÃ³n:</strong> 
+                  <strong style={{ color: '#374151' }}>Dirección:</strong> 
                   <span style={{ marginLeft: '8px', color: '#111827' }}>
                     {perfil.direccion}
                   </span>
@@ -291,7 +291,7 @@ export default function DetalleViajante({
               
               {reputacion !== null && (
                 <p style={{ margin: '0 0 8px 0', fontSize: '16px' }}>
-                  <strong style={{ color: '#374151' }}>ReputaciÃ³n:</strong> 
+                  <strong style={{ color: '#374151' }}>Reputación:</strong> 
                   <span style={{ marginLeft: '8px' }}>
                     {renderEstrellas(reputacion, totalOpiniones)}
                   </span>
@@ -299,7 +299,7 @@ export default function DetalleViajante({
               )}
             </div>
 
-            {/* Debug info - puedes remover esto despuÃ©s */}
+            {/* Debug info - puedes remover esto después */}
             {perfil.fotoPerfil && (
               <div style={{ 
                 padding: '8px', 
@@ -311,13 +311,13 @@ export default function DetalleViajante({
               }}>
                 <strong>Debug URL:</strong> {perfil.fotoPerfil.substring(0, 60)}...
                 <br />
-                <strong>Error de imagen:</strong> {imagenError ? 'SÃ­' : 'No'}
+                <strong>Error de imagen:</strong> {imagenError ? 'Sí' : 'No'}
               </div>
             )}
           </div>
         </div>
 
-        {/* Botones de decisiÃ³n */}
+        {/* Botones de decisión */}
         {esConductorQueDecide && (
           <div style={{ marginTop: 24, display: "flex", gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
             <button

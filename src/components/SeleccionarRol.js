@@ -22,7 +22,7 @@ function SeleccionarRol({ usuario, setRol }) {
   return (
     <div style={{ textAlign: "center", padding: "0.0rem 1rem" }}> {/* ðŸ”¥ CAMBIO AQUÃ: reduje padding de "1rem" a "0.5rem 1rem" */}
       <h2 style={{ fontSize: "1.20rem", fontWeight: "bold", marginBottom: "1rem" }}>
-        Â¿CÃ³mo querÃ©s usar la app?
+        ¿Cómo querés usar la app?
       </h2>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
         <span
@@ -82,7 +82,7 @@ function SeleccionarRol({ usuario, setRol }) {
           />
         </span>
       </div>
-      {/* ðŸ”¥ LÃ­nea visible sÃ­ o sÃ­ */}
+      {/* ðŸ”¥ Línea visible sí o sí */}
       <div style={{
         marginTop: '20px',
         marginBottom: '5px',

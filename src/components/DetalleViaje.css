@@ -31,8 +31,8 @@
 /* --- Close button ------------------------------------------------------ */
 .dv-close {
   position: absolute;            /* usa el position:relative de .dv-modal para posicionarse */
-  top: 10px;                     /* ajusta la separaciÃ³n superior */
-  right: 14px;                   /* ajusta la separaciÃ³n derecha */
+  top: 10px;                     /* ajusta la separación superior */
+  right: 14px;                   /* ajusta la separación derecha */
   border: none;
   background: transparent;
   font-size: 1.5rem;

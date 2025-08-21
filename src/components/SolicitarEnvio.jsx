@@ -12,7 +12,7 @@ function toCoords(v) {
   return loc ? { lat: loc.lat(), lng: loc.lng() } : null;
 }
 function rndPIN() {
-  return String(Math.floor(100000 + Math.random() * 900000)); // 6 dÃ­gitos
+  return String(Math.floor(100000 + Math.random() * 900000)); // 6 dígitos
 }
 
 export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
@@ -34,8 +34,8 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!usuario?.uid) return alert("IniciÃ¡ sesiÃ³n para solicitar un envÃ­o.");
-    if (!viaje?.id) return alert("Viaje invÃ¡lido.");
+    if (!usuario?.uid) return alert("Iniciá sesión para solicitar un envío.");
+    if (!viaje?.id) return alert("Viaje inválido.");
 
     setLoading(true);
     try {
@@ -67,7 +67,7 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
         receptor: {
           nombre: receptorNombre,
           whatsapp: receptorWhatsapp,
-          pinEntrega: rndPIN(), // se usarÃ¡ al confirmar entrega
+          pinEntrega: rndPIN(), // se usará al confirmar entrega
         },
       });
 
@@ -76,7 +76,7 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
       onClose?.();
     } catch (err) {
       console.error(err);
-      alert("No se pudo crear el envÃ­o.");
+      alert("No se pudo crear el envío.");
     } finally {
       setLoading(false);
     }
@@ -105,19 +105,19 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h3 style={{ margin: 0, fontWeight: 700 }}>Solicitar envÃ­o de paquete</h3>
+          <h3 style={{ margin: 0, fontWeight: 700 }}>Solicitar envío de paquete</h3>
           <button type="button" onClick={onClose} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer" }}>Ã—</button>
         </div>
 
         <div style={{ display: "grid", gap: 12, marginTop: 10 }}>
           <div>
-            <label style={label}>DirecciÃ³n de retiro</label>
+            <label style={label}>Dirección de retiro</label>
             <AutocompleteInput placeholder="Ej: Av. Siempre Viva 742, Posadas"
               value={retiro} onChange={setRetiro} />
           </div>
           <div>
-            <label style={label}>DirecciÃ³n de entrega</label>
-            <AutocompleteInput placeholder="Ej: San MartÃ­n 100, Posadas"
+            <label style={label}>Dirección de entrega</label>
+            <AutocompleteInput placeholder="Ej: San Martín 100, Posadas"
               value={entrega} onChange={setEntrega} />
           </div>
 
@@ -132,7 +132,7 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 26 }}>
               <input id="fragil" type="checkbox" checked={fragil} onChange={(e)=>setFragil(e.target.checked)} />
-              <label htmlFor="fragil" style={{ fontWeight: 600, cursor: "pointer" }}>Es frÃ¡gil</label>
+              <label htmlFor="fragil" style={{ fontWeight: 600, cursor: "pointer" }}>Es frágil</label>
             </div>
           </div>
 
@@ -159,7 +159,7 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
           </button>
           <button type="submit" disabled={!valido || loading}
             style={{ padding: "10px 14px", borderRadius: 8, border: "none", background: "#10b981", color: "var(--color-surface)", fontWeight: 700, cursor: !valido||loading? "not-allowed":"pointer", opacity: !valido||loading? 0.7:1 }}>
-            {loading ? "Enviando..." : "Solicitar envÃ­o"}
+            {loading ? "Enviando..." : "Solicitar envío"}
           </button>
         </div>
       </form>

@@ -6,7 +6,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import VehiculosConductor from "./VehiculosConductor";
 import ReservasRecibidas from "./ReservasRecibidas";
 
-// Badge pequeÃ±o
+// Badge pequeño
 const Badge = ({ children, bg = "#eef2f7", color = "#1f2d3d" }) => (
   <span
     style={{
@@ -93,7 +93,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
   });
   const [original, setOriginal] = useState({});
   const [guardado, setGuardado] = useState(false);
-  const menuItems = ["Perfil", "VehÃ­culos", "Reservas"];
+  const menuItems = ["Perfil", "Vehículos", "Reservas"];
   const [activeTab, setActiveTab] = useState(menuItems[0]);
   const [editMode, setEditMode] = useState(false);
   const [previewPhoto, setPreviewPhoto] = useState("");
@@ -144,7 +144,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
     if (!file) return;
     const url = URL.createObjectURL(file);
     setPreviewPhoto(url);
-    // AquÃ­ deberÃ­as subir a Firebase Storage y obtener URL final.
+    // Aquí deberías subir a Firebase Storage y obtener URL final.
     setPerfil((prev) => ({ ...prev, fotoURL: url }));
   };
 
@@ -275,7 +275,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                     <Badge>Conductor verificado</Badge>
                     <Badge>100% viajes completados</Badge>
-                    <Badge>Responde rÃ¡pido</Badge>
+                    <Badge>Responde rápido</Badge>
                   </div>
                 </div>
                 <div style={{ fontSize: "0.8rem", marginTop: 4, color: "#555" }}>
@@ -334,7 +334,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
               </div>
             </div>
 
-            {/* Grid de datos y descripciÃ³n */}
+            {/* Grid de datos y descripción */}
             <div
               style={{
                 display: "grid",
@@ -372,7 +372,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                 />
               </div>
               <div>
-                <label style={labelStyle}>Modelo de VehÃ­culo</label>
+                <label style={labelStyle}>Modelo de Vehículo</label>
                 <input
                   type="text"
                   value={perfil.modeloVehiculo || ""}
@@ -405,7 +405,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                 </select>
               </div>
               <div style={{ gridColumn: "1 / span 2" }}>
-                <label style={labelStyle}>Acerca de mÃ­</label>
+                <label style={labelStyle}>Acerca de mí</label>
                 <textarea
                   rows={3}
                   value={perfil.descripcion || ""}
@@ -433,7 +433,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 140 }}>
-                    <RatingRow label="ConducciÃ³n" value={perfil.valoraciones.conduccion} />
+                    <RatingRow label="Conducción" value={perfil.valoraciones.conduccion} />
                     <RatingRow label="Puntualidad" value={perfil.valoraciones.puntualidad} />
                   </div>
                   <div style={{ flex: 1, minWidth: 140 }}>
@@ -442,16 +442,16 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                   </div>
                 </div>
                 <div style={{ fontSize: "0.85rem", color: "#555" }}>
-                  {perfil.viajesCompletados} viajes completados â€¢ {completadosPercent}% Ã©xito
+                  {perfil.viajesCompletados} viajes completados â€¢ {completadosPercent}% éxito
                 </div>
               </div>
             </div>
           </section>
         )}
 
-        {activeTab === "VehÃ­culos" && (
+        {activeTab === "Vehículos" && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Mis VehÃ­culos</h1>
+            <h1 className="text-2xl font-bold mb-4">Mis Vehículos</h1>
             <VehiculosConductor viajes={viajes} reservas={reservas} />
           </section>
         )}

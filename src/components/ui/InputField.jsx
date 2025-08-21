@@ -6,7 +6,7 @@
  * - label: texto del label
  * - type: "text", "date", "select", "textarea"
  * - value: valor actual
- * - onChange: funciÃ³n de cambio (e => ...)
+ * - onChange: función de cambio (e => ...)
  * - options: opciones para select (array de strings)
  * - readOnly / disabled: boolean
  * - placeholder: string

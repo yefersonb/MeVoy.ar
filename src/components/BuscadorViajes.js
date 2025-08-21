@@ -29,7 +29,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     fontWeight: 500,
   };
 
-  // ---------- hook de bÃºsqueda ----------
+  // ---------- hook de búsqueda ----------
   const { resultados, loading: loadingHook, filters, setFilters, clear } = useViajesSearch();
 
   // UI controlada local
@@ -67,7 +67,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     return (lista || []).filter((v) => {
       const asientosOk = (v.asientos ?? 0) >= pasajeros;
 
-      // Momento (segÃºn hora)
+      // Momento (según hora)
       let momentoOk = true;
       if (momento) {
         const fechaViaje = getFechaHora(v);
@@ -123,7 +123,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
 
   const confirmarReserva = async (viajeId) => {
     if (!usuario) {
-      alert("IniciÃ¡ sesiÃ³n para reservar");
+      alert("Iniciá sesión para reservar");
       return;
     }
     if (!viajeId) {
@@ -133,10 +133,10 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     setLoadingAction(true);
     try {
       if (typeof onReservar === "function") {
-        // UsÃ¡ la lÃ³gica del padre (App.reservarViaje)
+        // Usá la lógica del padre (App.reservarViaje)
         await onReservar(viajeId);
       } else {
-        // Fallback local: crea reserva bÃ¡sica
+        // Fallback local: crea reserva básica
         const reservasCol = collection(db, "viajes", viajeId, "reservas");
         await addDoc(reservasCol, {
           viajanteUid: usuario.uid,
@@ -145,7 +145,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
           estadoReserva: "pendiente",
           creadoPor: usuario.uid,
         });
-        alert("Â¡Reserva creada! Esperando aprobaciÃ³n del conductor.");
+        alert("¡Reserva creada! Esperando aprobación del conductor.");
       }
       setDetalle(null);
       buscar(); // refresca resultados
@@ -189,7 +189,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         <label htmlFor="origen" style={labelStyle}>Origen</label>
         <AutocompleteInput
           id="origen"
-          placeholder="IngresÃ¡ origen"
+          placeholder="Ingresá origen"
           value={typeof origen === "object" ? origen.formatted_address : origen}
           onChange={setOrigen}
         />
@@ -199,7 +199,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         <label htmlFor="destino" style={labelStyle}>Destino</label>
         <AutocompleteInput
           id="destino"
-          placeholder="IngresÃ¡ destino"
+          placeholder="Ingresá destino"
           value={typeof destino === "object" ? destino.formatted_address : destino}
           onChange={setDestino}
         />
@@ -217,7 +217,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
       </div>
 
       <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="momento" style={labelStyle}>Momento del dÃ­a</label>
+        <label htmlFor="momento" style={labelStyle}>Momento del día</label>
         <select
           id="momento"
           value={momento}
@@ -225,7 +225,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
           style={inputStyle}
         >
           <option value="">Cualquiera</option>
-          <option value="manana">MaÃ±ana (06â€“12)</option>
+          <option value="manana">Mañana (06â€“12)</option>
           <option value="tarde">Tarde (12â€“18)</option>
           <option value="noche">Noche (18â€“06)</option>
         </select>
@@ -359,8 +359,8 @@ export default function BuscadorViajes({ usuario, onReservar }) {
                     }}
                   >
                     <span>ðŸ“¦ Acepta paquetes</span>
-                    <span>â€¢ Peso mÃ¡x: <strong>{v.pesoMax ?? "â€”"}</strong> kg</span>
-                    <span>â€¢ Volumen mÃ¡x: <strong>{v.volumenMax ?? "â€”"}</strong> L</span>
+                    <span>â€¢ Peso máx: <strong>{v.pesoMax ?? "â€”"}</strong> kg</span>
+                    <span>â€¢ Volumen máx: <strong>{v.volumenMax ?? "â€”"}</strong> L</span>
                     {v.costoBasePaquete != null && (
                       <span>â€¢ Desde <strong>${Number(v.costoBasePaquete).toLocaleString("es-AR")}</strong></span>
                     )}

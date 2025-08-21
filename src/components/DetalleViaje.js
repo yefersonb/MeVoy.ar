@@ -20,7 +20,7 @@ import { useUser } from "../contexts/UserContext";
 import { usePerfilViajeroCompleto } from "../hooks/usePerfilViajeroCompleto";
 import { abreviarUbicacion } from "../utils/ubicacion";
 import "./DetalleViaje.css";
-import SolicitarEnvio from "./SolicitarEnvio"; // opcional, si aÃºn no lo creaste, quitÃ¡ esta lÃ­nea y lo relacionado
+import SolicitarEnvio from "./SolicitarEnvio"; // opcional, si aún no lo creaste, quitá esta línea y lo relacionado
 
 function haversineKm(a, b) {
   const toRad = (deg) => (deg * Math.PI) / 180;
@@ -57,10 +57,10 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
   const [totalOpiniones, setTotalOpiniones] = useState(0);
   const [reservando, setReservando] = useState(false);
 
-  // NUEVO: modal solicitar envÃ­o
+  // NUEVO: modal solicitar envío
   const [abrirEnvio, setAbrirEnvio] = useState(false);
 
-  // cÃ¡lculo ruta y distancia
+  // cálculo ruta y distancia
   useEffect(() => {
     if (!isLoaded || !viaje) return;
     const { origenCoords, destinoCoords, origen, destino } = viaje;
@@ -87,7 +87,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
               setDistanciaKm((r2.routes[0].legs[0].distance.value / 1000).toFixed(1));
             } else if (origenCoords && destinoCoords) {
               setDistanciaKm(haversineKm(origenCoords, destinoCoords).toFixed(1));
-              setRutaError("â„¹ï¸ Ruta aproximada en lÃ­nea recta.");
+              setRutaError("â„¹ï¸ Ruta aproximada en línea recta.");
             }
           });
         }
@@ -97,7 +97,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
     }
   }, [isLoaded, viaje]);
 
-  // datos de conductor y vehÃ­culo
+  // datos de conductor y vehículo
   useEffect(() => {
     if (!viaje?.conductor?.uid) return;
     const fetchDatos = async () => {
@@ -144,9 +144,9 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
   };
 
   const handleConfirmarReserva = async () => {
-    if (!usuario?.uid) return alert("IniciÃ¡ sesiÃ³n para reservar.");
-    if (cargandoPerfil) return alert("EsperÃ¡ a que cargue tu perfil.");
-    if (!puedeReservar) { alert("CompletÃ¡ tu perfil."); return window.location.href = "/perfil-viajero"; }
+    if (!usuario?.uid) return alert("Iniciá sesión para reservar.");
+    if (cargandoPerfil) return alert("Esperá a que cargue tu perfil.");
+    if (!puedeReservar) { alert("Completá tu perfil."); return window.location.href = "/perfil-viajero"; }
     if (!viaje.id) return alert("ID de viaje faltante.");
 
     setReservando(true);
@@ -205,8 +205,8 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
               }}
             >
               <span>ðŸ“¦ Acepta paquetes</span>
-              <span>â€¢ Peso mÃ¡x: <strong>{viaje.pesoMax ?? "â€”"}</strong> kg</span>
-              <span>â€¢ Volumen mÃ¡x: <strong>{viaje.volumenMax ?? "â€”"}</strong> L</span>
+              <span>â€¢ Peso máx: <strong>{viaje.pesoMax ?? "â€”"}</strong> kg</span>
+              <span>â€¢ Volumen máx: <strong>{viaje.volumenMax ?? "â€”"}</strong> L</span>
               {viaje.costoBasePaquete != null && (
                 <span>â€¢ Desde <strong>${Number(viaje.costoBasePaquete).toLocaleString("es-AR")}</strong></span>
               )}
@@ -237,30 +237,30 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
                 />
               )}
               {datosConductor.whatsapp && <p><strong>WhatsApp:</strong> {datosConductor.whatsapp}</p>}
-              {datosConductor.direccion && <p><strong>DirecciÃ³n:</strong> {datosConductor.direccion}</p>}
+              {datosConductor.direccion && <p><strong>Dirección:</strong> {datosConductor.direccion}</p>}
               <p>
-                <strong>ReputaciÃ³n:</strong>{" "}
+                <strong>Reputación:</strong>{" "}
                 {reputacionCalculada !== null ? renderEstrellas(reputacionCalculada) : "Sin calificaciones"}
               </p>
             </div>
           </details>
         )}
 
-        {/* VehÃ­culo */}
+        {/* Vehículo */}
         {vehiculo && (
           <details className="dv-info" style={{ marginTop: 8 }}>
             <summary style={{ cursor: "pointer", color: "var(--color-primary-700)" }}>
-              ðŸš— {vehiculo.marca || "VehÃ­culo"} {vehiculo.modelo || ""}
+              ðŸš— {vehiculo.marca || "Vehículo"} {vehiculo.modelo || ""}
             </summary>
             <div style={{ marginTop: 8, paddingLeft: 8 }}>
               {vehiculo.imagenURL && (
                 <img
                   src={vehiculo.imagenURL}
-                  alt="Foto del vehÃ­culo"
+                  alt="Foto del vehículo"
                   style={{ width: 80, height: 60, borderRadius: 4, objectFit: "cover", marginBottom: 4 }}
                 />
               )}
-              <p><strong>AÃ±o:</strong> {vehiculo.anio || "-"}</p>
+              <p><strong>Año:</strong> {vehiculo.anio || "-"}</p>
               <p><strong>Patente:</strong> {vehiculo.patente || "-"}</p>
             </div>
           </details>
@@ -289,13 +289,13 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
                 marginLeft: 8,
               }}
             >
-              Solicitar envÃ­o ðŸ“¦
+              Solicitar envío ðŸ“¦
             </button>
           )}
         </div>
       </div>
 
-      {/* Modal solicitar envÃ­o */}
+      {/* Modal solicitar envío */}
       {abrirEnvio && (
         <SolicitarEnvio
           viaje={viaje}

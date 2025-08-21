@@ -70,7 +70,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
   });
   const [original, setOriginal] = useState({});
   const [guardado, setGuardado] = useState(false);
-  const menuItems = ["Perfil", "VehÃ­culos", "Reservas"];
+  const menuItems = ["Perfil", "Vehículos", "Reservas"];
   const [activeTab, setActiveTab] = useState(menuItems[0]);
   const [editMode, setEditMode] = useState(false);
 
@@ -89,7 +89,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
         // Si el data.fotoURL existe, actualiza el previewPhoto
         if (data.fotoURL) {
           // Si quieres forzar el preview, puedes llamar al handler con un objeto falso,
-          // pero realmente deberÃ­as setPreviewPhoto(data.fotoURL);
+          // pero realmente deberías setPreviewPhoto(data.fotoURL);
           setTimeout(() => {
             // Sincroniza el hook si el usuario cambia de perfil con foto
             handlePhotoSelected({ target: { files: [] } });
@@ -246,7 +246,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                     <Badge variant="verificado">Conductor verificado</Badge>
                     <Badge variant="viajes">100% viajes completados</Badge>
-                    <Badge variant="rapido">Responde rÃ¡pido</Badge>
+                    <Badge variant="rapido">Responde rápido</Badge>
                   </div>
                 </div>
                 <div style={{ fontSize: "0.8rem", marginTop: 4, color: "#555" }}>
@@ -281,7 +281,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                 placeholder="Sin datos"
               />
               <InputField
-                label="Modelo de VehÃ­culo"
+                label="Modelo de Vehículo"
                 type="text"
                 value={perfil.modeloVehiculo || ""}
                 onChange={(e) => handlePerfilChange("modeloVehiculo", e.target.value)}
@@ -298,7 +298,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
               />
               <div style={{ gridColumn: "1 / span 2" }}>
                 <InputField
-                  label="Acerca de mÃ­"
+                  label="Acerca de mí"
                   type="textarea"
                   value={perfil.descripcion || ""}
                   onChange={(e) => handlePerfilChange("descripcion", e.target.value)}
@@ -320,7 +320,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 140 }}>
-                    <RatingRow label="ConducciÃ³n" value={valoraciones.conduccion} />
+                    <RatingRow label="Conducción" value={valoraciones.conduccion} />
                     <RatingRow label="Puntualidad" value={valoraciones.puntualidad} />
                   </div>
                   <div style={{ flex: 1, minWidth: 140 }}>
@@ -329,15 +329,15 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                   </div>
                 </div>
                 <div style={{ fontSize: "0.85rem", color: "#555" }}>
-                  {perfil.viajesCompletados} viajes completados â€¢ {completadosPercent}% Ã©xito
+                  {perfil.viajesCompletados} viajes completados â€¢ {completadosPercent}% éxito
                 </div>
               </div>
             </div>
           </section>
         )}
-        {activeTab === "VehÃ­culos" && (
+        {activeTab === "Vehículos" && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Mis VehÃ­culos</h1>
+            <h1 className="text-2xl font-bold mb-4">Mis Vehículos</h1>
             <VehiculosConductor viajes={viajes} reservas={reservas} />
           </section>
         )}

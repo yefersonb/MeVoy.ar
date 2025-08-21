@@ -12,7 +12,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import usePhotoUpload from "../hooks/usePhotoUpload";
 import useHashSection from "../hooks/useHashSection";
 
-// Reutilizado estilo de pestaÃ±as tipo conductor
+// Reutilizado estilo de pestañas tipo conductor
 const TabButton = ({ active, children, onClick }) => (
   <span
     onClick={onClick}
@@ -82,7 +82,7 @@ const calcularEdad = (fechaStr) => {
 export default function PerfilViajeroPage() {
   const { usuario } = useUser();
 
-  // Hash â†” pestaÃ±a (por si querÃ©s linkear directo)
+  // Hash â†” pestaña (por si querés linkear directo)
   const section = useHashSection();
   const tabFromHash = (h) =>
     ({
@@ -109,9 +109,9 @@ export default function PerfilViajeroPage() {
     usuario?.uid || ""
   );
 
-  // Viajes frecuentes (placeholder; reemplazar con lÃ³gica real)
+  // Viajes frecuentes (placeholder; reemplazar con lógica real)
   const [viajesFrecuentes, setViajesFrecuentes] = useState([]);
-  // MÃ©todos de pago (placeholder)
+  // Métodos de pago (placeholder)
   const [metodosPago, setMetodosPago] = useState([]);
 
   // Carga perfil
@@ -150,11 +150,11 @@ export default function PerfilViajeroPage() {
 
       // Simulado (reemplazar con real)
       setViajesFrecuentes([
-        { id: "vf1", origen: "Posadas", destino: "IguazÃº", frecuencia: "Semanal" },
-        { id: "vf2", origen: "OberÃ¡", destino: "Posadas", frecuencia: "Mensual" },
+        { id: "vf1", origen: "Posadas", destino: "Iguazú", frecuencia: "Semanal" },
+        { id: "vf2", origen: "Oberá", destino: "Posadas", frecuencia: "Mensual" },
       ]);
       setMetodosPago([
-        { id: "p1", tipo: "Tarjeta de crÃ©dito", detalle: "**** **** **** 4242", vencimiento: "12/25" },
+        { id: "p1", tipo: "Tarjeta de crédito", detalle: "**** **** **** 4242", vencimiento: "12/25" },
       ]);
     } catch (e) {
       console.error("Error cargando perfil viajero:", e);
@@ -207,7 +207,7 @@ export default function PerfilViajeroPage() {
   };
 
   const edad = calcularEdad(perfil.fechaNacimiento);
-  const edadTexto = edad != null ? ` (${edad} aÃ±os)` : "";
+  const edadTexto = edad != null ? ` (${edad} años)` : "";
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -432,16 +432,16 @@ export default function PerfilViajeroPage() {
                 placeholder="Tu email"
               />
               <InputField
-                label="DirecciÃ³n"
+                label="Dirección"
                 type="text"
                 value={perfil.direccion || ""}
                 onChange={(e) => onPerfilChange("direccion", e.target.value)}
                 readOnly={!editMode}
-                placeholder="Tu direcciÃ³n"
+                placeholder="Tu dirección"
               />
               <div style={{ gridColumn: "1 / span 4" }}>
                 <InputField
-                  label="Acerca de mÃ­"
+                  label="Acerca de mí"
                   type="textarea"
                   value={perfil.descripcion || ""}
                   onChange={(e) => onPerfilChange("descripcion", e.target.value)}
@@ -485,7 +485,7 @@ export default function PerfilViajeroPage() {
                     <RatingRow label="Puntualidad" value={perfil.valoraciones.puntualidad} />
                   </div>
                   <div style={{ flex: 1, minWidth: 140 }}>
-                    <RatingRow label="ComunicaciÃ³n" value={perfil.valoraciones.comunicacion} />
+                    <RatingRow label="Comunicación" value={perfil.valoraciones.comunicacion} />
                   </div>
                 </div>
                 <div style={{ fontSize: 14, color: "#555" }}>
@@ -509,7 +509,7 @@ export default function PerfilViajeroPage() {
               }}
             >
               {metodosPago.length === 0 ? (
-                <div>No tenÃ©s mÃ©todos de pago guardados.</div>
+                <div>No tenés métodos de pago guardados.</div>
               ) : (
                 <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                   {metodosPago.map((m) => (
@@ -563,7 +563,7 @@ export default function PerfilViajeroPage() {
                   fontWeight: 600,
                 }}
               >
-                Agregar mÃ©todo de pago
+                Agregar método de pago
               </button>
             </div>
           </section>
@@ -573,7 +573,7 @@ export default function PerfilViajeroPage() {
           <section>
             <h1 className="text-2xl font-bold mb-4">Viajes frecuentes</h1>
             {viajesFrecuentes.length === 0 ? (
-              <div>No tenÃ©s viajes frecuentes aÃºn.</div>
+              <div>No tenés viajes frecuentes aún.</div>
             ) : (
               <div
                 style={{

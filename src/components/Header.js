@@ -9,7 +9,7 @@ import logo from "../assets/logo/logo_light.png";
 import Avatar from "./ui/Avatar";
 import { Caret } from "./cozyglow/icons/Caret";
 
-// MenÃº desprendido
+// Menú desprendido
 import UserMenuPortal from "./menus/UserMenuPortal";
 
 export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
@@ -24,13 +24,13 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
   const etiquetaRol = rol === "viajero" ? "Viajante" : "Conductor";
   const proximoRol = rol === "viajero" ? "conductor" : "viajero";
 
-  // ðŸ‘‰ Items del menÃº (editÃ¡ acÃ¡ lo que quieras)
+  // ðŸ‘‰ Items del menú (editá acá lo que quieras)
   const MENU_ITEMS = [
     { label: "Perfil", href: "#perfil" },
-    { label: "VerificaciÃ³n", href: "#verificacion" },
+    { label: "Verificación", href: "#verificacion" },
     { label: "Reservas", href: "#reservas" },
-    { label: "VehÃ­culos", href: "#mis-vehiculos" },
-    { label: "EnvÃ­os", href: "#envios" },
+    { label: "Vehículos", href: "#mis-vehiculos" },
+    { label: "Envíos", href: "#envios" },
     { label: "Nuevo viaje", href: "#nuevo-viaje" },
     // { type: "divider" },
     // { label: "Ayuda", href: "#ayuda" },
@@ -49,7 +49,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
       else await signOut(auth);
     } catch (e) {
       console.error(e);
-      alert("No se pudo cerrar sesiÃ³n");
+      alert("No se pudo cerrar sesión");
     } finally {
       setMenuAbierto(false);
     }
@@ -89,7 +89,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
               aria-expanded={menuAbierto}
               aria-controls={menuAbierto ? "user-menu" : undefined}
               onClick={toggleMenu}
-              title="MenÃº de usuario"
+              title="Menú de usuario"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -119,13 +119,13 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
               <div>{etiquetaRol}</div>
             </button>
 
-            {/* (Opcional) Salir rÃ¡pido */}
+            {/* (Opcional) Salir rápido */}
             {onLogout && (
               <button
                 type="button"
                 className="button borderless row danger"
                 onClick={onLogout}
-                title="Cerrar sesiÃ³n"
+                title="Cerrar sesión"
                 style={{ cursor: "pointer" }}
               >
                 Salir
@@ -135,7 +135,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
         </div>
       </div>
 
-      {/* MenÃº desprendido por portal */}
+      {/* Menú desprendido por portal */}
       <UserMenuPortal
         open={menuAbierto}
         anchorRef={btnRef}

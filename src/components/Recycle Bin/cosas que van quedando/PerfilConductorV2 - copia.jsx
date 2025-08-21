@@ -41,7 +41,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
   });
   const [original, setOriginal] = useState({});
   const [guardado, setGuardado] = useState(false);
-  const menuItems = ["Perfil", "VehÃ­culos", "Reservas"];
+  const menuItems = ["Perfil", "Vehículos", "Reservas"];
   const [activeTab, setActiveTab] = useState(menuItems[0]);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
 
   const handleCancelar = () => setPerfil(original);
 
-  // Estilo para inputs y visualizaciÃ³n
+  // Estilo para inputs y visualización
   const fieldStyle = {
     minHeight: '40px',
     fontSize: '1.05rem',
@@ -79,7 +79,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
-      {/* MenÃº lateral */}
+      {/* Menú lateral */}
       <aside className="w-48 bg-white border-r shadow-sm p-4">
         {menuItems.map(item => (
           <span
@@ -143,7 +143,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600">Modelo de VehÃ­culo</label>
+                <label className="block text-sm font-medium text-gray-600">Modelo de Vehículo</label>
                 {modo === "editar" ? (
                   <input
                     type="text"
@@ -178,7 +178,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
                 )}
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-600">Acerca de mÃ­</label>
+                <label className="block text-sm font-medium text-gray-600">Acerca de mí</label>
                 {modo === "editar" ? (
                   <textarea
                     rows={3}
@@ -204,9 +204,9 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
           </section>
         )}
 
-        {activeTab === 'VehÃ­culos' && (
+        {activeTab === 'Vehículos' && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Mis VehÃ­culos</h1>
+            <h1 className="text-2xl font-bold mb-4">Mis Vehículos</h1>
             <VehiculosConductor viajes={viajes} reservas={reservas} />
           </section>
         )}

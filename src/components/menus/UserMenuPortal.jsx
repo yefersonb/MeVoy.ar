@@ -32,8 +32,8 @@ export default function UserMenuPortal({
   const DEFAULT_ITEMS = [
     { label: "Perfil", href: "#perfil" },
     { label: "Reservas", href: "#reservas" },
-    { label: "VehÃ­culos", href: "#mis-vehiculos" },
-    { label: "EnvÃ­os", href: "#envios" },
+    { label: "Vehículos", href: "#mis-vehiculos" },
+    { label: "Envíos", href: "#envios" },
     { label: "Nuevo viaje", href: "#nuevo-viaje" },
   ];
   const links = items && items.length ? items : DEFAULT_ITEMS;
@@ -112,7 +112,7 @@ export default function UserMenuPortal({
         }}
       />
 
-      {/* Links dinÃ¡micos */}
+      {/* Links dinámicos */}
       {links.map((it, idx) =>
         it?.type === "divider" ? (
           <div key={`div-${idx}`} style={dividerStyle} />
@@ -137,7 +137,7 @@ export default function UserMenuPortal({
         onClick={onLogout}
         style={{ ...itemStyle, color: "var(--color-danger)" }}
       >
-        Cerrar sesiÃ³n
+        Cerrar sesión
       </button>
     </div>
   );

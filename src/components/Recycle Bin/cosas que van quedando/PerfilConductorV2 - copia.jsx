@@ -12,7 +12,7 @@ const HoverSpan = ({ children, onClick }) => (
     className="cursor-pointer relative font-medium"
     style={{ color: '#444', fontSize: '1.05rem' }}
     onMouseEnter={e => {
-      e.currentTarget.style.color = 'var(--cg-primary-700)';
+      e.currentTarget.style.color = 'var(--color-primary-700)';
       const u = e.currentTarget.querySelector('.underline');
       if (u) u.style.transform = 'scaleX(1)';
     }}
@@ -24,7 +24,7 @@ const HoverSpan = ({ children, onClick }) => (
   >
     {children}
     <span
-      className="underline absolute bottom-[-4px] left-0 right-0 h-0.5 bg-[var(--cg-primary-700)]"
+      className="underline absolute bottom-[-4px] left-0 right-0 h-0.5 bg-[var(--color-primary-700)]"
       style={{ transform: 'scaleX(0)', transformOrigin: 'left', transition: 'transform 0.3s ease' }}
     />
   </span>
@@ -72,7 +72,7 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
   const fieldStyle = {
     minHeight: '40px',
     fontSize: '1.05rem',
-    backgroundColor: modo === "ver" ? "var(--cg-bg)" : undefined,
+    backgroundColor: modo === "ver" ? "var(--color-bg)" : undefined,
     border: modo === "ver" ? "none" : undefined,
     pointerEvents: modo === "ver" ? "none" : undefined
   };
@@ -87,16 +87,16 @@ export default function PerfilConductorV2({ viajes, reservas, modo = "editar" })
             onClick={() => setActiveTab(item)}
             style={{
               display: 'block', marginBottom: '1rem', cursor: 'pointer',
-              color: activeTab === item ? 'var(--cg-primary-700)' : '#444',
+              color: activeTab === item ? 'var(--color-primary-700)' : '#444',
               fontWeight: 500, fontSize: '1.05rem', position: 'relative', transition: 'color 0.2s ease'
             }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--cg-primary-700)'}
-            onMouseLeave={e => e.currentTarget.style.color = activeTab === item ? 'var(--cg-primary-700)' : '#444'}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary-700)'}
+            onMouseLeave={e => e.currentTarget.style.color = activeTab === item ? 'var(--color-primary-700)' : '#444'}
           >
             {item}
             <span
               style={{
-                display:'block',height:'2px',backgroundColor:'var(--cg-primary-700)',position:'absolute',bottom:-4,
+                display:'block',height:'2px',backgroundColor:'var(--color-primary-700)',position:'absolute',bottom:-4,
                 left:0,right:0,transform: activeTab===item?'scaleX(1)':'scaleX(0)',transformOrigin:'left',transition:'transform 0.3s ease'
               }}
             />

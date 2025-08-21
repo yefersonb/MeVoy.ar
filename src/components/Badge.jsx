@@ -20,8 +20,8 @@ import { License } from "./cozyglow/icons/License"
 
 const variantMap = {
   verificado: { bg: "#ecfdf5", color: "#047857", border: "#0ba579ff" },
-  viajes:     { bg: "#f3f4f6", color: "var(--cg-text)", border: "#223044ff" },
-  rapido:     { bg: "#f0f5ff", color: "var(--cg-primary-700)", border: "var(--cg-primary-700)" },
+  viajes:     { bg: "#f3f4f6", color: "var(--color-text)", border: "#223044ff" },
+  rapido:     { bg: "#f0f5ff", color: "var(--color-primary-700)", border: "var(--color-primary-700)" },
 };
 
 const base_style = {

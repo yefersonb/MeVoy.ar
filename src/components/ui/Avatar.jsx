@@ -5,7 +5,7 @@ import { AlignJustify } from "react-feather";
 export default function Avatar({ size = "100%", editable = false }) {
   const { avatarUrl, loading, uploading, setPreview } = useUser();
 
-  if (loading) return <div style={{ width: size, height: size, borderRadius: "50%", background: "var(--cg-border)" }} />;
+  if (loading) return <div style={{ width: size, height: size, borderRadius: "50%", background: "var(--color-border)" }} />;
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -39,7 +39,7 @@ export default function Avatar({ size = "100%", editable = false }) {
           }}
         />
       ) : (
-        <div style={{ width: "100%", height: "100%", background: "var(--cg-border)" }}></div>
+        <div style={{ width: "100%", height: "100%", background: "var(--color-border)" }}></div>
       )}
     </div>
   );

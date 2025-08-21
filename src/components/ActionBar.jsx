@@ -35,13 +35,13 @@ export default function ActionBar({
           style={{
             padding: "7px 18px",
             background: "var(--color-primary)",
-            color: "var(--cg-surface)",
+            color: "var(--color-surface)",
             border: "none",
             borderRadius: 6,
             fontWeight: 600,
             cursor: "pointer",
             fontSize: "1rem",
-            boxShadow: "var(--cg-shadow-sm)",
+            boxShadow: "var(--color-shadow-sm)",
             transition: "background 0.18s",
           }}
         >
@@ -54,7 +54,7 @@ export default function ActionBar({
             style={{
               padding: "7px 18px",
               background: "var(--color-success)",
-              color: "var(--cg-surface)",
+              color: "var(--color-surface)",
               border: "none",
               borderRadius: 6,
               fontWeight: 600,
@@ -71,7 +71,7 @@ export default function ActionBar({
             style={{
               padding: "7px 18px",
               background: "var(--color-neutral)",
-              color: "var(--cg-surface)",
+              color: "var(--color-surface)",
               border: "none",
               borderRadius: 6,
               fontWeight: 600,

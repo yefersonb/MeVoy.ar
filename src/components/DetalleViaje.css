@@ -15,7 +15,7 @@
 /* --- Modal ------------------------------------------------------------- */
 .dv-modal {
   position: relative;            /* ðŸ”§ Necesario para que .dv-close (position:absolute) quede anclado a este contenedor */
-  background: var(--cg-surface);
+  background: var(--color-surface);
   border-radius: 1rem;           /* extra-rounded corners */
   width: min(92vw, 560px);
   max-height: 90vh;              /* limita la altura al 90% del viewport */
@@ -103,15 +103,15 @@ h2 {
 }
 
 .dv-actions button:last-child {
-  background: var(--cg-primary);   /* Tailwind blue-500 */
-  color: var(--cg-surface);
+  background: var(--color-primary);   /* Tailwind blue-500 */
+  color: var(--color-surface);
 }
 .dv-actions button:last-child:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 .dv-actions button:last-child:not(:disabled):hover {
-  background: var(--cg-primary-700);   /* blue-600 */
+  background: var(--color-primary-700);   /* blue-600 */
 }
 
 /* --- Responsive tweaks ------------------------------------------------- */

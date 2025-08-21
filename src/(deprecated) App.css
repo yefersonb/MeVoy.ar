@@ -8,16 +8,16 @@
 */
 
 :root {
-  --primary: var(--cg-primary);
-  --primary-hover: var(--cg-primary-700);
-  --secondary: var(--cg-secondary);
-  --bg: var(--cg-bg);
-  --card-bg: var(--cg-surface);
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-700);
+  --secondary: var(--color-secondary);
+  --bg: var(--color-bg);
+  --card-bg: var(--color-surface);
   --radius: 0.75rem;
-  --shadow: var(--cg-shadow-sm);
-  --text: var(--cg-text);
-  --muted: var(--cg-text-muted);
-  --hover-bg: var(--cg-hover);
+  --shadow: var(--color-shadow-sm);
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --hover-bg: var(--color-hover);
   --transition: 0.2s ease;
   --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
@@ -73,33 +73,33 @@ html, body {
 .link-btn {
   background: none;
   border: none;
-  color: var(--cg-text);
+  color: var(--color-text);
   font-weight: 500;
   font-family: inherit;
   font-size: 0.95rem;
   cursor: pointer;
   padding: 0.5rem;
   margin: 0;
-  transition: color var(--cg-transition-fast);
-  border-radius: var(--cg-radius-md);
+  transition: color var(--color-transition-fast);
+  border-radius: var(--color-radius-md);
   min-height: 44px; /* Mejor accesibilidad tÃ¡ctil en mÃ³viles */
 }
 
 .link-btn:hover {
-  color: var(--cg-primary);
-  background-color: var(--cg-hover);
+  color: var(--color-primary);
+  background-color: var(--color-hover);
 }
 
 /* Botones principales */
 .btn-rounded {
-  background-color: var(--cg-primary);
+  background-color: var(--color-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 9999px;
   cursor: pointer;
   margin: 0.5rem 0;
-  transition: background-color var(--cg-transition-fast);
+  transition: background-color var(--color-transition-fast);
   font-weight: 600;
   font-family: inherit;
   font-size: 1rem;
@@ -109,35 +109,35 @@ html, body {
 }
 
 .btn-rounded:hover {
-  background-color: var(--cg-primary-700);
+  background-color: var(--color-primary-700);
 }
 
 .highlight-hover {
-  transition: background-color var(--cg-transition-fast);
-  border-radius: var(--cg-radius-md);
+  transition: background-color var(--color-transition-fast);
+  border-radius: var(--color-radius-md);
 }
 .highlight-hover:hover {
-  background-color: var(--cg-hover);
+  background-color: var(--color-hover);
 }
 
 /* Utilidades pequeÃ±as */
 .text-muted {
-  color: var(--cg-text-muted);
+  color: var(--color-text-muted);
 }
 
 .rounded-card {
-  border-radius: var(--cg-radius-md);
-  background: var(--cg-surface);
-  box-shadow: var(--cg-shadow-sm);
+  border-radius: var(--color-radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--color-shadow-sm);
   padding: 1rem;
   margin: 0.5rem;
-  transition: transform var(--cg-transition-fast), box-shadow var(--cg-transition-fast);
+  transition: transform var(--color-transition-fast), box-shadow var(--color-transition-fast);
   width: calc(100% - 1rem); /* Respeta mÃ¡rgenes laterales */
 }
 
 .rounded-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--cg-shadow-lg);
+  box-shadow: var(--color-shadow-lg);
 }
 
 /* RESPONSIVE DESIGN */
@@ -196,8 +196,8 @@ html, body {
 .user-menu { position: relative; }
 .user-menu__btn {
   display:inline-flex; align-items:center; justify-content:center;
-  width:40px; height:40px; border-radius:999px; border:1px solid var(--cg-border);
-  background:var(--cg-surface); cursor:pointer;
+  width:40px; height:40px; border-radius:999px; border:1px solid var(--color-border);
+  background:var(--color-surface); cursor:pointer;
 }
 .user-menu__btn img { width:100%; height:100%; border-radius:999px; object-fit:cover; }
 .avatar-fallback { font-weight:600; }
@@ -205,7 +205,7 @@ html, body {
 .user-menu__dropdown {
   position:absolute; top:calc(100% + 10px); right:0; z-index:30;
   width:280px; padding:8px;
-  background:var(--cg-surface); border:1px solid var(--cg-border); border-radius:16px;
+  background:var(--color-surface); border:1px solid var(--color-border); border-radius:16px;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
   animation: menu-in .12s ease;
 }
@@ -215,14 +215,14 @@ html, body {
 .user-menu__item {
   display:flex; align-items:center; gap:10px;
   width:100%; padding:10px 12px; border-radius:12px; text-decoration:none;
-  color:var(--cg-text); background:transparent; border:none; cursor:pointer; text-align:left;
+  color:var(--color-text); background:transparent; border:none; cursor:pointer; text-align:left;
 }
-.user-menu__item:hover { background:var(--cg-hover); }
-.user-menu__item.danger { color:var(--cg-danger); }
-.user-menu__item.danger:hover { background:var(--cg-danger-bg); }
+.user-menu__item:hover { background:var(--color-hover); }
+.user-menu__item.danger { color:var(--color-danger); }
+.user-menu__item.danger:hover { background:var(--color-danger-bg); }
 
 .user-menu__divider {
-  height:1px; background:var(--cg-border); margin:6px 4px;
+  height:1px; background:var(--color-border); margin:6px 4px;
 }
 
 .user-menu { position: relative; }
@@ -236,8 +236,8 @@ html, body {
   min-width: 260px;
   max-width: 280px;
   padding: 8px;
-  background: var(--cg-surface);
-  border: 1px solid var(--cg-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,.08);
   display: flex;
@@ -251,10 +251,10 @@ html, body {
   top: -6px;
   right: 18px;
   width: 12px; height: 12px;
-  background: var(--cg-surface);
+  background: var(--color-surface);
   transform: rotate(45deg);
-  border-left: 1px solid var(--cg-border);
-  border-top: 1px solid var(--cg-border);
+  border-left: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
 }
 
 @keyframes menu-in {
@@ -270,17 +270,17 @@ html, body {
   padding: 10px 12px;
   border-radius: 12px;
   text-decoration: none;
-  color: var(--cg-text);
+  color: var(--color-text);
   background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
 }
-.user-menu__item:hover { background: var(--cg-hover); }
-.user-menu__item.danger { color: var(--cg-danger); }
-.user-menu__item.danger:hover { background: var(--cg-danger-bg); }
+.user-menu__item:hover { background: var(--color-hover); }
+.user-menu__item.danger { color: var(--color-danger); }
+.user-menu__item.danger:hover { background: var(--color-danger-bg); }
 
-.user-menu__divider { height: 1px; background: var(--cg-border); margin: 6px 4px; }
+.user-menu__divider { height: 1px; background: var(--color-border); margin: 6px 4px; }
 
 /* hace que â€œCerrar sesiÃ³nâ€ quede claro como acciÃ³n final */
 .user-menu__footer { margin-top: 2px; }

@@ -299,7 +299,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         onClick={buscar}
         disabled={loading}
         style={{
-          backgroundColor: "var(--cg-primary-700)",
+          backgroundColor: "var(--color-primary-700)",
           color: "white",
           padding: "0.75rem",
           border: "none",
@@ -373,7 +373,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
                     style={{
                       padding: "0.5rem 0.75rem",
                       borderRadius: "0.375rem",
-                      backgroundColor: "var(--cg-primary)",
+                      backgroundColor: "var(--color-primary)",
                       color: "white",
                       border: "none",
                       cursor: "pointer",

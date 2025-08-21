@@ -93,7 +93,7 @@ export default function AutoResults({ viajes = [], onReservar }) {
                 onClick={() => toggleDetails(v)}
                 style={{
                   background: "#007bff",
-                  color: "var(--cg-surface)",
+                  color: "var(--color-surface)",
                   border: "none",
                   padding: "0.5rem",
                   borderRadius: 4,
@@ -110,7 +110,7 @@ export default function AutoResults({ viajes = [], onReservar }) {
                 style={{
                   marginTop: 8,
                   padding: 8,
-                  background: "var(--cg-surface)",
+                  background: "var(--color-surface)",
                   borderRadius: 6,
                   boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
                 }}
@@ -136,7 +136,7 @@ export default function AutoResults({ viajes = [], onReservar }) {
                       onClick={() => onReservar(v.id)}
                       style={{
                         background: "#28a745",
-                        color: "var(--cg-surface)",
+                        color: "var(--color-surface)",
                         border: "none",
                         padding: "0.5rem 1rem",
                         borderRadius: 4,

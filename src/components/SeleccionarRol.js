@@ -35,7 +35,7 @@ function SeleccionarRol({ usuario, setRol }) {
             position: 'relative',
             transition: 'color 0.2s ease'
           }}
-          onMouseEnter={(e) => (e.target.style.color = 'var(--cg-primary-700)')}
+          onMouseEnter={(e) => (e.target.style.color = 'var(--color-primary-700)')}
           onMouseLeave={(e) => (e.target.style.color = '#444')}
         >
           Conducir
@@ -43,7 +43,7 @@ function SeleccionarRol({ usuario, setRol }) {
             style={{
               display: 'block',
               height: '100px',
-              backgroundColor: 'var(--cg-primary-700)',
+              backgroundColor: 'var(--color-primary-700)',
               position: 'absolute',
               bottom: -4,
               left: 0,
@@ -63,7 +63,7 @@ function SeleccionarRol({ usuario, setRol }) {
             position: 'relative',
             transition: 'color 0.2s ease'
           }}
-          onMouseEnter={(e) => (e.target.style.color = 'var(--cg-primary-700)')}
+          onMouseEnter={(e) => (e.target.style.color = 'var(--color-primary-700)')}
           onMouseLeave={(e) => (e.target.style.color = '#444')}
         >
           Viajar
@@ -71,7 +71,7 @@ function SeleccionarRol({ usuario, setRol }) {
             style={{
               display: 'block',
               height: '2px',
-              backgroundColor: 'var(--cg-primary-700)',
+              backgroundColor: 'var(--color-primary-700)',
               position: 'absolute',
               bottom: -4,
               left: 0,

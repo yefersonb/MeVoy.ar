@@ -1,7 +1,7 @@
-﻿// src/components/PerfilSection.jsx
+// src/components/PerfilSection.jsx
 
 /*
-  STRICT FORMATTING RULES: DO NOT CHANGE THE FORMATTING OF THIS FILE â€” IT MAY LOOK NON STANDARD TO YOU BUT IT HAS MEANING TO US
+  STRICT FORMATTING RULES: DO NOT CHANGE THE FORMATTING OF THIS FILE — IT MAY LOOK NON STANDARD TO YOU BUT IT HAS MEANING TO US
 */
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -55,7 +55,7 @@ const PerfilSection = ({
     limpieza: 0,
   };
 
-// ESTO ES LO QUE HAY Q SACAR SI NO QUEDA BIEN % de perfil (suma foto, bio, whatsapp, fecha, vehÃ­culo y % de verificaciÃ³n de documentos)
+// ESTO ES LO QUE HAY Q SACAR SI NO QUEDA BIEN % de perfil (suma foto, bio, whatsapp, fecha, vehículo y % de verificación de documentos)
 const { percent: _verDocPct } = useVerificacionConductor(usuario?.uid);
 const hasFoto = !!(preview || perfil.fotoURL || usuario?.photoURL);
 const perfilPercent = (() => {
@@ -64,7 +64,7 @@ const perfilPercent = (() => {
   if (perfil?.descripcion) p += 10;           // bio
   if (perfil?.whatsapp) p += 10;              // contacto
   if (perfil?.fechaNacimiento) p += 10;       // fecha nac.
-  if (vehiculos && vehiculos.length > 0) p += 20; // â‰¥1 vehÃ­culo
+  if (vehiculos && vehiculos.length > 0) p += 20; // ≥1 vehículo
   const docs = Math.max(0, Math.min(100, _verDocPct || 0));
   p += Math.round(docs * 0.35);               // documentos (DNI/licencia/selfie) hasta +35
   return Math.min(100, p);
@@ -88,7 +88,7 @@ const perfilPercent = (() => {
       const lista = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       setVehiculos(lista);
     } catch (e) {
-      console.error('Error cargando vehÃ­culos en perfil:', e);
+      console.error('Error cargando vehículos en perfil:', e);
     } finally {
       setLoadingVehiculos(false);
     }
@@ -106,7 +106,7 @@ const perfilPercent = (() => {
   return (
     <div style={{padding: "0 10px"}}>
       {/* NUEVA TARJETA DE PERFIL */}
-      {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx â€” DeberÃ­a usar el contexto de perfil */}
+      {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx — Debería usar el contexto de perfil */}
 
       {/* Barra de progreso del perfil */}
       <div style={{padding: "2rem 0"}}>
@@ -117,14 +117,14 @@ const perfilPercent = (() => {
       <div style={{width: "100%", padding: "0.5rem", display: "flex", gap: "1rem", alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap"}}>
         {/* Foto de perfil */}
         <div style={{ flex: "1 1 12rem", maxWidth: "20%", minWidth: "180px", flexShrink: 0, marginTop: "0.5rem", position: "relative" }}>
-          <Avatar/>
-          <div style={{position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#0d690d80", border: "1px solid #00ff1560", boxShadow: "0 4px 4px #00000020", color: "var(--cg-surface)", fontSize: "1.5rem" }}>
+          <Avatar />
+          <div style={{position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#0d690d80", border: "1px solid #00ff1560", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
             <License size="80%"/>
           </div>
         </div>
         
         <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>
-          {/* PresentaciÃ³n */}
+          {/* Presentación */}
           <div style={{fontSize: "2rem", marginBottom: "1rem"}}>{perfil.nombre}</div>
 
           {/* AboutMe + editor */}
@@ -137,23 +137,23 @@ const perfilPercent = (() => {
                 value={perfil.descripcion || ''}
                 onChange={(e) => onPerfilChange('descripcion', e.target.value)}
                 readOnly={!editMode}
-                placeholder="Contanos algo sobre vos, tus gustos, mÃºsica favorita, etc."
+                placeholder="Contanos algo sobre vos, tus gustos, música favorita, etc."
               />
             </div>
           )}
 
           {/* Insignias */}
           <div style={{display: "flex", gap: "1rem"}}>
-            {/* ToDo: Generar dinÃ¡micamente: */}
+            {/* ToDo: Generar dinámicamente: */}
             <Badge variant="verificado">Conductor verificado</Badge>
             <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
-            <Badge variant="rapido">Responde rÃ¡pido</Badge>
+            <Badge variant="rapido">Responde rápido</Badge>
           </div>
-          {/* Fin PresentaciÃ³n */}
+          {/* Fin Presentación */}
         
-          {/* InformaciÃ³n personal */}
+          {/* Información personal */}
           <div>
-            {/* ToDo: Reemplazar estos inputs por _vistas_. SÃ³lo usar Inputs en un panel de ediciÃ³n â€” Ã‰sto permite mantener tarjetas generalizadas para todos -> menos cÃ³digo */}
+            {/* ToDo: Reemplazar estos inputs por _vistas_. Sólo usar Inputs en un panel de edición — Ésto permite mantener tarjetas generalizadas para todos -> menos código */}
             <div>
               <InputField
                 label="WhatsApp"
@@ -161,7 +161,7 @@ const perfilPercent = (() => {
                 value={perfil.whatsapp || ''}
                 onChange={(e) => onPerfilChange('whatsapp', e.target.value)}
                 readOnly={!editMode}
-                placeholder="Ingresa tu nÃºmero de WhatsApp"
+                placeholder="Ingresa tu número de WhatsApp"
               />
               <InputField
                 label="Fecha de nacimiento"
@@ -178,7 +178,7 @@ const perfilPercent = (() => {
               <h3> Valoraciones de Conductores </h3>
               <div>
                 <div>
-                  <RatingRow label="ConducciÃ³n" value={valoraciones.conduccion} />
+                  <RatingRow label="Conducción" value={valoraciones.conduccion} />
                   <RatingRow label="Puntualidad" value={valoraciones.puntualidad} />
                 </div>
                 <div>
@@ -189,23 +189,23 @@ const perfilPercent = (() => {
               
               <div>
                 <span> {perfil.viajesCompletados || 0} viajes completados </span>
-                <div> {completadosPercent}% de Ã©xito </div>
+                <div> {completadosPercent}% de éxito </div>
               </div>
             </div>
             {/* Fin Valoraciones */}
 
-            {/* VehÃ­culos */}
+            {/* Vehículos */}
             <div>
-              <h3> Mis VehÃ­culos </h3>
+              <h3> Mis Vehículos </h3>
               {loadingVehiculos ? (
                 <div>
                   <Spinner/>
                 </div>
               ) : vehiculos.length === 0 ? (
                 <div>
-                  <p>No tienes vehÃ­culos registrados</p>
+                  <p>No tienes vehículos registrados</p>
                   <p>
-                    Agrega tu primer vehÃ­culo en la pestaÃ±a <strong>VehÃ­culos</strong> para comenzar a ofrecer viajes.
+                    Agrega tu primer vehículo en la pestaña <strong>Vehículos</strong> para comenzar a ofrecer viajes.
                   </p>
                 </div>
               )
@@ -219,7 +219,7 @@ const perfilPercent = (() => {
                       (
                         <div key={vehiculo.id}>
                           <div>
-                            <span>ðŸš—</span>
+                            <span>🚗</span>
                           </div>
                           <div>
                             <div> {vehiculo.modelo || 'Sin modelo especificado'} </div>
@@ -239,12 +239,12 @@ const perfilPercent = (() => {
             </div>
             {/* Fin Vehiculos */ }
           </div>
-          {/* Fin InformaciÃ³n personal */}
+          {/* Fin Información personal */}
         </div>
       </div>
       {/* Fin Tarjeta */}
 
-      {/* ToDo: Eliminar. Esto deberÃ­a ser parte de la tarjeta _o_ deberÃ­a haber un menu de ediciÃ³n */}
+      {/* ToDo: Eliminar. Esto debería ser parte de la tarjeta _o_ debería haber un menu de edición */}
       <ActionBar
         editMode={editMode}
         onEdit={onEdit}
@@ -253,7 +253,7 @@ const perfilPercent = (() => {
         guardado={guardado}
       />
 
-      {/* Vieja tarjeta de perfil (Nos vamos a deshacer de ella pronto) â€” Por ahora estÃ¡ escondida */}
+      {/* Vieja tarjeta de perfil (Nos vamos a deshacer de ella pronto) — Por ahora está escondida */}
       <div>
           <div className="primary" style={{ display: "flex" }}>
             <div style={{ width: 98, height: 98, minWidth: 98, minHeight: 98 }}>
@@ -271,7 +271,7 @@ const perfilPercent = (() => {
               </div>
 
               { editMode && (
-                <label style={{ position: 'absolute', bottom: -6, right: -6, background: 'var(--cg-surface)', borderRadius: '50%', padding: 6, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                <label style={{ position: 'absolute', bottom: -6, right: -6, background: '#fff', borderRadius: '50%', padding: 6, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   aria-label="Cambiar foto de perfil"
                   title="Cambiar foto">
                   <input
@@ -281,20 +281,20 @@ const perfilPercent = (() => {
                     disabled={uploading}
                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pacity: 0, cursor: 'pointer' }}
                   />
-                  <Edit3 /> {/* El Ã­cono del lapiz */}
+                  <Edit3 /> {/* El ícono del lapiz */}
                 </label>
               )}
             </div>
             
-            {/* InformaciÃ³n del usuario */}
+            {/* Información del usuario */}
             <table>
               <tr>
                 <td style={{fontWeight: "600"}}>Viajes:</td>
                 <td style={{width: "1rem"}}></td>
-                <td>{"Nunca viajÃ³"}</td>
+                <td>{"Nunca viajó"}</td>
               </tr>
               <tr>
-                <td style={{fontWeight: "600"}}>Ãšltimo viaje:</td>
+                <td style={{fontWeight: "600"}}>Último viaje:</td>
                 <td style={{width: "1rem"}}></td>
                 <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
               </tr>

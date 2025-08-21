@@ -333,7 +333,7 @@ export default function NuevoViaje() {
         className="btn-rounded highlight-hover"
         style={{
           width: "100%", marginTop: 8, padding: "12px", fontWeight: 600,
-          borderRadius: 6, border: "none", background: "var(--cg-primary-700)", color: "var(--cg-surface)",
+          borderRadius: 6, border: "none", background: "var(--color-primary-700)", color: "var(--color-surface)",
           cursor: incompleto || loading ? "not-allowed" : "pointer",
           opacity: incompleto || loading ? 0.6 : 1,
         }}

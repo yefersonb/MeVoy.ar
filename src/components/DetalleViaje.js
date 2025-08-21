@@ -227,7 +227,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
         {/* Detalle conductor (usamos un mini estado local ad-hoc) */}
         {datosConductor && (
           <details style={{ marginTop: 8, paddingLeft: 0 }}>
-            <summary style={{ cursor: "pointer", color: "var(--cg-primary-700)" }}>Ver datos del conductor</summary>
+            <summary style={{ cursor: "pointer", color: "var(--color-primary-700)" }}>Ver datos del conductor</summary>
             <div style={{ marginTop: 8, paddingLeft: 8 }}>
               {datosConductor.fotoPerfil && (
                 <img
@@ -249,7 +249,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
         {/* VehÃ­culo */}
         {vehiculo && (
           <details className="dv-info" style={{ marginTop: 8 }}>
-            <summary style={{ cursor: "pointer", color: "var(--cg-primary-700)" }}>
+            <summary style={{ cursor: "pointer", color: "var(--color-primary-700)" }}>
               ðŸš— {vehiculo.marca || "VehÃ­culo"} {vehiculo.modelo || ""}
             </summary>
             <div style={{ marginTop: 8, paddingLeft: 8 }}>

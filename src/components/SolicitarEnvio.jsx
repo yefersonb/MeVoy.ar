@@ -100,7 +100,7 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
         onClick={(e) => e.stopPropagation()}
         onSubmit={submit}
         style={{
-          width: "min(680px, 92vw)", background: "var(--cg-surface)", borderRadius: 12,
+          width: "min(680px, 92vw)", background: "var(--color-surface)", borderRadius: 12,
           padding: 16, boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
         }}
       >
@@ -154,11 +154,11 @@ export default function SolicitarEnvio({ viaje, usuario, onClose, onCreated }) {
         </div>
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
-          <button type="button" onClick={onClose} style={{ padding: "10px 14px", borderRadius: 8, border: "1px solid #e5e7eb", background: "var(--cg-surface)", cursor: "pointer" }}>
+          <button type="button" onClick={onClose} style={{ padding: "10px 14px", borderRadius: 8, border: "1px solid #e5e7eb", background: "var(--color-surface)", cursor: "pointer" }}>
             Cancelar
           </button>
           <button type="submit" disabled={!valido || loading}
-            style={{ padding: "10px 14px", borderRadius: 8, border: "none", background: "#10b981", color: "var(--cg-surface)", fontWeight: 700, cursor: !valido||loading? "not-allowed":"pointer", opacity: !valido||loading? 0.7:1 }}>
+            style={{ padding: "10px 14px", borderRadius: 8, border: "none", background: "#10b981", color: "var(--color-surface)", fontWeight: 700, cursor: !valido||loading? "not-allowed":"pointer", opacity: !valido||loading? 0.7:1 }}>
             {loading ? "Enviando..." : "Solicitar envÃ­o"}
           </button>
         </div>

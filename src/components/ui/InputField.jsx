@@ -45,8 +45,8 @@ export default function InputField({
   };
 
   const focusStyle = {
-    border: "1.5px solid var(--cg-primary)",
-    boxShadow: "0 0 0 1px var(--cg-primary), 0 1px 4px var(--cg-shadow-sm)",
+    border: "1.5px solid var(--color-primary)",
+    boxShadow: "0 0 0 1px var(--color-primary), 0 1px 4px var(--color-shadow-sm)",
   };
 
   const [isFocused, setIsFocused] = React.useState(false);

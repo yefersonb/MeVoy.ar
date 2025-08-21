@@ -260,7 +260,7 @@ export default function VerificacionConductorWizard({ onExit }) {
       <header className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">VerificaciÃ³n de identidad (Conductor)</h1>
-          <p className="text-sm" style={{color:'var(--cg-text-muted)'}}>Estado: <StatusBadge status={status} /></p>
+          <p className="text-sm" style={{color:'var(--color-text-muted)'}}>Estado: <StatusBadge status={status} /></p>
         </div>
         {onExit && (
           <button className="px-3 py-2 rounded-xl border" onClick={onExit}>Salir</button>
@@ -314,16 +314,16 @@ export default function VerificacionConductorWizard({ onExit }) {
         <div className="flex items-center gap-2">
           <button className="px-3 py-2 rounded-xl border" onClick={completarPasoActual} disabled={saving}>{saving? 'Guardando...' : 'Guardar'}</button>
           {step < totalSteps - 1 ? (
-            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--cg-surface)'}} onClick={goNext}>Siguiente</button>
+            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--color-surface)'}} onClick={goNext}>Siguiente</button>
           ) : (
-            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--cg-surface)'}} onClick={onSubmit} disabled={status==='pending'}>
+            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--color-surface)'}} onClick={onSubmit} disabled={status==='pending'}>
               {status==='pending' ? 'En revisiÃ³n' : 'Enviar a revisiÃ³n'}
             </button>
           )}
         </div>
       </div>
 
-      <p className="text-xs" style={{color:'var(--cg-text-muted)', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verÃ¡ el equipo de verificaciÃ³n.</p>
+      <p className="text-xs" style={{color:'var(--color-text-muted)', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verÃ¡ el equipo de verificaciÃ³n.</p>
     </div>
   );
 }
@@ -354,7 +354,7 @@ function Progress({
   showLabel = true             // mostrar % centrado
 }) {
   const pct = Math.min(100, Math.max(0, Math.round(value)));
-  const textColor = pct >= 50 ? 'var(--cg-surface)' : '#111827'; // blanco si hay bastante relleno
+  const textColor = pct >= 50 ? 'var(--color-surface)' : '#111827'; // blanco si hay bastante relleno
 
   return (
     <div
@@ -412,14 +412,14 @@ function Stepper({ steps, current, isDone }) {
         const active = i === current;
         const base = { display:'inline-flex', alignItems:'center', justifyContent:'center', width:24, height:24, borderRadius:'9999px', border:'1px solid #D1D5DB' };
         const style = done
-          ? { ...base, background:'#16A34A', color:'var(--cg-surface)', borderColor:'#16A34A' }
+          ? { ...base, background:'#16A34A', color:'var(--color-surface)', borderColor:'#16A34A' }
           : active
-          ? { ...base, background:'#000', color:'var(--cg-surface)', borderColor:'#000' }
+          ? { ...base, background:'#000', color:'var(--color-surface)', borderColor:'#000' }
           : base;
         return (
           <li key={s.key} className="flex items-center gap-2">
             <span style={style}>{done ? 'âœ“' : i+1}</span>
-            <span style={{fontWeight: active ? 600 : 400, color: active ? '#111827' : 'var(--cg-text-muted)'}}>{s.label}</span>
+            <span style={{fontWeight: active ? 600 : 400, color: active ? '#111827' : 'var(--color-text-muted)'}}>{s.label}</span>
             {i < steps.length - 1 && <span className="mx-1" style={{color:'#D1D5DB'}}>â€º</span>}
           </li>
         );
@@ -440,7 +440,7 @@ function PasoDatos({ datos, setDatos }) {
         <label className="block text-sm font-medium">NÃºmero de DNI</label>
         <input className="mt-1 w-full border rounded-xl px-3 py-2" value={datos.dniNumero}
                onChange={(e)=>setDatos(v=>({...v, dniNumero:e.target.value.replace(/\D/g,'')}))} inputMode="numeric" placeholder="Ej. 30123456" />
-        <p className="text-xs" style={{color:'var(--cg-text-muted)', marginTop:4}}>Usamos estos datos solo para verificar tu identidad.</p>
+        <p className="text-xs" style={{color:'var(--color-text-muted)', marginTop:4}}>Usamos estos datos solo para verificar tu identidad.</p>
       </div>
     </div>
   );
@@ -495,7 +495,7 @@ function PasoResumen({ datos, urls, status }) {
         <Thumb label="Licencia Dorso" url={urls.licDorso} />
         <Thumb label="Selfie" url={urls.selfie} />
       </div>
-      <div className="p-3" style={{ background:'var(--cg-bg)', border:'1px solid #E5E7EB', borderRadius:12, color:'#4B5563', fontSize:14 }}>
+      <div className="p-3" style={{ background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, color:'#4B5563', fontSize:14 }}>
         Estado actual: <StatusBadge status={status} /> â€” Al enviar, quedarÃ¡ <strong>En revisiÃ³n</strong> por un admin.
       </div>
     </div>
@@ -505,7 +505,7 @@ function PasoResumen({ datos, urls, status }) {
 function KeyVal({ k, v }) {
   return (
     <div className="border rounded-2xl p-3">
-      <div className="text-xs" style={{textTransform:'uppercase', color:'var(--cg-text-muted)'}}>{k}</div>
+      <div className="text-xs" style={{textTransform:'uppercase', color:'var(--color-text-muted)'}}>{k}</div>
       <div className="text-sm">{v}</div>
     </div>
   );
@@ -518,7 +518,7 @@ function Thumb({ label, url }) {
 
   return (
     <div className="border rounded-2xl p-3">
-      <div className="text-xs" style={{color:'var(--cg-text-muted)', marginBottom:8}}>{label}</div>
+      <div className="text-xs" style={{color:'var(--color-text-muted)', marginBottom:8}}>{label}</div>
       <div style={boxStyle}>
         {url ? (
           <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
@@ -534,7 +534,7 @@ function Thumb({ label, url }) {
 
 function StatusBadge({ status }) {
   const map = {
-    incomplete: { text: 'Incompleto', bg:'#E5E7EB', fg:'var(--cg-text)' },
+    incomplete: { text: 'Incompleto', bg:'#E5E7EB', fg:'var(--color-text)' },
     pending:    { text: 'En revisiÃ³n', bg:'#FEF3C7', fg:'#92400E' },
     verified:   { text: 'Verificado', bg:'#BBF7D0', fg:'#065F46' },
     rejected:   { text: 'Rechazado',  bg:'#FECACA', fg:'#7F1D1D' },
@@ -567,7 +567,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
   const handleDragOver = (e) => e.preventDefault();
 
   // Alto fijo chico para que NO se vean gigantes (aplica siempre)
-  const previewBoxStyle = { height: 160, background:'var(--cg-bg)', border:'1px solid #E5E7EB', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' };
+  const previewBoxStyle = { height: 160, background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' };
   const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
 
   return (
@@ -575,7 +575,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
       <div className="flex items-center justify-between mb-2">
         <div>
           <div className="text-sm font-medium">{label}</div>
-          {hint && <div className="text-xs" style={{color:'var(--cg-text-muted)'}}>{hint}</div>}
+          {hint && <div className="text-xs" style={{color:'var(--color-text-muted)'}}>{hint}</div>}
         </div>
         {url && <a className="text-xs underline" href={url} target="_blank" rel="noreferrer">Ver</a>}
       </div>
@@ -613,7 +613,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
           Subir foto
         </button>
         {typeof progress === 'number' && (
-          <span className="text-xs" style={{color:'var(--cg-text-muted)'}}>{progress}%</span>
+          <span className="text-xs" style={{color:'var(--color-text-muted)'}}>{progress}%</span>
         )}
       </div>
     </div>

@@ -134,7 +134,7 @@ function ReservaItem({
                   border: "none",
                   padding: 0,
                   margin: 0,
-                  color: "var(--cg-primary-700)",
+                  color: "var(--color-primary-700)",
                   textDecoration: "underline",
                   fontWeight: 500,
                   fontSize: "1.05rem",
@@ -167,7 +167,7 @@ function ReservaItem({
               : ""}
           </div>
           {/* Mostrar quiÃ©n reservÃ³ */}
-          <div style={{ fontSize: "0.89rem", color: "var(--cg-primary-700)", marginTop: 2 }}>
+          <div style={{ fontSize: "0.89rem", color: "var(--color-primary-700)", marginTop: 2 }}>
             <span style={{ fontWeight: 400 }}>
               Reservado por: {quienReservo}
             </span>

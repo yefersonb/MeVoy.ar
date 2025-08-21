@@ -6,7 +6,7 @@
 
 :root {
   --radius: 0.75rem;
-  --shadow: var(--cg-shadow-sm);
+  --shadow: var(--color-shadow-sm);
   --transition: 0.2s ease;
   --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }

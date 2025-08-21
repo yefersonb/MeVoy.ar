@@ -76,7 +76,7 @@
 
 .gsi-material-button:disabled {
   cursor: default;
-  background-color: color-mix(in srgb, var(--cg-surface) 38%, transparent);
+  background-color: color-mix(in srgb, var(--color-surface) 38%, transparent);
 }
 
 .gsi-material-button:disabled .gsi-material-button-state {

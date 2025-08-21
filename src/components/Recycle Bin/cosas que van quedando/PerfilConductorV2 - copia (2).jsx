@@ -11,7 +11,7 @@ const TabButton = ({ active, children, onClick }) => (
     onClick={onClick}
     style={{
       cursor: 'pointer',
-      color: active ? 'var(--cg-primary-700)' : '#444',
+      color: active ? 'var(--color-primary-700)' : '#444',
       fontWeight: 500,
       fontSize: '1.05rem',
       position: 'relative',
@@ -20,8 +20,8 @@ const TabButton = ({ active, children, onClick }) => (
       transition: 'color 0.2s ease',
       display: 'inline-block',
     }}
-    onMouseEnter={e => e.currentTarget.style.color = 'var(--cg-primary-700)'}
-    onMouseLeave={e => e.currentTarget.style.color = active ? 'var(--cg-primary-700)' : '#444'}
+    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary-700)'}
+    onMouseLeave={e => e.currentTarget.style.color = active ? 'var(--color-primary-700)' : '#444'}
   >
     {children}
     <span
@@ -31,7 +31,7 @@ const TabButton = ({ active, children, onClick }) => (
         right: 0,
         bottom: 0,
         height: 2,
-        background: 'var(--cg-primary-700)',
+        background: 'var(--color-primary-700)',
         transform: active ? 'scaleX(1)' : 'scaleX(0)',
         transformOrigin: 'left',
         transition: 'transform 0.3s'
@@ -213,8 +213,8 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                     padding: '8px 18px',
                     fontWeight: 500,
                     fontSize: '1rem',
-                    color: 'var(--cg-surface)',
-                    background: 'var(--cg-primary-700)',
+                    color: 'var(--color-surface)',
+                    background: 'var(--color-primary-700)',
                     border: 'none',
                     borderRadius: 6,
                     boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
@@ -232,7 +232,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                       padding: '8px 18px',
                       fontWeight: 500,
                       fontSize: '1rem',
-                      color: 'var(--cg-surface)',
+                      color: 'var(--color-surface)',
                       background: '#059669',
                       border: 'none',
                       borderRadius: 6,
@@ -249,7 +249,7 @@ export default function PerfilConductorV2({ viajes, reservas }) {
                       padding: '8px 18px',
                       fontWeight: 500,
                       fontSize: '1rem',
-                      color: 'var(--cg-surface)',
+                      color: 'var(--color-surface)',
                       background: '#64748b',
                       border: 'none',
                       borderRadius: 6,

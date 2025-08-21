@@ -10,14 +10,14 @@ const itemStyle = {
   padding: "10px 12px",
   borderRadius: 12,
   textDecoration: "none",
-  color: "var(--cg-text)",
+  color: "var(--color-text)",
   background: "transparent",
   border: "none",
   cursor: "pointer",
   textAlign: "left",
 };
 
-const dividerStyle = { height: 1, background: "var(--cg-border)", margin: "6px 4px" };
+const dividerStyle = { height: 1, background: "var(--color-border)", margin: "6px 4px" };
 
 export default function UserMenuPortal({
   open,
@@ -90,8 +90,8 @@ export default function UserMenuPortal({
         minWidth: 260,
         maxWidth: 280,
         padding: 8,
-        background: "var(--cg-surface)",
-        border: "1px solid var(--cg-border)",
+        background: "var(--color-surface)",
+        border: "1px solid var(--color-border)",
         borderRadius: 16,
         boxShadow: "0 10px 25px rgba(0,0,0,.08)",
       }}
@@ -105,10 +105,10 @@ export default function UserMenuPortal({
           right: 18,
           width: 12,
           height: 12,
-          background: "var(--cg-surface)",
+          background: "var(--color-surface)",
           transform: "rotate(45deg)",
-          borderLeft: "1px solid var(--cg-border)",
-          borderTop: "1px solid var(--cg-border)",
+          borderLeft: "1px solid var(--color-border)",
+          borderTop: "1px solid var(--color-border)",
         }}
       />
 
@@ -135,7 +135,7 @@ export default function UserMenuPortal({
         type="button"
         role="menuitem"
         onClick={onLogout}
-        style={{ ...itemStyle, color: "var(--cg-danger)" }}
+        style={{ ...itemStyle, color: "var(--color-danger)" }}
       >
         Cerrar sesiÃ³n
       </button>

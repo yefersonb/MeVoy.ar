@@ -96,8 +96,8 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
                 gap: "0.1rem",
                 padding: "0.1rem",
                 borderRadius: 999,
-                border: "1px solid var(--cg-border)",
-                background: "var(--cg-surface)",
+                border: "1px solid var(--color-border)",
+                background: "var(--color-surface)",
                 cursor: "pointer",
                 height: "100%",
               }}

@@ -13,16 +13,16 @@ import {
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const colors = {
-  primary: 'var(--cg-primary-700)',
+  primary: 'var(--color-primary-700)',
   secondary: '#f8fafc',
-  accent: 'var(--cg-surface)',
+  accent: 'var(--color-surface)',
   border: '#e2e8f0',
   text: '#1e293b',
   label: '#64748b',
   error: '#c0392b',
 };
 const radius = 8;
-const shadow = 'var(--cg-shadow-sm)';
+const shadow = 'var(--color-shadow-sm)';
 
 const shared = {
   input: {
@@ -79,13 +79,13 @@ const ActionButton = ({ children, variant = 'neutral', disabled = false, onClick
   const variants = {
     primary: {
       background: colors.primary,
-      color: 'var(--cg-surface)',
+      color: 'var(--color-surface)',
       border: `1px solid ${colors.primary}`,
     },
     neutral: {
       background: '#f1f5f9',
-      color: 'var(--cg-primary-700)',
-      border: '1px solid var(--cg-primary-700)',
+      color: 'var(--color-primary-700)',
+      border: '1px solid var(--color-primary-700)',
     },
     destructive: {
       background: '#ffe3e3',
@@ -94,7 +94,7 @@ const ActionButton = ({ children, variant = 'neutral', disabled = false, onClick
     },
     success: {
       background: '#22c55e',
-      color: 'var(--cg-surface)',
+      color: 'var(--color-surface)',
       border: '1px solid #22c55e',
     },
   };
@@ -147,7 +147,7 @@ const SubTab = ({ active, label, onClick, count }) => (
       padding: '8px 16px',
       border: 'none',
       background: active ? colors.primary : '#f1f5f9',
-      color: active ? 'var(--cg-surface)' : '#334155',
+      color: active ? 'var(--color-surface)' : '#334155',
       borderRadius: 6,
       cursor: 'pointer',
       fontWeight: 600,

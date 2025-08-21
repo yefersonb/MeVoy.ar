@@ -49,7 +49,7 @@ const TabNavigation = ({
           onClick={onCreateTrip}
           style={{
             background: "var(--color-primary)",
-            color: "var(--cg-surface)",
+            color: "var(--color-surface)",
             padding: "0.5rem 1rem",
             borderRadius: 8,
             fontWeight: 600,

@@ -16,7 +16,7 @@ const TabButton = ({ active, children, onClick }) => (
     onClick={onClick}
     style={{
       cursor: "pointer",
-      color: active ? "var(--cg-primary-700)" : "#444",
+      color: active ? "var(--color-primary-700)" : "#444",
       fontWeight: 500,
       fontSize: "1.05rem",
       position: "relative",
@@ -25,9 +25,9 @@ const TabButton = ({ active, children, onClick }) => (
       transition: "color 0.2s ease",
       display: "inline-block",
     }}
-    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cg-primary-700)")}
+    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-700)")}
     onMouseLeave={(e) =>
-      (e.currentTarget.style.color = active ? "var(--cg-primary-700)" : "#444")
+      (e.currentTarget.style.color = active ? "var(--color-primary-700)" : "#444")
     }
   >
     {children}
@@ -38,7 +38,7 @@ const TabButton = ({ active, children, onClick }) => (
         right: 0,
         bottom: 0,
         height: 2,
-        background: "var(--cg-primary-700)",
+        background: "var(--color-primary-700)",
         transform: active ? "scaleX(1)" : "scaleX(0)",
         transformOrigin: "left",
         transition: "transform 0.3s",
@@ -227,7 +227,7 @@ export default function PerfilConductorV2Enhanced({ viajes, reservas }) {
                       position: "absolute",
                       bottom: -6,
                       right: -6,
-                      background: "var(--cg-surface)",
+                      background: "var(--color-surface)",
                       borderRadius: "50%",
                       padding: 4,
                       cursor: "pointer",

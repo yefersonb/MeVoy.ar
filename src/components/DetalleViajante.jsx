@@ -303,11 +303,11 @@ export default function DetalleViajante({
             {perfil.fotoPerfil && (
               <div style={{ 
                 padding: '8px', 
-                backgroundColor: 'var(--cg-bg)', 
+                backgroundColor: 'var(--color-bg)', 
                 borderRadius: '4px', 
                 marginTop: '12px',
                 fontSize: '12px',
-                color: 'var(--cg-text-muted)'
+                color: 'var(--color-text-muted)'
               }}>
                 <strong>Debug URL:</strong> {perfil.fotoPerfil.substring(0, 60)}...
                 <br />
@@ -327,7 +327,7 @@ export default function DetalleViajante({
                 padding: "12px 20px",
                 borderRadius: 8,
                 border: "2px solid #ef4444",
-                background: "var(--cg-surface)",
+                background: "var(--color-surface)",
                 color: "#ef4444",
                 cursor: accionando ? 'not-allowed' : "pointer",
                 fontSize: '14px',
@@ -338,12 +338,12 @@ export default function DetalleViajante({
               onMouseOver={(e) => {
                 if (!accionando) {
                   e.target.style.backgroundColor = '#ef4444';
-                  e.target.style.color = 'var(--cg-surface)';
+                  e.target.style.color = 'var(--color-surface)';
                 }
               }}
               onMouseOut={(e) => {
                 if (!accionando) {
-                  e.target.style.backgroundColor = 'var(--cg-surface)';
+                  e.target.style.backgroundColor = 'var(--color-surface)';
                   e.target.style.color = '#ef4444';
                 }
               }}
@@ -358,7 +358,7 @@ export default function DetalleViajante({
                 borderRadius: 8,
                 border: "none",
                 background: "#10b981",
-                color: "var(--cg-surface)",
+                color: "var(--color-surface)",
                 cursor: accionando ? 'not-allowed' : "pointer",
                 fontSize: '14px',
                 fontWeight: '500',

@@ -18,7 +18,7 @@ const TabButton = ({ active, children, onClick }) => (
     onClick={onClick}
     style={{
       cursor: "pointer",
-      color: active ? "var(--cg-primary-700)" : "#444",
+      color: active ? "var(--color-primary-700)" : "#444",
       fontWeight: 500,
       fontSize: "1.05rem",
       position: "relative",
@@ -27,9 +27,9 @@ const TabButton = ({ active, children, onClick }) => (
       transition: "color 0.2s ease",
       display: "inline-block",
     }}
-    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cg-primary-700)")}
+    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-700)")}
     onMouseLeave={(e) =>
-      (e.currentTarget.style.color = active ? "var(--cg-primary-700)" : "#444")
+      (e.currentTarget.style.color = active ? "var(--color-primary-700)" : "#444")
     }
   >
     {children}
@@ -40,7 +40,7 @@ const TabButton = ({ active, children, onClick }) => (
         right: 0,
         bottom: 0,
         height: 2,
-        background: "var(--cg-primary-700)",
+        background: "var(--color-primary-700)",
         transform: active ? "scaleX(1)" : "scaleX(0)",
         transformOrigin: "left",
         transition: "transform 0.3s",
@@ -324,7 +324,7 @@ export default function PerfilViajeroPage() {
                       position: "absolute",
                       bottom: -6,
                       right: -6,
-                      background: "var(--cg-surface)",
+                      background: "var(--color-surface)",
                       borderRadius: "50%",
                       padding: 6,
                       cursor: "pointer",
@@ -458,7 +458,7 @@ export default function PerfilViajeroPage() {
                   border: `1px solid #e2e8f0`,
                   borderRadius: 10,
                   padding: 16,
-                  background: "var(--cg-surface)",
+                  background: "var(--color-surface)",
                   boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
                   marginBottom: 12,
                 }}
@@ -505,7 +505,7 @@ export default function PerfilViajeroPage() {
                 borderRadius: 8,
                 padding: 16,
                 marginBottom: 16,
-                background: "var(--cg-surface)",
+                background: "var(--color-surface)",
               }}
             >
               {metodosPago.length === 0 ? (
@@ -536,11 +536,11 @@ export default function PerfilViajeroPage() {
                           style={{
                             padding: "6px 14px",
                             background: "#f1f5f9",
-                            border: "1px solid var(--cg-primary-700)",
+                            border: "1px solid var(--color-primary-700)",
                             borderRadius: 6,
                             cursor: "pointer",
                             fontSize: 12,
-                            color: "var(--cg-primary-700)",
+                            color: "var(--color-primary-700)",
                             fontWeight: 600,
                           }}
                         >
@@ -555,8 +555,8 @@ export default function PerfilViajeroPage() {
                 style={{
                   marginTop: 6,
                   padding: "10px 16px",
-                  background: "var(--cg-primary-700)",
-                  color: "var(--cg-surface)",
+                  background: "var(--color-primary-700)",
+                  color: "var(--color-surface)",
                   border: "none",
                   borderRadius: 6,
                   cursor: "pointer",
@@ -593,7 +593,7 @@ export default function PerfilViajeroPage() {
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      background: "var(--cg-surface)",
+                      background: "var(--color-surface)",
                     }}
                   >
                     <div>
@@ -607,8 +607,8 @@ export default function PerfilViajeroPage() {
                     <button
                       style={{
                         padding: "8px 14px",
-                        background: "var(--cg-primary-700)",
-                        color: "var(--cg-surface)",
+                        background: "var(--color-primary-700)",
+                        color: "var(--color-surface)",
                         border: "none",
                         borderRadius: 6,
                         cursor: "pointer",

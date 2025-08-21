@@ -1,4 +1,4 @@
-/* ToDo: Renombrar este archivo PRONTO */
+/* ToDo: Renombrar este archivo PRONTO — Eso incluye reparar todas las referencias que dependan de éste */
 
 // src/components/PerfilConductorV2Enhanced.jsx
 import React, { useState, useEffect } from "react";
@@ -22,6 +22,7 @@ import useHashSection from "../hooks/useHashSection";
 // 👇 NUEVO
 import EnviosDelViaje from "./EnviosDelViaje";
 import EnviosDisponibles from "./EnviosDisponibles";
+import IDCard from "./idcard/IDCard";
 
 // 👇 NUEVO: agregamos "Envíos"
 //const menuItems = ["Perfil", "Verificación", "Vehículos", "Reservas", "Envíos", "Nuevo Viaje"];
@@ -155,37 +156,29 @@ export default function PerfilConductorV2Enhanced({
           />
         );
 
+      /* Todo: Mover esto a una página componente */
       case "Verificación":
         return (
-          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
-            <div className="bg-gradient-to-r from-violet-600 to-violet-700 px-6 py-4">
-              <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-sm">🪪</span>
-                Verificación de identidad
-              </h1>
-              <p className="text-violet-100 mt-1">Cargá tu DNI y licencia paso a paso.</p>
-            </div>
-            <div className="p-6">
-              <VerificacionConductorWizard onExit={() => handleTabChange("Perfil")} />
-            </div>
-          </section>
+          <div>
+            <VerificacionConductorWizard onExit={() => handleTabChange("Perfil")} />
+          </div>
         );
 
 
  
      case "Vehículos":
         return (
-          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
-              <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                <span className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-sm">
+          <section >
+            <div >
+              <h1 >
+                <span >
                   🚗
                 </span>
                 Mis Vehículos
               </h1>
-              <p className="text-blue-100 mt-1">Gestiona tus vehículos registrados</p>
+              <p >Gestiona tus vehículos registrados</p>
             </div>
-            <div className="p-6">
+            <div >
               <VehiculosConductor viajes={viajesProp} reservas={reservasProp} />
             </div>
           </section>
@@ -206,48 +199,48 @@ export default function PerfilConductorV2Enhanced({
       // 👇 Envíos para el CONDUCTOR
       case "Envíos":
         return (
-          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
-            <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4">
-              <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                <span className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-sm">
+          <section >
+            <div >
+              <h1 >
+                <span >
                   📦
                 </span>
                 Envíos de Paquetes
               </h1>
-              <p className="text-indigo-100 mt-1">
+              <p >
                 Aceptá solicitudes, iniciá retiros y confirmá entregas con PIN.
               </p>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div >
               {/* Bloque 1: Envíos disponibles para aceptar */}
-              <div className="p-4 rounded border bg-white">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-semibold">Envíos disponibles</h3>
-                  <span className="text-xs text-gray-500">Conductor</span>
+              <div >
+                <div >
+                  <h3 >Envíos disponibles</h3>
+                  <span >Conductor</span>
                 </div>
-                <p className="text-sm text-gray-600 mt-1">
+                <p >
                   Mirá los envíos públicos y aceptá los que te sirvan.
                 </p>
-                <div className="mt-3">
+                <div >
                   <EnviosDisponibles />
                 </div>
               </div>
 
               {/* Bloque 2: Envíos vinculados a tus viajes */}
-              <div className="p-4 rounded border bg-white">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-semibold">Vinculados a tus viajes</h3>
+              <div >
+                <div >
+                  <h3 >Vinculados a tus viajes</h3>
                   <button
                     type="button"
                     onClick={loadViajesYReservas}
-                    className="text-xs text-indigo-600 hover:underline"
+                    
                   >
                     Refrescar
                   </button>
                 </div>
 
-                <div className="mt-3">
+                <div >
                   <EnviosDelViaje
                     conductorId={usuario?.uid}
                     viajesPublicados={viajesPublicados}
@@ -261,13 +254,13 @@ export default function PerfilConductorV2Enhanced({
 
       case "Nuevo Viaje":
         return (
-          <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden section-card">
-            <div className="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
-              <p className="text-green-100 mt-1 font-bold">
+          <section >
+            <div >
+              <p >
                 <strong>Publica tu próximo viaje y encuentra pasajeros</strong>
               </p>
             </div>
-            <div className="p-6">
+            <div >
               <NuevoViaje />
             </div>
           </section>

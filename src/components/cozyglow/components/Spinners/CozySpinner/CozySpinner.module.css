@@ -12,7 +12,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
+  height: 20rem;
+  max-height: 100%;
 }
 
 @keyframes bounce {

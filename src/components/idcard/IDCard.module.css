@@ -1,0 +1,11 @@
+/* Colores "hardcodeados" en x.modules.css no deben usar variables — CSS Team */
+.card-container{
+    width: 100%;
+    aspect-ratio: 1.7 / 1;
+    background-color: #eee;
+    border-radius: 15px;
+    box-shadow: 0 4px 4px #0001;
+    font-size: 100%;
+    display: flex;
+    position: relative;
+}

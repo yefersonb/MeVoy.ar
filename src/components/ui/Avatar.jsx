@@ -2,10 +2,10 @@
 import { useUser } from "../../contexts/UserContext";
 import { AlignJustify } from "react-feather";
 
-export default function Avatar({ size = "100%", editable = false }) {
+export default function Avatar({editable = false }) {
   const { avatarUrl, loading, uploading, setPreview } = useUser();
 
-  if (loading) return <div style={{ width: size, height: size, borderRadius: "50%", background: "var(--color-border)" }} />;
+  if (loading) return <div style={{  maxWidth: "100%", maxHeight: "100%", height: "100%", width: "100%", aspectRatio: "1 / 1", borderRadius: "50%", backgroundColor: "#0001" }} />;
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -16,32 +16,12 @@ export default function Avatar({ size = "100%", editable = false }) {
     reader.readAsDataURL(file);
   };
 
+  if (avatarUrl) {
+    return (<img src={avatarUrl} style={{ maxWidth: "100%", maxHeight: "100%", height: "100%", width: "100%", aspectRatio: "1 / 1", borderRadius: "50%", objectFit: "cover", objectPosition: "center", backgroundColor: "#0001"}}/>)
+  }
+
   return (
-    <div style={{
-      width: size,
-      height: size,
-      borderRadius: "50%",
-      overflow: "hidden",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center"
-    }}>
-      {avatarUrl ? (
-        <img
-          src={avatarUrl}
-          alt="Foto de perfil"
-          style={{
-            width: "100%",
-            height: "100%",
-            aspectRatio: "1 / 1",
-            objectFit: "cover", // Keeps the image ratio but crops it
-            objectPosition: "center", // Ensures the image is centered if it gets cropped
-          }}
-        />
-      ) : (
-        <div style={{ width: "100%", height: "100%", background: "var(--color-border)" }}></div>
-      )}
-    </div>
+    <div style={{  maxWidth: "100%", maxHeight: "100%", height: "100%", width: "100%", aspectRatio: "1 / 1", backgroundColor: "#0001" }}></div>    
   );
 }
 

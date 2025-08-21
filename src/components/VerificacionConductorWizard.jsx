@@ -32,6 +32,8 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
+import ProgressBar from './ui/ProgressBar/Basic/Basic';
+import CozySpinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
 
 export default function VerificacionConductorWizard({ onExit }) {
   // Unificados con reglas
@@ -248,7 +250,7 @@ export default function VerificacionConductorWizard({ onExit }) {
     return false;
   };
 
-  if (loading) return <Splash text="Cargando verificación..." />;
+  if (loading) return <CozySpinner text="Cargando verificación..." />;
   if (!uid) return (
     <EmptyCard title="Iniciá sesión">
       <p>Tenés que iniciar sesión para verificar tu identidad.</p>
@@ -256,28 +258,17 @@ export default function VerificacionConductorWizard({ onExit }) {
   );
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <header className="mb-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Verificación de identidad (Conductor)</h1>
-          <p className="text-sm" style={{color:'var(--color-text-muted)'}}>Estado: <StatusBadge status={status} /></p>
-        </div>
-        {onExit && (
-          <button className="px-3 py-2 rounded-xl border" onClick={onExit}>Salir</button>
-        )}
-      </header>
-
-      <Progress value={progress} />
-
-      <Stepper steps={steps} current={step} isDone={pasoCompletado} />
+    <div>
+      <StatusTag status={status} />
+      <Stepper steps={steps} current={step} isDone={pasoCompletado} progress={progress} />
 
       {error && (
-        <div className="mt-3 p-3" style={{ background:'#FEF2F2', border:'1px solid #FEE2E2', borderRadius:12, color:'#991B1B' }}>
+        <div style={{ background:'#FEF2F2', border:'1px solid #FEE2E2', borderRadius:12, color:'#991B1B' }}>
           <span style={{fontSize:12}}>{error}</span>
         </div>
       )}
 
-      <div className="mt-4">
+      <div>
         {step === 0 && (
           <PasoDatos datos={datos} setDatos={setDatos} />
         )}
@@ -309,21 +300,25 @@ export default function VerificacionConductorWizard({ onExit }) {
         )}
       </div>
 
-      <div className="mt-6 flex items-center justify-between">
-        <button className="px-3 py-2 rounded-xl border" onClick={goBack} disabled={step===0}>Atrás</button>
-        <div className="flex items-center gap-2">
-          <button className="px-3 py-2 rounded-xl border" onClick={completarPasoActual} disabled={saving}>{saving? 'Guardando...' : 'Guardar'}</button>
+      <div >
+        <button  onClick={goBack} disabled={step===0}>Atrás</button>
+        <div >
+          <button  onClick={completarPasoActual} disabled={saving}>{saving? 'Guardando...' : 'Guardar'}</button>
           {step < totalSteps - 1 ? (
-            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--color-surface)'}} onClick={goNext}>Siguiente</button>
+            <button  style={{background:'#000', color:'var(--color-surface)'}} onClick={goNext}>Siguiente</button>
           ) : (
-            <button className="px-4 py-2 rounded-xl" style={{background:'#000', color:'var(--color-surface)'}} onClick={onSubmit} disabled={status==='pending'}>
+            <button  style={{background:'#000', color:'var(--color-surface)'}} onClick={onSubmit} disabled={status==='pending'}>
               {status==='pending' ? 'En revisión' : 'Enviar a revisión'}
             </button>
           )}
         </div>
       </div>
+          
+        {onExit && (
+          <button onClick={onExit}>Volver</button>
+        )}
+      <p  style={{color:'var(--color-text-muted)', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verá el equipo de verificación.</p>
 
-      <p className="text-xs" style={{color:'var(--color-text-muted)', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verá el equipo de verificación.</p>
     </div>
   );
 }
@@ -331,17 +326,17 @@ export default function VerificacionConductorWizard({ onExit }) {
 // ----------------- Subcomponentes -----------------
 function Splash({ text }) {
   return (
-    <div style={{height:256}} className="flex items-center justify-center">
-      <div className="text-sm" style={{color:'#4b5563'}}>{text || 'Cargando...'}</div>
+    <div style={{height:256}} >
+      <div  style={{color:'#4b5563'}}>{text || 'Cargando...'}</div>
     </div>
   );
 }
 
 function EmptyCard({ title, children }) {
   return (
-    <div className="max-w-lg mx-auto p-6 border rounded-2xl">
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <div className="text-sm" style={{color:'#374151'}}>{children}</div>
+    <div >
+      <h3 >{title}</h3>
+      <div  style={{color:'#374151'}}>{children}</div>
     </div>
   );
 }
@@ -355,6 +350,9 @@ function Progress({
 }) {
   const pct = Math.min(100, Math.max(0, Math.round(value)));
   const textColor = pct >= 50 ? 'var(--color-surface)' : '#111827'; // blanco si hay bastante relleno
+  return (
+    <ProgressBar color="var(--color-primary)"/>
+  );
 
   return (
     <div
@@ -370,7 +368,7 @@ function Progress({
         borderRadius: 9999,
         overflow: 'hidden'
       }}
-    >
+      >
       <div
         style={{
           position: 'absolute',
@@ -403,44 +401,64 @@ function Progress({
   );
 }
 
+function ChecklistItem({done = false, active = false, label = ""}){
+  return(
+    <div style={{padding: "0.2rem", display: "flex", justifyContent: "flex-start", alignItems: "center", fontWeight: 600, transition: "0.5s", opacity: `${active ? 1 : 0.3}`}}>
+      <div style={{position: "relative", width: 24, height: 24}}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={"#000"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+          style={{transition: "transform .6s ease, opacity .6s ease", transformOrigin: "center", position: 'absolute',
+              transform: `${(active && (!done)) ? "rotateX(0deg)" : "rotateX(-180deg)"}`,
+              opacity: `${(active && (!done)) ? "1" : "0"}`
+            }}
+          >
+          <path d="M15 17l5-5-5-5 5 5 -12 0" />
+        </svg>
 
-function Stepper({ steps, current, isDone }) {
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={"#094"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+          style={{transition: "transform .3s ease, opacity .15s ease", transformOrigin: "center", position: 'absolute',
+              transform: `${done ? "translateY(0px)" : "translateY(100%)"}`,
+              opacity: `${done ? "1" : "0"}`
+            }}
+          >
+          <path d="M7 9.5l5 5 10-10" />
+        </svg>
+      </div>
+      
+      <div style={{padding: "0.2rem 1rem"}}> {label} </div>
+    </div>
+  );
+}
+
+function Stepper({ steps, current, isDone, progress = 0 }) {
   return (
-    <ol className="mt-3 flex items-center gap-2 text-sm flex-wrap">
-      {steps.map((s, i) => {
-        const done = isDone(i);
-        const active = i === current;
-        const base = { display:'inline-flex', alignItems:'center', justifyContent:'center', width:24, height:24, borderRadius:'9999px', border:'1px solid #D1D5DB' };
-        const style = done
-          ? { ...base, background:'#16A34A', color:'var(--color-surface)', borderColor:'#16A34A' }
-          : active
-          ? { ...base, background:'#000', color:'var(--color-surface)', borderColor:'#000' }
-          : base;
-        return (
-          <li key={s.key} className="flex items-center gap-2">
-            <span style={style}>{done ? 'âœ“' : i+1}</span>
-            <span style={{fontWeight: active ? 600 : 400, color: active ? '#111827' : 'var(--color-text-muted)'}}>{s.label}</span>
-            {i < steps.length - 1 && <span className="mx-1" style={{color:'#D1D5DB'}}>â€º</span>}
-          </li>
-        );
-      })}
-    </ol>
+    <div style={{marginTop: "2rem"}}>
+      {
+        steps.map(
+          (s, i) => {
+            const done = isDone(i);
+            const active = i === current;
+            const base = { display:'inline-flex', alignItems:'center', justifyContent:'center', width:24, height:24, borderRadius:'9999px', border:'1px solid #D1D5DB' };
+            return (<ChecklistItem key={s.key} active={active} done={done} label={s.label}/>);
+          }
+        )
+      }
+    </div>
   );
 }
 
 function PasoDatos({ datos, setDatos }) {
   return (
-    <div className="space-y-4">
+    <div style={{marginTop: "1rem"}}>
       <div>
-        <label className="block text-sm font-medium">Nombre completo</label>
-        <input className="mt-1 w-full border rounded-xl px-3 py-2" value={datos.nombreCompleto}
+        <label >Nombre completo</label>
+        <input  value={datos.nombreCompleto}
                onChange={(e)=>setDatos(v=>({...v, nombreCompleto:e.target.value}))} placeholder="Tal como figura en tu DNI" />
       </div>
       <div>
-        <label className="block text-sm font-medium">Número de DNI</label>
-        <input className="mt-1 w-full border rounded-xl px-3 py-2" value={datos.dniNumero}
+        <label >Número de DNI</label>
+        <input  value={datos.dniNumero}
                onChange={(e)=>setDatos(v=>({...v, dniNumero:e.target.value.replace(/\D/g,'')}))} inputMode="numeric" placeholder="Ej. 30123456" />
-        <p className="text-xs" style={{color:'var(--color-text-muted)', marginTop:4}}>Usamos estos datos solo para verificar tu identidad.</p>
+        <p  style={{color:'var(--color-text-muted)', marginTop:4}}>Usamos estos datos solo para verificar tu identidad.</p>
       </div>
     </div>
   );
@@ -448,7 +466,7 @@ function PasoDatos({ datos, setDatos }) {
 
 function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile }) {
   return (
-    <div className="grid md:grid-cols-2 gap-4">
+    <div >
       <DocTile
         label={`${title} - Frente`}
         url={urls[frenteKey]}
@@ -467,11 +485,11 @@ function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile })
 
 function PasoSelfie({ url, uploading, onFile }) {
   return (
-    <div className="grid md:grid-cols-2 gap-4">
+    <div >
       <DocTile label="Selfie de verificación" url={url} progress={uploading} onSelect={onFile} hint="Tomá una selfie sosteniendo tu DNI (opcional, acelera la verificación)." />
-      <div className="p-4 border rounded-2xl">
-        <h4 className="font-medium">Consejos</h4>
-        <ul className="list-disc ml-5 text-sm" style={{color:'#374151', marginTop:8}}>
+      <div >
+        <h4 >Consejos</h4>
+        <ul  style={{color:'#374151', marginTop:8}}>
           <li>Buena luz, sin reflejos.</li>
           <li>Foto nítida y completa, que se lean los datos.</li>
           <li>Formatos admitidos: JPG, PNG, WebP, HEIC. Máx 8MB.</li>
@@ -483,20 +501,20 @@ function PasoSelfie({ url, uploading, onFile }) {
 
 function PasoResumen({ datos, urls, status }) {
   return (
-    <div className="space-y-4">
-      <div className="grid md:grid-cols-2 gap-4">
+    <div >
+      <div >
         <KeyVal k="Nombre" v={datos.nombreCompleto || 'â€”'} />
         <KeyVal k="DNI" v={datos.dniNumero || 'â€”'} />
       </div>
-      <div className="grid md:grid-cols-3 gap-4">
+      <div >
         <Thumb label="DNI Frente" url={urls.dniFrente} />
         <Thumb label="DNI Dorso" url={urls.dniDorso} />
         <Thumb label="Licencia Frente" url={urls.licFrente} />
         <Thumb label="Licencia Dorso" url={urls.licDorso} />
         <Thumb label="Selfie" url={urls.selfie} />
       </div>
-      <div className="p-3" style={{ background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, color:'#4B5563', fontSize:14 }}>
-        Estado actual: <StatusBadge status={status} /> â€” Al enviar, quedará <strong>En revisión</strong> por un admin.
+      <div  style={{ background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, color:'#4B5563', fontSize:14 }}>
+        Estado actual: <StatusTag status={status} /> â€” Al enviar, quedará <strong>En revisión</strong> por un admin.
       </div>
     </div>
   );
@@ -504,9 +522,9 @@ function PasoResumen({ datos, urls, status }) {
 
 function KeyVal({ k, v }) {
   return (
-    <div className="border rounded-2xl p-3">
-      <div className="text-xs" style={{textTransform:'uppercase', color:'var(--color-text-muted)'}}>{k}</div>
-      <div className="text-sm">{v}</div>
+    <div >
+      <div  style={{textTransform:'uppercase', color:'var(--color-text-muted)'}}>{k}</div>
+      <div >{v}</div>
     </div>
   );
 }
@@ -517,8 +535,8 @@ function Thumb({ label, url }) {
   const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
 
   return (
-    <div className="border rounded-2xl p-3">
-      <div className="text-xs" style={{color:'var(--color-text-muted)', marginBottom:8}}>{label}</div>
+    <div >
+      <div  style={{color:'var(--color-text-muted)', marginBottom:8}}>{label}</div>
       <div style={boxStyle}>
         {url ? (
           <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
@@ -532,7 +550,8 @@ function Thumb({ label, url }) {
   );
 }
 
-function StatusBadge({ status }) {
+/* ToDo: Esta es una idea para las nuevas etiquetas de estado de perfil. Aplicar la lógica de renderizado: */
+function StatusTag({ status }) {
   const map = {
     incomplete: { text: 'Incompleto', bg:'#E5E7EB', fg:'var(--color-text)' },
     pending:    { text: 'En revisión', bg:'#FEF3C7', fg:'#92400E' },
@@ -541,9 +560,29 @@ function StatusBadge({ status }) {
   };
   const s = map[status] || map.incomplete;
   return (
-    <span style={{ padding:'2px 8px', borderRadius:999, fontSize:12, background:s.bg, color:s.fg }}>
-      {s.text}
-    </span>
+    <div>
+      <div style={{width: "100%", padding: "0.5rem 1rem", fontSize: "1.5rem", fontWeight: "600", display: "flex", justifyContent: "center", borderRadius: "5px", borderBottom: "5px solid var(--color-warning)"}}>
+        Seguí de completando tu documentación      
+      </div>
+
+      <div style={{width: "100%", padding: "0.5rem 1rem", fontWeight: "600", borderRadius: "5px", borderLeft: "5px solid #0003"}}>
+        Estamos validando tus datos...
+      </div>
+
+      <div style={{width: "100%", padding: "0.5rem 1rem", fontWeight: "600", borderRadius: "5px", borderLeft: "5px solid rgba(59, 253, 0, 0.59)"}}>
+        Verificado
+      </div>
+
+      <div style={{width: "100%", padding: "0.5rem 1rem", borderRadius: "5px", borderLeft: "5px solid rgba(253, 0, 0, 0.59)", backgroundColor: "rgba(253, 0, 0, 0.11)"}}>
+        <b>Rechazado</b> — No pudimos verificar tu identidad
+      </div>
+    </div>
+    /*
+      <span style={{ padding:'2px 8px', borderRadius:999, fontSize:12, background:s.bg, color:s.fg }}>
+        {s.text}
+      </span>
+    
+    */
   );
 }
 
@@ -571,13 +610,13 @@ function DocTile({ label, url, onSelect, progress, hint }) {
   const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
 
   return (
-    <div className="p-4 border rounded-2xl">
-      <div className="flex items-center justify-between mb-2">
+    <div >
+      <div >
         <div>
-          <div className="text-sm font-medium">{label}</div>
-          {hint && <div className="text-xs" style={{color:'var(--color-text-muted)'}}>{hint}</div>}
+          <div >{label}</div>
+          {hint && <div  style={{color:'var(--color-text-muted)'}}>{hint}</div>}
         </div>
-        {url && <a className="text-xs underline" href={url} target="_blank" rel="noreferrer">Ver</a>}
+        {url && <a  href={url} target="_blank" rel="noreferrer">Ver</a>}
       </div>
 
       <div
@@ -590,7 +629,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
             <img src={url} alt={label} style={imgStyle} />
           </a>
         ) : (
-          <span className="text-gray-400 text-sm" style={{color:'#9CA3AF'}}>Soltá una imagen acá o usá â€œSubir fotoâ€</span>
+          <span  style={{color:'#9CA3AF'}}>Soltá una imagen acá o usá <b>Subir foto</b></span>
         )}
       </div>
 
@@ -604,16 +643,16 @@ function DocTile({ label, url, onSelect, progress, hint }) {
         style={{ display:'none' }}
       />
 
-      <div className="mt-3 flex items-center gap-2">
+      <div >
         <button
           type="button"
-          className="px-3 py-2 border rounded-xl hover:bg-gray-50"
+          
           onClick={openPicker}
         >
           Subir foto
         </button>
         {typeof progress === 'number' && (
-          <span className="text-xs" style={{color:'var(--color-text-muted)'}}>{progress}%</span>
+          <span  style={{color:'var(--color-text-muted)'}}>{progress}%</span>
         )}
       </div>
     </div>

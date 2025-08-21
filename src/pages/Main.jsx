@@ -7,12 +7,6 @@ export default function PageMain({ rol }) {
 
   return (
     <div className="page-main">
-      {/* Podés tunear este bloque como “hero” de la home */}
-      <div style={{ marginBottom: "1rem" }}>
-        <h1 className="title">Encontrá tu próximo viaje</h1>
-        <p className="subtitle">Compartí gastos y viajá más barato.</p>
-      </div>
-
       <SearchBar />
     </div>
   );

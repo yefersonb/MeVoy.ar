@@ -115,7 +115,9 @@ export default function App() {
   if (loadingAuth) {
     return (
       <ThemeProvider>
-        <CozySpinner />
+        <div style={{height: "90vh", display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <CozySpinner />
+        </div>
       </ThemeProvider>
     );
   }
@@ -153,7 +155,19 @@ export default function App() {
       <Header rol={rol} onToggleRol={handleToggleRol} />
       <div className="app-container">
 
+        {/* Todo: Main se está renderizando por sobre todas las pestañas. Considerar usar Routers. PageMain sólo debe renderizarse cuando la URL es main.
+         Si no, entonces debería renderizar lo demás, por ejemplo:
+          PageMenu
+          PageDashboard (Viajante/Conductores)
+          L Settings
+            L PageProfile
+            L Verification 
+
+          App.js debería renderizar por páginas, tal vez usando routers, o un gran switch(){}, no lo sé
+         */}
         <PageMain rol={rol} />
+
+        {/* ToDo: Todo esto debería separarse en páginas que se renderizan en sus respectivos contextos, sin renderizar Main. */}
 
         {
           rol === "conductor" ? (<ConductorDashboard viajes={viajes} reservas={reservas} />)

@@ -109,10 +109,6 @@ export default function InputField({
         type={type}
         value={value}
         onChange={onChange}
-        style={{
-          ...baseStyle,
-          ...(isFocused ? focusStyle : {}),
-        }}
         readOnly={readOnly}
         disabled={disabled}
         aria-label={label}

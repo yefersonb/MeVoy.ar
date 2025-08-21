@@ -39,13 +39,13 @@ export default function EnvioConductorPage() {
     return () => unsub();
   }, [envioId]);
 
-  if (!envioId) return <div className="p-4">Falta parámetro <code>envioId</code>.</div>;
-  if (loading) return <div className="p-4">Cargando envío…</div>;
-  if (error) return <div className="p-4 text-red-600">{error}</div>;
+  if (!envioId) return <div>Falta parámetro <code>envioId</code>.</div>;
+  if (loading) return <div>Cargando envío…</div>;
+  if (error) return <div>{error}</div>;
   if (!envio) return null;
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div>
       <DetalleEnvioConductor
         envio={envio}
         onAfterAccept={(data) => console.log("Preference creada:", data)}

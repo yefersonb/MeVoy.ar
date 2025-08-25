@@ -1,3 +1,62 @@
-[1m[31mError:[39m[22m [1mfirestore:rules:get[22m is not a Firebase command
+// Firestore Security Rules (parche compatibilidad)
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-Did you mean [1mfirestore:delete[22m?
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // ====== BLOQUE ESTRICTO: verificaciones ======
+    function allowedUserFields() {
+      return [
+        'nombreCompleto','dniNumero',
+        'dniFrenteURL','dniDorsoURL',
+        'licenciaFrenteURL','licenciaDorsoURL',
+        'selfieURL','status','step',
+        'createdAt','updatedAt','submittedAt'
+      ];
+    }
+    function validStep(step) { return step is int && step >= 0 && step <= 4; }
+    function validUserStatus(status) { return status in ['incomplete','pending']; }
+    function validAnyStatus(status) { return status in ['incomplete','pending','verified','rejected']; }
+
+    match /verificaciones/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(allowedUserFields())
+        && (!('status' in request.resource.data) || validUserStatus(request.resource.data.status))
+        && (!('step' in request.resource.data) || validStep(request.resource.data.step));
+
+      allow update: if (
+        (isOwner(uid)
+          && request.resource.data.keys().hasOnly(allowedUserFields())
+          && (!('status' in request.resource.data) || validUserStatus(request.resource.data.status))
+          && (!('step' in request.resource.data) || validStep(request.resource.data.step))
+        ) ||
+        (isAdmin()
+          && request.resource.data.keys().hasOnly(allowedUserFields())
+          && (!('status' in request.resource.data) || validAnyStatus(request.resource.data.status))
+          && (!('step' in request.resource.data) || validStep(request.resource.data.step))
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ====== PARCHE COMPATIBILIDAD: resto de colecciones ======
+    // Permite VER todo (read) y ESCRIBIR sólo si está logueado.
+    // Así recuperás "ver perfil", viajes, etc., mientras pensamos reglas finas.
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+  }
+}

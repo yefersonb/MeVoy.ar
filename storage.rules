@@ -1,18 +1,31 @@
+// Firebase Storage Security Rules
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // Verificación (selfie, DNI, licencia) — solo dueño
-    match /verificaciones/{uid}/{rest=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    // Helpers
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Archivos de perfil — solo dueño
-    match /usuarios/{uid}/{rest=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
     }
 
-    // Todo lo demás: bloqueado
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // Archivos de verificación: /verificaciones/{uid}/...
+    match /verificaciones/{uid}/{allPaths=**} {
+      // Leer: dueño o admin
+      allow read: if isOwner(uid) || isAdmin();
+
+      // Escribir (subir/borrar): solo dueño en su carpeta, o admin
+      allow write: if isOwner(uid) || isAdmin();
+    }
+
+    // Todo lo demás: denegado
     match /{allPaths=**} {
       allow read, write: if false;
     }

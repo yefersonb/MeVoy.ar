@@ -288,22 +288,25 @@ const perfilPercent = (() => {
             
             {/* Información del usuario */}
             <table>
-              <tr>
-                <td style={{fontWeight: "600"}}>Viajes:</td>
-                <td style={{width: "1rem"}}></td>
-                <td>{"Nunca viajó"}</td>
-              </tr>
-              <tr>
-                <td style={{fontWeight: "600"}}>Último viaje:</td>
-                <td style={{width: "1rem"}}></td>
-                <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
-              </tr>
-              <tr>
-                <td style={{fontWeight: "600"}}>Tasa de respuesta: </td>
-                <td style={{width: "1rem"}}></td>
-                <td>{Math.round((perfil.tasaRespuesta) * 100) || "--"}%</td>
-              </tr>
-            </table>
+  <tbody>
+    <tr>
+      <td style={{fontWeight: "600"}}>Viajes:</td>
+      <td style={{width: "1rem"}}></td>
+      <td>{"Nunca viajó"}</td>
+    </tr>
+    <tr>
+      <td style={{fontWeight: "600"}}>Último viaje:</td>
+      <td style={{width: "1rem"}}></td>
+      <td>{perfil.ultimoViaje || 'No tiene viajes'}</td>
+    </tr>
+    <tr>
+      <td style={{fontWeight: "600"}}>Tasa de respuesta: </td>
+      <td style={{width: "1rem"}}></td>
+      <td>{Math.round((perfil.tasaRespuesta) * 100) || "--"}%</td>
+    </tr>
+  </tbody>
+</table>
+
           </div>
         </div>
       </div>

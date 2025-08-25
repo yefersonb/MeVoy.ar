@@ -34,6 +34,8 @@ import {
 } from 'firebase/storage';
 import ProgressBar from './ui/ProgressBar/Basic/Basic';
 import CozySpinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
+import SelfieUploaderMobile from "./verification/SelfieUploaderMobile";
+
 
 export default function VerificacionConductorWizard({ onExit }) {
   // Unificados con reglas
@@ -292,9 +294,16 @@ export default function VerificacionConductorWizard({ onExit }) {
             onFile={handleFile}
           />
         )}
-        {step === 3 && (
-          <PasoSelfie url={urls.selfie} uploading={uploading.selfie} onFile={(f) => handleFile('selfie', f)} />
-        )}
+{step === 3 && (
+  <PasoSelfie
+    url={urls.selfie}
+    onUploaded={({ url }) => {
+      // guardamos en estado local para que se vea al instante
+      setUrls(prev => ({ ...prev, selfie: url }));
+      // ya se guarda en Firestore adentro del componente modular
+    }}
+  />
+)}
         {step === 4 && (
           <PasoResumen datos={datos} urls={urls} status={status} />
         )}
@@ -483,10 +492,24 @@ function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile })
   );
 }
 
-function PasoSelfie({ url, uploading, onFile }) {
+function PasoSelfie({ url, onUploaded }) {
   return (
     <div >
-      <DocTile label="Selfie de verificación" url={url} progress={uploading} onSelect={onFile} hint="Tomá una selfie sosteniendo tu DNI (opcional, acelera la verificación)." />
+      {/* Uploader modular (abre cámara frontal en móvil, comprime, sube, guarda en Firestore) */}
+      <SelfieUploaderMobile onUploaded={onUploaded} />
+
+      {/* Mini-preview si ya hay selfie guardada */}
+      {url && (
+        <div style={{ marginTop: 12 }}>
+          <div style={{color:'var(--color-text-muted)', marginBottom:8}}>Selfie existente</div>
+          <div style={{ height: 160, background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
+            <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
+              <img src={url} alt="Selfie" style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' }} />
+            </a>
+          </div>
+        </div>
+      )}
+
       <div >
         <h4 >Consejos</h4>
         <ul  style={{color:'#374151', marginTop:8}}>

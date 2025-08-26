@@ -168,20 +168,7 @@ export default function PerfilConductorV2Enhanced({
  
      case "Vehículos":
         return (
-          <section >
-            <div >
-              <h1 >
-                <span >
-                  🚗
-                </span>
-                Mis Vehículos
-              </h1>
-              <p >Gestiona tus vehículos registrados</p>
-            </div>
-            <div >
-              <VehiculosConductor viajes={viajesProp} reservas={reservasProp} />
-            </div>
-          </section>
+          <VehiculosConductor viajes={viajesProp} reservas={reservasProp} />
         );
 
       case "Reservas":

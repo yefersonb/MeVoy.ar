@@ -68,13 +68,14 @@ body {
 
 
 .button {
-    background-color: var(--color-surface);
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    border: 1px solid #0002;
     padding: 0.5rem 0.5rem;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    letter-spacing: 0.5px;
+    margin: 0.1rem;
 }
     .button.neutral {
         background-color: var(--color-surface-alt);
@@ -94,21 +95,6 @@ body {
         background-color: var(--color-primary-hover);
     }
 
-/* Default CozyButton */
-button {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-    border: 1px solid #0002;
-    font-weight: 600;
-    padding: 0.5rem 0.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    margin: 0.1rem;
-}
-    button:hover {
-        background-color: var(--color-primary-hover);
-    }
 
 input{
     width: calc(100% - 1rem);

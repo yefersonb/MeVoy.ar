@@ -1,3 +1,8 @@
+// SOLO en desarrollo (localhost). En prod/hosting NO lo incluyas.
+if (location.hostname === "localhost") {
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = "3a9ab3ee-e944-4822-8485-932f5fa9e1bc";
+}
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";

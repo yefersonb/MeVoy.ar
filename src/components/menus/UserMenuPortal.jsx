@@ -11,7 +11,6 @@ const itemStyle = {
   borderRadius: 12,
   textDecoration: "none",
   color: "var(--color-text)",
-  background: "transparent",
   border: "none",
   cursor: "pointer",
   textAlign: "left",
@@ -123,6 +122,7 @@ export default function UserMenuPortal({
             role="menuitem"
             onClick={onClose}
             style={itemStyle}
+            className="menu-item"
           >
             {it.label}
           </a>

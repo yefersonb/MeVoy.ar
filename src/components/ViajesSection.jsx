@@ -68,7 +68,7 @@ const ViajesSection = ({
                               tieneAceptado
                               && (<Badge variant="viajes"> Aceptado </Badge>)
                             }
-                            <button onClick={() => handleEliminarViaje(viaje.id)} style={{padding: 5, border: "1px solid #0001", backgroundColor: "transparent", borderRadius: 5, cursor: "pointer"}} title='Eliminar este viaje'>
+                            <button onClick={() => handleEliminarViaje(viaje.id)} style={{padding: 5, border: "none", backgroundColor: "transparent", borderRadius: 5, cursor: "pointer"}} title='Eliminar este viaje'>
                               <Trash2 color="var(--color-primary)"/>
                             </button>
                           </div>

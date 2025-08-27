@@ -1,12 +1,12 @@
 import React from 'react';
-import './GLoginButton.css';
+import styles from './GLoginButton.module.css'
 
 export default function GoogleLoginButton({ onClick }) {
   return (
-    <button className="gsi-material-button" onClick={onClick}>
-      <div className="gsi-material-button-state"></div>
-      <div className="gsi-material-button-content-wrapper">
-        <div className="gsi-material-button-icon">
+    <button className={styles["gsi-material-button"]} onClick={onClick}>
+      <div className={styles["gsi-material-button-state"]}></div>
+      <div className={styles["gsi-material-button-content-wrapper"]}>
+        <div className={styles["gsi-material-button-icon"]}>
           <svg
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +21,7 @@ export default function GoogleLoginButton({ onClick }) {
             <path fill="none" d="M0 0h48v48H0z" />
           </svg>
         </div>
-        <span className="gsi-material-button-contents">Continuar con Google</span>
+        <span className={styles["gsi-material-button-contents"]}>Continuar con Google</span>
         <span style={{ display: 'none' }}>Continuar con Google</span>
       </div>
     </button>

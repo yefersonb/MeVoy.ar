@@ -13,21 +13,9 @@
  * - name: id/for para accesibilidad
  */
 
-export default function InputField({
-                                    label,
-                                    type = "text",
-                                    value,
-                                    onChange,
-                                    options = [],
-                                    readOnly = false,
-                                    disabled = false,
-                                    placeholder = "",
-                                    name,
-                                    ...rest
-                                  }) {
-
+export default function InputField({ label, type = "text", value, onChange, options = [], readOnly = false, disabled = false, placeholder = "", name, ...rest })
+{
   const inputId = name || label.replace(/\s+/g, "-").toLowerCase();
-
   const baseStyle = {
     width: "100%",
     fontSize: "1rem",
@@ -52,8 +40,10 @@ export default function InputField({
   const [isFocused, setIsFocused] = React.useState(false);
 
   let inputEl;
-  if (type === "select") {
-    inputEl = (
+  if (type === "select")
+  {
+    inputEl =
+    (
       <select
         id={inputId}
         name={inputId}
@@ -69,17 +59,16 @@ export default function InputField({
         tabIndex={readOnly || disabled ? -1 : 0}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        {...rest}
-      >
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
+        {...rest}>
+
+        {options.map((opt) => ( <option key={opt} value={opt}> {opt} </option> ))}
       </select>
     );
-  } else if (type === "textarea") {
-    inputEl = (
+  }
+  else if (type === "textarea")
+  {
+    inputEl =
+    (
       <textarea
         id={inputId}
         name={inputId}
@@ -101,7 +90,9 @@ export default function InputField({
         {...rest}
       />
     );
-  } else {
+  } 
+  else
+  {
     inputEl = (
       <input
         id={inputId}
@@ -132,7 +123,7 @@ export default function InputField({
           marginBottom: 5,
           display: "block",
         }}
-      >
+        >
         {label}
       </label>
       {inputEl}

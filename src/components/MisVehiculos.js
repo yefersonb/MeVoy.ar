@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { useUser } from "../contexts/UserContext";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import CozySpinner from "./cozyglow/components/Spinners/CozySpinner/CozySpinner";
 
 export default function MisVehiculos() {
   const { usuario } = useUser();
   const [vehiculos, setVehiculos] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [loading, setloading] = useState(true);
 
   useEffect(() => {
     if (!usuario) return;
@@ -14,7 +15,7 @@ export default function MisVehiculos() {
     console.log("Usuario en MisVehiculos:", usuario);
 
     const fetchVehiculos = async () => {
-      setCargando(true);
+      setloading(true);
       try {
         const ref = collection(db, `usuarios/${usuario.uid}/vehiculos`);
         const snapshot = await getDocs(ref);
@@ -27,7 +28,7 @@ export default function MisVehiculos() {
       } catch (error) {
         console.error("Error al traer vehículos:", error);
       } finally {
-        setCargando(false);
+        setloading(false);
       }
     };
 
@@ -45,13 +46,12 @@ export default function MisVehiculos() {
     }
   };
 
-  if (cargando) return <p>Cargando vehículos...</p>;
+  if (loading) return <CozySpinner/>;
 
   if (vehiculos.length === 0) return <p>No tenés vehículos cargados aún.</p>;
 
   return (
     <div style={{ marginTop: "1rem" }}>
-      <h2>🚗 Mis Vehículos</h2>
       <ul style={{ listStyle: "none", paddingLeft: 0 }}>
         {vehiculos.map((v) => (
           <li key={v.id} style={{ marginBottom: "1rem", borderBottom: "1px solid #ccc", paddingBottom: "1rem" }}>

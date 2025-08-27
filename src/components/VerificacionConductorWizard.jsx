@@ -310,7 +310,7 @@ export default function VerificacionConductorWizard({ onExit }) {
       </div>
 
       <div >
-        <button  onClick={goBack} disabled={step===0}>Atrás</button>
+        <button className='button' onClick={goBack} disabled={step===0}>Atrás</button>
         <div >
           <button  onClick={completarPasoActual} disabled={saving}>{saving? 'Guardando...' : 'Guardar'}</button>
           {step < totalSteps - 1 ? (
@@ -668,10 +668,10 @@ function DocTile({ label, url, onSelect, progress, hint }) {
 
       <div >
         <button
-          type="button"
-          
+          type="button"          
           onClick={openPicker}
-        >
+          className='button'
+          >
           Subir foto
         </button>
         {typeof progress === 'number' && (

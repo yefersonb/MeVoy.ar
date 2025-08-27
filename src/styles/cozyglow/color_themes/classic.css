@@ -33,8 +33,8 @@
   
   --color-overlay: rgba(0,0,0,0.04);
  
-  --color-border: var(--color-gray-300);
-  --color-border-strong: var(--color-gray-500);
+  --color-border: #0002;
+  --color-border-strong: #0003;
   --color-divider: var(--color-gray-200);
   
   --color-focus-ring: var(--color-green-400);

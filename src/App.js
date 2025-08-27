@@ -12,9 +12,8 @@ import CozySpinner from "./components/cozyglow/components/Spinners/CozySpinner/C
 // Styles
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./styles/cozyglow/cozyglow.css";
-import "./styles/cozyglow/color_themes/mvclassic.css";
-import "./styles/markdown.css"
-//import "./styles/cozyglow/color_themes/hazbyn.css"; // Override MeVoy-Classic with Hazbyn
+import "./styles/cozyglow/color_themes/classic.css";
+import "./styles/markdown.css";
 import "./App.css";
 
 // UI

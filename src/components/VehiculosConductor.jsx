@@ -2,15 +2,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { db, storage } from '../firebase';
-import {
-  collection,
-  addDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc as firestoreDoc,
-} from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc as firestoreDoc } from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import InputField from "./ui/InputField"
+
 
 const colors = {
   primary: 'var(--color-primary-700)',
@@ -452,73 +447,58 @@ const VehiculosConductor = () => {
       {activeSubTab === 'agregar' && (
         <div
           style={{
-            background: colors.secondary,
-            padding: 22,
-            borderRadius: radius,
-            marginBottom: 28,
-            boxShadow: shadow,
-            border: `1px solid ${colors.border}`,
+            maxWidth: 700,
             display: 'flex',
             flexDirection: 'column',
-            gap: 24,
+            borderRadius: 8,
+            border: "1px solid #0002",
+            padding: "1rem",
+            gap: 24
           }}
         >
           {/* encabezado de agregar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: colors.primary }}>Agregar vehículo</div>
-            <div style={{ fontSize: 13, color: '#555' }}>Completá los datos para registrar un nuevo vehículo.</div>
-          </div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: colors.primary }}>Agregar un vehículo</div>
 
           {/* campos en grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))',
-              gap: 16,
-            }}
-          >
-            {[
-              { key: 'marca', label: 'Marca' },
-              { key: 'modelo', label: 'Modelo' },
-              { key: 'anio', label: 'Año' },
-              { key: 'color', label: 'Color' },
-              { key: 'patente', label: 'Patente' },
-            ].map(({ key, label }) => (
-              <div key={key}>
-                <label style={shared.label} htmlFor={`nuevo-${key}`}>
-                  {label}
-                </label>
+          <div style={{ display: 'flex', flexDirection: "column", gap: 16 }}>
+            {/*
+              ToDo: Reemplazar esto por in component "InputField - Number" custom con mejores Spinners (los botones de subir/bajar)
+                    Tal vez podría tener un -/+ de cada lado y un número grande en el medio
+
+                    Asientos:   (( - ) 4 ( + ))      
+                    ------------------------------
+            */}
+              <div className="input-number">
+                <label htmlFor="nuevo-asientos"> Asientos </label>
                 <input
-                  id={`nuevo-${key}`}
-                  placeholder={label}
-                  value={nuevo[key]}
-                  onChange={(e) => setNuevo((n) => ({ ...n, [key]: e.target.value }))}
-                  style={{
-                    ...shared.input,
-                    borderColor: errorsNuevo[key] ? colors.error : shared.input.border,
-                  }}
-                  aria-invalid={!!errorsNuevo[key]}
+                  id="nuevo-asientos"
+                  type="number"
+                  min={1}
+                  placeholder="Asientos"
+                  value={nuevo.asientos}
+                  onChange={(e) => setNuevo((n) => ({ ...n, asientos: +e.target.value }))}
                 />
-                {errorsNuevo[key] && (
-                  <div style={{ color: colors.error, fontSize: 12 }}>{errorsNuevo[key]}</div>
-                )}
               </div>
-            ))}
-            <div>
-              <label style={shared.label} htmlFor="nuevo-asientos">
-                Asientos
-              </label>
-              <input
-                id="nuevo-asientos"
-                type="number"
-                min={1}
-                placeholder="Asientos"
-                value={nuevo.asientos}
-                onChange={(e) => setNuevo((n) => ({ ...n, asientos: +e.target.value }))}
-                style={shared.input}
-              />
-            </div>
+            {/* Fin ToDo: Reemplazar est... -/+ ... */}
+
+            { // Ésto genera la lista de inputs... la verdad... podría ser más crudo en pos de readabilidad. — Suggestion: Keys deberían ser SIEMPRE en inglés
+              [
+                { key: 'marca', label: 'Marca' },
+                { key: 'modelo', label: 'Modelo' },
+                { key: 'anio', label: 'Año' },
+                { key: 'color', label: 'Color' },
+                { key: 'patente', label: 'Patente' },
+              ]
+              .map
+              (
+                ({ key, label }) =>
+                (
+                  <input key={key} type='text' placeholder={label} onChange={(e) => setNuevo((n) => ({ ...n, [key]: e.target.value }))}/>
+                )
+              )
+            }            
           </div>
+          {/* Fin campos en grid */}
 
           {/* fila de archivos: documentos y foto en dos columnas */}
           <div
@@ -846,5 +826,3 @@ const VehiculosConductor = () => {
 };
 
 export default VehiculosConductor;
-
-

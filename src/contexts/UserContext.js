@@ -7,62 +7,70 @@
   
   Considerar las vulnerabilidades de seguridad de usar este contexto en el frontend
 */
-
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
-  const [perfil, setPerfil] = useState(null);
+  const [perfil, setPerfil] = useState(null);          // <- null, no {}
   const [loading, setLoading] = useState(true);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  // 1) Escuchar Auth
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUsuario(user);
-
-      if (user) {
-        try {
-          const perfilRef = doc(db, "usuarios", user.uid);
-          const snap = await getDoc(perfilRef);
-          setPerfil(snap.exists() ? snap.data() : {});
-        } catch (e) {
-          console.error("Error fetching perfil:", e);
-          setPerfil({});
-        }
-      } else {
-        setPerfil({});
-      }
-      setLoading(false);
+    const unsubAuth = onAuthStateChanged(auth, (u) => {
+      setUsuario(u ?? null);
     });
-
-    return () => unsubscribe();
+    return () => unsubAuth();
   }, []);
 
-  // Avatar logic centralised: preview → perfil → auth user
+  // 2) Escuchar Perfil (en vivo) cuando hay usuario
+  useEffect(() => {
+    if (!usuario?.uid) {
+      setPerfil(null);
+      setLoading(false);        // no hay user, ya está
+      return;
+    }
+    setLoading(true);           // hay user: esperamos primer snapshot
+    const ref = doc(db, "usuarios", usuario.uid);
+    const unsubPerfil = onSnapshot(
+      ref,
+      (snap) => {
+        setPerfil(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+        setLoading(false);
+      },
+      (e) => {
+        console.error("Error fetching perfil:", e);
+        setPerfil(null);
+        setLoading(false);
+      }
+    );
+    return () => unsubPerfil();
+  }, [usuario?.uid]);
+
+  // Avatar: preview → perfil → auth
   const avatarUrl = preview || perfil?.fotoURL || usuario?.photoURL || null;
 
-  return (
-    <UserContext.Provider
-      value={{
-        usuario,
-        perfil,
-        loading,
-        avatarUrl,
-        preview,
-        setPreview,
-        uploading,
-        setUploading,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+  const value = useMemo(
+    () => ({
+      usuario,
+      perfil,
+      loading,
+      avatarUrl,
+      preview,
+      setPreview,
+      uploading,
+      setUploading,
+    }),
+    [usuario, perfil, loading, avatarUrl, preview, uploading]
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 
 export function useUser() {

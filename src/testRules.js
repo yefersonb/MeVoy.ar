@@ -1,5 +1,5 @@
 // src/testRules.js
-import { auth, provider, db, storage } from "./firebase";
+import { auth, googleProvider, db, storage } from "./firebase";
 import { signInWithPopup } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { ref as sRef, uploadBytes } from "firebase/storage";
@@ -21,7 +21,7 @@ export async function runRulesTest() {
   let user = auth.currentUser;
   if (!user) {
     console.log("No hay sesión, abriendo popup de Google...");
-    const cred = await signInWithPopup(auth, provider);
+    const cred = await signInWithPopup(auth, googleProvider);
     user = cred.user;
   }
   const uid = user.uid;

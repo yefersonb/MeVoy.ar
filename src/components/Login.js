@@ -1,18 +1,15 @@
 // src/components/Login.jsx
-import { useState } from "react";
-import { signInWithPopup, signInWithRedirect } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { auth, db, googleProvider } from "../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { useUser } from "../contexts/UserContext";
-import { useTheme } from "../contexts/ThemeContext"; // si tu ThemeContext existe
+import { useTheme } from "../contexts/ThemeContext";
 import logoLight from "../assets/logo/logotype_light.png";
-// si tenés versión dark, descomentá y usala:
-// import logoDark from "../assets/logo/logotype_dark.png";
-
 import GLoginButton from "./google/GLoginButton";
 
 export default function Login() {
-  const { usuario } = useUser();           // 👈 NO usamos setUsuario: el contexto se actualiza solo
+  const { usuario } = useUser(); // el contexto se actualiza solo por onAuthStateChanged
   const { isDark } = useTheme?.() || { isDark: false };
 
   const [whatsapp, setWhatsapp] = useState("");
@@ -21,18 +18,44 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
 
+  // === Post-login para flujo REDIRECT ===
+  useEffect(() => {
+    // Procesa el resultado si venimos de signInWithRedirect
+    getRedirectResult(auth)
+      .then((res) => {
+        if (res?.user) {
+          handlePostLogin(res.user);
+        }
+      })
+      .catch((e) => {
+        // si no hay redirect pendiente, Firebase tira error benigno; lo ignoramos salvo casos útiles
+        const code = e?.code || "";
+        if (code && code !== "auth/no-auth-event") {
+          console.error("Redirect result error:", e);
+          setMsg("No se pudo completar el inicio de sesión (redirect).");
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const loginConGoogle = async () => {
     if (busy) return;
     setBusy(true);
     setMsg(null);
 
     try {
-      // 1) Intento con POPUP
+      // Si el sitio está aislado (COOP/COEP), usá redirect para evitar warnings/popups bloqueados
+      if (window.crossOriginIsolated) {
+        await signInWithRedirect(auth, googleProvider);
+        return; // redirige; no seguimos
+      }
+
+      // Intento con POPUP
       const result = await signInWithPopup(auth, googleProvider);
       await handlePostLogin(result.user);
     } catch (e) {
       const code = e?.code || "";
-      // 2) Fallback a REDIRECT si el popup está bloqueado / cancelado
+      // Fallback a REDIRECT si el popup está bloqueado/cancelado
       if (code === "auth/popup-blocked" || code === "auth/cancelled-popup-request") {
         try {
           await signInWithRedirect(auth, googleProvider);
@@ -51,36 +74,35 @@ export default function Login() {
   };
 
   const handlePostLogin = async (user) => {
-    // Chequear doc de perfil
-    const userRef = doc(db, "usuarios", user.uid);
-    const snap = await getDoc(userRef);
+    try {
+      const userRef = doc(db, "usuarios", user.uid);
+      const snap = await getDoc(userRef);
+      const yaTieneWhatsapp = snap.exists() && !!snap.data()?.whatsapp;
 
-    const yaTieneWhatsapp = snap.exists() && !!snap.data()?.whatsapp;
+      if (yaTieneWhatsapp) {
+        setMsg("¡Bienvenido!");
+        setPidiendoWhatsapp(false);
+        setUserTemp(null);
+        return;
+      }
 
-    if (yaTieneWhatsapp) {
-      // No hacemos nada: onAuthStateChanged en UserContext actualizará la UI
-      setMsg("¡Bienvenido!");
-      setPidiendoWhatsapp(false);
-      setUserTemp(null);
-      return;
+      // Pedimos WhatsApp
+      setUserTemp(user);
+      setPidiendoWhatsapp(true);
+    } catch (e) {
+      console.error("Error leyendo perfil:", e);
+      setMsg("No se pudo leer tu perfil.");
     }
-
-    // Pedimos WhatsApp
-    setUserTemp(user);
-    setPidiendoWhatsapp(true);
   };
 
   const guardarWhatsapp = async () => {
     if (!userTemp) return;
     const tel = whatsapp.trim();
 
-    // Validación simple
     if (!tel) {
       setMsg("Ingresá tu número de WhatsApp");
       return;
     }
-    // Opcional: validar formato (solo dígitos, 8-13 chars, etc.)
-    // if (!/^\d{8,13}$/.test(tel)) { setMsg("Número inválido"); return; }
 
     try {
       const ref = doc(db, "usuarios", userTemp.uid);
@@ -94,20 +116,20 @@ export default function Login() {
           updatedAt: serverTimestamp(),
           createdAt: serverTimestamp(),
         },
-        { merge: true } // ← no pisamos otros campos si el doc ya existía
+        { merge: true }
       );
 
       setMsg("¡Listo! Ya podés continuar.");
       setPidiendoWhatsapp(false);
       setUserTemp(null);
-      // No llamamos setUsuario: el UserContext detecta la sesión y el onSnapshot del perfil se actualiza solo
+      // El UserContext detecta la sesión y actualizará el estado
     } catch (e) {
       console.error("Error guardando WhatsApp:", e);
       setMsg("Error guardando WhatsApp. Probá de nuevo.");
     }
   };
 
-  // Si ya hay usuario logueado, no mostramos el login (evita “banner fantasma”)
+  // Si ya hay usuario logueado, no mostramos el login
   if (usuario) return null;
 
   return (
@@ -119,7 +141,6 @@ export default function Login() {
       maxWidth: 360,
       margin: "0 auto"
     }}>
-      {/* Logo: si tenés versión dark, alterná con isDark */}
       <img
         src={/* isDark ? logoDark : */ logoLight}
         alt="[Logo de MeVoy]"
@@ -128,7 +149,11 @@ export default function Login() {
 
       <div style={{ opacity: 0.7, marginBottom: 8 }}>Iniciá sesión</div>
 
-      <GLoginButton onClick={loginConGoogle} disabled={busy} label={busy ? "Entrando..." : "Entrar con Google"} />
+      <GLoginButton
+        onClick={loginConGoogle}
+        disabled={busy}
+        label={busy ? "Entrando..." : "Entrar con Google"}
+      />
 
       {pidiendoWhatsapp && (
         <div style={{
@@ -175,3 +200,4 @@ export default function Login() {
     </div>
   );
 }
+

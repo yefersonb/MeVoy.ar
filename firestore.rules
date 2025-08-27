@@ -1,3 +1,47 @@
-[1m[31mError:[39m[22m [1mfirestore:rules:get[22m is not a Firebase command
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
 
-Did you mean [1mfirestore:delete[22m?
+    // ---- PERFILES ----
+    match /usuarios/{uid} {
+      allow read: if isSignedIn();                      // <- leer perfil si estás logueado
+      allow create: if isSignedIn();
+      allow update, delete: if request.auth.uid == uid; // <- solo el dueño actualiza/borra
+
+      // subcolección: /usuarios/{uid}/vehiculos/{vehiculoId}
+      match /vehiculos/{vehiculoId} {
+        allow read: if isSignedIn();                    // <- lectura si estás logueado
+        allow create, update, delete: if request.auth.uid == uid;
+      }
+
+      // si usás /usuarios/{uid}/documentos/{docId}
+      match /documentos/{docId} {
+        allow read: if isSignedIn();
+        allow create, update, delete: if request.auth.uid == uid;
+      }
+    }
+
+    // ---- VIAJES EN RAÍZ ----
+    match /viajes/{viajeId} {
+      allow read: if isSignedIn();                      // <- lectura si estás logueado
+      allow create, update, delete: if false;           // <- por ahora no escribimos acá
+    }
+
+    // ---- SUBCOLECCIONES BAJO /viajes/{viajeId}/... ----
+    match /viajes/{viajeId}/{document=**} {
+      allow read: if isSignedIn();                      // <- lectura si estás logueado
+      allow write: if false;
+    }
+
+    // ---- RESERVAS EN RAÍZ ----
+    match /reservas/{reservaId} {
+      allow read: if isSignedIn();                      // <- lectura si estás logueado
+      allow create, update, delete: if false;
+    }
+
+    // Bloqueo por defecto
+    match /{document=**} { allow read, write: if false; }
+  }
+}
+

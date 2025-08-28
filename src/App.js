@@ -3,10 +3,7 @@ import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "f
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
-// Pages
-import PageProfile from "./pages/Profile"
-
-// UI Copmonents
+// UI Components
 import CozySpinner from "./components/cozyglow/components/Spinners/CozySpinner/CozySpinner";
 
 // Styles
@@ -17,10 +14,10 @@ import "./styles/markdown.css";
 import "./App.css";
 
 // UI
-import Copyright from "./components/common/Copyright"
+import Copyright from "./components/common/Copyright";
 import Login from "./components/Login";
 import Header from "./components/Header";
-import VerificacionVehiculosAdmin from "./components/vehicleVerification/VerificacionVehiculosAdmin";
+import AdminVerificador from "./components/admin/AdminVerificador";
 
 // Dashboards
 import ConductorDashboard from "./components/ConductorDashboard";
@@ -46,25 +43,25 @@ export default function App() {
   // Datos del conductor (suscripción en vivo)
   const { viajes, reservas } = useConductorData(usuario, rol === "conductor");
 
-  // Auth + rol inicial
+  // Auth + rol inicial (siempre prioriza Firestore)
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       setUsuario(user);
       if (user) {
-        const stored = localStorage.getItem("rolSeleccionado");
-        if (stored) {
-          setRol(stored);
-        } else {
+        try {
           const snap = await getDoc(doc(db, "usuarios", user.uid));
           if (snap.exists()) {
             const rolDb = snap.data().rol || "viajero";
             setRol(rolDb);
-            localStorage.setItem("rolSeleccionado", rolDb);
+            localStorage.setItem("rolSeleccionado", rolDb); // opcional
           } else {
             await setDoc(doc(db, "usuarios", user.uid), { rol: "viajero" }, { merge: true });
             setRol("viajero");
             localStorage.setItem("rolSeleccionado", "viajero");
           }
+        } catch (err) {
+          console.error("Error leyendo rol:", err);
+          setRol("viajero");
         }
       } else {
         setRol(null);
@@ -129,7 +126,6 @@ export default function App() {
     );
   }
 
-  // ?? What's this?
   if (rol === "viajero" && loadingPerfil) {
     return (
       <ThemeProvider>
@@ -139,50 +135,28 @@ export default function App() {
   }
 
   // App
-  /*
-    return (
-      <ThemeProvider>
-        <Header rol={rol} onToggleRol={handleToggleRol} />
-        <div style={{marginTop: "3.5rem"}}>
-          <PageProfile />
-        </div>
-      </ThemeProvider>
-    )
-  */
   return (
     <ThemeProvider>
       <Header rol={rol} onToggleRol={handleToggleRol} />
       <div className="app-container">
 
-        {/* Todo: Main se está renderizando por sobre todas las pestañas. Considerar usar Routers. PageMain sólo debe renderizarse cuando la URL es main.
-         Si no, entonces debería renderizar lo demás, por ejemplo:
-          PageMenu
-          PageDashboard (Viajante/Conductores)
-          L Settings
-            L PageProfile
-            L Verification 
-
-          App.js debería renderizar por páginas, tal vez usando routers, o un gran switch(){}, no lo sé
-         */}
         <PageMain rol={rol} />
 
-        {/* ToDo: Todo esto debería separarse en páginas que se renderizan en sus respectivos contextos, sin renderizar Main. */}
-
-        {
-          rol === "conductor" ? (<ConductorDashboard viajes={viajes} reservas={reservas} />)
-          : rol === "viajero" ?
-            (
-              <ViajeroDashboard
-                usuario={usuario}
-                viajes={[]}                // tu flujo original
-                perfilCompleto={perfilCompleto}
-                viajeReservado={viajeReservado}
-                onReservar={reservarViaje}
-              />
-            )
-            : 
-            (<VerificacionVehiculosAdmin />)
-        }
+        {rol === "conductor" ? (
+          <ConductorDashboard viajes={viajes} reservas={reservas} />
+        ) : rol === "viajero" ? (
+          <ViajeroDashboard
+            usuario={usuario}
+            viajes={[]} // tu flujo original
+            perfilCompleto={perfilCompleto}
+            viajeReservado={viajeReservado}
+            onReservar={reservarViaje}
+          />
+        ) : rol === "admin" ? (
+          <AdminVerificador />
+        ) : (
+          <p>No autorizado</p>
+        )}
       </div>
       <Copyright />
     </ThemeProvider>

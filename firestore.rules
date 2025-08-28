@@ -9,7 +9,10 @@ service cloud.firestore {
 
     // Admin “real” vía custom claim (recomendado)
     function isAdmin() {
-      return isSignedIn() && request.auth.token.admin == true;
+      return isSignedIn() && (
+        request.auth.token.admin == true ||                 // futuro (claims)
+        request.auth.uid in ["KadtSZ3NJwcJCA8wpR9gt1PvrjT2"]  // 👈 whitelist temporal
+      );
     }
 
     /* =====================  VERIFICACIONES  ===================== 

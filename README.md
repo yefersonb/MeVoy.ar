@@ -25,8 +25,7 @@ Login en Firebase (si no lo habías hecho ya):
 firebase login
 Inicializar Hosting (solo la primera vez):
 
-firebase init hosting
-
+firebase init hosting 
 Elegís tu proyecto de Firebase
 
 Le indicás que la carpeta de public sea build

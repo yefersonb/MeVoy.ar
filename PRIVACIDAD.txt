@@ -1,0 +1,150 @@
+# Política de Privacidad de MeVoy S.R.L.
+
+**Última actualización:** 6 de agosto de 2025
+
+Esta Política de Privacidad establece cómo MeVoy S.R.L. (en adelante, “MeVoy” o “la Empresa”) recolecta, utiliza, almacena y protege los datos personales de los Usuarios (Conductor y Pasajero) de la Plataforma MeVoy.
+
+## 1. Definiciones
+
+1.1. **Datos Personales:** toda información que identifica o puede identificar a una persona física (nombre, documento, contacto).
+1.2. **Tratamiento:** cualquier operación o conjunto de operaciones aplicadas a Datos Personales (recolección, almacenamiento, uso, transferencia, supresión).
+1.3. **Responsable:** MeVoy S.R.L., CUIT XX-XXXXXXXX-X, con domicilio en Antonio Arredondo 7852, Montecarlo, Misiones.
+1.4. **Usuario:** persona física que utiliza la Plataforma, ya sea Conductor o Pasajero.
+
+## 2. Datos que recolectamos
+
+2.1. **Datos de registro y autenticación:**
+
+* Nombre completo, DNI/Documento de identidad, fecha de nacimiento.
+* Correo electrónico, número de teléfono, foto de perfil.
+
+2.2. **Datos de uso y navegación:**
+
+* Dirección IP, registros de acceso, cookies y tecnologías similares.
+* Páginas visitadas, interacciones, preferencias.
+
+2.3. **Datos de ubicación y trayectos:**
+
+* Ubicación en tiempo real (GPS) cuando utilices la funcionalidad de búsqueda y reserva.
+* Origen, destino, horario de los viajes.
+
+2.4. **Datos financieros (procesados por terceros):**
+
+* Información de pago gestionada por Mercado Pago o pasarelas asociadas.
+* Transacciones, historial de pagos y reembolsos.
+
+2.5. **Datos de verificación de antecedentes (Conductor):**
+
+* Certificado de antecedentes penales y de tránsito.
+* Licencia de conducir, seguro automotor y Certificado de ITV.
+
+## 3. Finalidades del Tratamiento
+
+3.1. **Prestación del Servicio:**
+
+* Verificar identidad y antecedentes de Conductores.
+* Permitir búsquedas, reservas, pagos y calificaciones de viajes.
+
+3.2. **Comunicación y atención:**
+
+* Envío de notificaciones, confirmaciones, alertas y comunicaciones de soporte.
+
+3.3. **Mejora del servicio:**
+
+* Analizar patrones de uso para optimizar la Plataforma.
+* Realizar encuestas y feedback.
+
+3.4. **Cumplimiento legal:**
+
+* Reportar información ante autoridades en caso de delitos o siniestros.
+
+## 4. Bases Legales para el Tratamiento
+
+4.1. **Consentimiento:** al registrarte, aceptas expresamente esta Política y las finalidades descritas (Ley 25.326).
+4.2. **Ejecución de contrato:** necesario para la prestación de servicios de reserva y transporte (art. 10 bis, LOPDP).
+4.3. **Obligaciones legales:** cumplimiento de normativas de transporte y prevención de delitos.
+
+## 5. Transferencia y Compartición de Datos
+
+5.1. **Terceros proveedores:**
+
+* Mercado Pago y pasarelas de pago para procesar transacciones.
+* Plataformas de verificación de antecedentes.
+
+5.2. **Autoridades:**
+
+* En caso de solicitud judicial o denuncia penal.
+
+5.3. **Otras transferencias:**
+
+* Solo con tu consentimiento y para finalidades específicas.
+
+## 6. Uso de Cookies y Tecnologías Similares
+
+6.1. **¿Qué son las cookies y tecnologías similares?**
+Pequeños archivos de texto o rastreadores (píxeles, SDKs) que almacenan y leen datos en tu navegador o dispositivo.
+
+6.2. **Tipos de cookies que utilizamos:**
+
+* **Esenciales:** necesarias para funciones básicas como inicio de sesión, seguridad y funcionamiento de la Plataforma.
+* **Rendimiento/Analítica:** recogen datos de interacción (páginas visitadas, eventos, tiempo de permanencia) para optimizar la experiencia (p.ej. Firebase Analytics).
+* **Marketing y segmentación:** permiten mostrarte publicidad basada en tu perfil e intereses, medir la efectividad de campañas y compartir datos de perfil con socios publicitarios (p.ej. Google Ads, Facebook Pixel).
+
+6.3. **Gestión y consentimiento:**
+
+* Al ingresar, verás un banner de cookies donde podés aceptar o rechazar cookies de rendimiento y marketing.
+* Podés cambiar tu configuración en cualquier momento desde el enlace “Configuración de cookies” en el pie de página.
+
+6.4. **Duración y conservación:**
+
+* Las cookies esenciales permanecen mientras uses la Plataforma.
+* Las cookies de rendimiento y marketing se conservan hasta 25 meses.
+
+6.5. **Actualizaciones de la política:**
+
+* Actualizaremos esta sección cuando haya cambios en el uso de cookies.
+* La fecha de última revisión aparecerá en el encabezado de esta Política.
+
+6.6. **Contacto y recursos adicionales:**
+
+* Para más detalles sobre cada cookie de terceros y sus políticas, consultá la configuración de cookies o contactanos en [privacidad@mevoy.app](mailto:privacidad@mevoy.app).
+
+## 7. Conservación de Datos. Conservación de Datos
+
+7.1. Diseñamos plazos de retención según tipo de dato:
+
+* Datos de registro y transacciones: hasta 5 años.
+* Logs de acceso y cookies: hasta 25 meses.
+* Datos de antecedentes de Conductores: 6 meses o hasta renovación.
+
+7.2. Al caducar el plazo o a solicitud tuya, eliminamos o anonimizaos los datos.
+
+## 8. Derechos de los Usuarios (ARCO)
+
+8.1. **Acceso:** conocer qué datos tenemos.
+8.2. **Rectificación:** corregir datos inexactos.
+8.3. **Cancelación:** solicitar supresión cuando ya no sean necesarios.
+8.4. **Oposición:** oponerse al tratamiento por motivos legítimos.
+
+**Ejercicio de derechos:** enviá tu solicitud a [privacidad@mevoy.app](mailto:privacidad@mevoy.app) indicando tu identificación y requerimiento.
+
+## 9. Seguridad de la Información
+
+9.1. Implementamos medidas técnicas y organizativas (encriptación, firewalls, control de acceso) para proteger los datos.
+9.2. Capacitación continua a nuestro equipo y auditorías periódicas.
+
+## 10. Modificaciones a esta Política
+
+10.1. Podremos actualizarla. Se indicará la fecha de última actualización.
+10.2. Tu uso continuado implica aceptación de la versión vigente.
+
+## 11. Contacto
+
+Para consultas, reclamos o sugerencias, contactanos en:
+
+* Correo: [privacidad@mevoy.app](mailto:privacidad@mevoy.app)
+* Domicilio: Antonio Arredondo 7852, Montecarlo, Misiones, Argentina.
+
+---
+
+*Recomendación:* Validar este documento con tu asesor legal y adaptarlo conforme a la legislación local antes de su publicación.

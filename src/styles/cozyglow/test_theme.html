@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Theme Test</title>
+<style>
+  @import url('primitives.css');
+  @import url('color_themes/natura.css'); /* this is where your variables live */
+
+  body {
+    font-family: sans-serif;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    padding: 2rem;
+  }
+
+  h1, h2 {
+    margin-top: 0;
+  }
+
+  .card {
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-text-on-primary);
+  }
+
+  .btn-primary { background: var(--color-primary); }
+  .btn-primary:hover { background: var(--color-primary-hover); }
+
+  .btn-secondary { background: var(--color-secondary); }
+  .btn-secondary:hover { background: var(--color-secondary-hover); }
+
+  .btn-danger { background: var(--color-danger); }
+  .btn-danger:hover { background: var(--color-danger-hover); }
+
+  .alert {
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+    color: white;
+  }
+  .alert-success { background: var(--color-success); }
+  .alert-warning { background: var(--color-warning); color: black; }
+  .alert-danger { background: var(--color-danger); }
+  .alert-info { background: var(--color-info); }
+
+  .divider {
+    height: 1px;
+    background: var(--color-divider);
+    margin: 1rem 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>Theme Preview</h1>
+<p>This page is a sandbox to test our theme tokens in <code>theme.css</code>.</p>
+
+<div class="card">
+  <h2>Buttons</h2>
+  <button class="btn btn-primary">Primary</button>
+  <button class="btn btn-secondary">Secondary</button>
+  <button class="btn btn-danger">Danger</button>
+</div>
+
+<div class="card">
+  <h2>Alerts</h2>
+  <div class="alert alert-success">This is a success message.</div>
+  <div class="alert alert-warning">This is a warning message.</div>
+  <div class="alert alert-danger">This is a danger message.</div>
+  <div class="alert alert-info">This is an info message.</div>
+</div>
+
+<div class="card">
+  <h2>Surface & Text</h2>
+  <p>Lorem ipsum dolor sit amet, <strong>consectetur</strong> adipiscing elit. 
+     <span style="color: var(--color-text-secondary)">This is secondary text.</span> 
+     <span style="color: var(--color-text-disabled)">This is disabled text.</span></p>
+</div>
+
+<div class="divider"></div>
+
+<p><em>Tip:</em> Swap the variables in <code>theme.css</code> and refresh this page to instantly preview different palettes.</p>
+
+</body>
+</html>

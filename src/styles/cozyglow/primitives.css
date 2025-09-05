@@ -1,0 +1,116 @@
+:root {
+  /* === Primitives === */
+  /* Soft Sky Blue (Primary) */
+  --color-sky-50: #f2f6f8;
+  --color-sky-100: #d6e3ea;
+  --color-sky-200: #b3cbd5;
+  --color-sky-300: #8fb3c0;
+  --color-sky-400: #6c9bab;
+  --color-sky-500: #4e7f8f; /* Primary */
+  --color-sky-600: #3e6673;
+  --color-sky-700: #2f4e58;
+  --color-sky-800: #20363e;
+  --color-sky-900: #152429;
+
+  /* Warm Sand / Amber (Secondary) */
+  --color-sand-50: #faf6f2;
+  --color-sand-100: #f0e3d6;
+  --color-sand-200: #e2c9ad;
+  --color-sand-300: #d4b07a;
+  --color-sand-400: #c59646;
+  --color-sand-500: #a97b32; /* Secondary */
+  --color-sand-600: #896328;
+  --color-sand-700: #6a4c1e;
+  --color-sand-800: #4b3614;
+  --color-sand-900: #2d200a;
+
+  /* Neutrals (Dark Surfaces) */
+  --color-gray-50: #ececec;
+  --color-gray-100: #d2d2d4;
+  --color-gray-200: #b8b8bb;
+  --color-gray-300: #9e9ea3;
+  --color-gray-400: #84848a;
+  --color-gray-500: #6a6a70;
+  --color-gray-600: #515156;
+  --color-gray-700: #39393d;
+  --color-gray-800: #242427;
+  --color-gray-900: #18181a;
+
+  /* Status Colors (muted) */
+  --color-green-500: #4b7d64;
+  --color-green-600: #3c6450;
+  --color-yellow-500: #d2a752;
+  --color-yellow-600: #b28b40;
+  --color-red-500: #b35c5c;
+  --color-red-600: #914a4a;
+  --color-blue-500: #5b7fa3;
+  --color-blue-600: #476480;
+
+    /* === Primitives === */
+  /* Blues (Primary) */
+  --color-blue-50: #f2f6fa;
+  --color-blue-100: #d9e4f4;
+  --color-blue-200: #b3caeb;
+  --color-blue-300: #8daee0;
+  --color-blue-400: #6a93d4; 
+  --color-blue-500: #4a7bd1; 
+  --color-blue-600: #3c66ad; /* Primary */
+  --color-blue-700: #2f5289; 
+  --color-blue-800: #223d64;
+  --color-blue-900: #162a44;
+
+  /* Greens (Secondary) */
+  --color-green-50: #f0faf7;
+  --color-green-100: #d6f1e8;
+  --color-green-200: #aee0d1;
+  --color-green-300: #86cfba;
+  --color-green-400: #63c0a7;
+  --color-green-500: #46b89d; 
+  --color-green-600: #3aa087;
+  --color-green-700: #2e7f6c; /* Secondary */
+  --color-green-800: #225f51;
+  --color-green-900: #153f36;
+
+    /* === Primitives === */
+  /* Dusty Rose (Primary) */
+  --color-rose-50: #fdf5f7;
+  --color-rose-100: #f8dbe1;
+  --color-rose-200: #f1b8c7;
+  --color-rose-300: #e890a8;
+  --color-rose-400: #db6d8d;
+  --color-rose-500: #c94f73; /* Primary */
+  --color-rose-600: #a63f5f;
+  --color-rose-700: #84324d;
+  --color-rose-800: #62263a;
+  --color-rose-900: #411927;
+
+  /* Sage / Muted Teal (Secondary) */
+  --color-sage-50: #f2f9f8;
+  --color-sage-100: #d8ebe9;
+  --color-sage-200: #b8d9d5;
+  --color-sage-300: #93c5c0;
+  --color-sage-400: #6daaa4;
+  --color-sage-500: #4f8f89; /* Secondary */
+  --color-sage-600: #3f726d;
+  --color-sage-700: #315854;
+  --color-sage-800: #223f3b;
+  --color-sage-900: #152725;
+
+  /* Neutrals (Dark Surfaces) */
+  --color-gray-50: #eaeaea;
+  --color-gray-100: #cfcfd2;
+  --color-gray-200: #b3b3b8;
+  --color-gray-300: #98989f;
+  --color-gray-400: #7d7d86;
+  --color-gray-500: #62626b;
+  --color-gray-600: #4a4a52;
+  --color-gray-700: #33333a;
+  --color-gray-800: #1f1f25;
+  --color-gray-900: #141418;
+
+  /* Status Colors (Darkened & Softened) */
+  --color-yellow-500: #d2a752;
+  --color-yellow-600: #b28b40;
+  --color-red-500: #c45555;
+  --color-red-600: #a34444;
+}

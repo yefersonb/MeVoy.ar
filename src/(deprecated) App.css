@@ -1,0 +1,287 @@
+﻿/*
+  *OUTDATED COLORS* - OVERRIDEN BY COZYGLOW
+  ToDo: Update all references to these colors in the codebase to point to CozyGlow's standard variables.
+
+  ESTE ARCHIVO FUE DESTRUIDO POR GPT. NO LO USES.
+  
+  Dark Modo is GONE from here, use CozyGlow's color themes instead.
+*/
+
+:root {
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-700);
+  --secondary: var(--color-secondary);
+  --bg: var(--color-bg);
+  --card-bg: var(--color-surface);
+  --radius: 0.75rem;
+  --shadow: var(--color-shadow-sm);
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --hover-bg: var(--color-hover);
+  --transition: 0.2s ease;
+  --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Reset y configuración base para pantalla completa */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-stack);
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Core App - PANTALLA COMPLETA */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh; /* Para móviles modernos */
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+/* Header / saludo y acciones */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+  padding: 0 1rem; /* Padding interno para móviles */
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap; /* Para que los botones se adapten en pantallas pequeñas */
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-weight: 500;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin: 0;
+  transition: color var(--color-transition-fast);
+  border-radius: var(--color-radius-md);
+  min-height: 44px; /* Mejor accesibilidad táctil en móviles */
+}
+
+.link-btn:hover {
+  color: var(--color-primary);
+  background-color: var(--color-hover);
+}
+
+/* Botones principales */
+.btn-rounded {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  margin: 0.5rem 0;
+  transition: background-color var(--color-transition-fast);
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 1rem;
+  min-height: 44px; /* Mejor para táctil */
+  width: 100%; /* En móviles, botones a ancho completo */
+  max-width: 300px; /* Límite en pantallas grandes */
+}
+
+.btn-rounded:hover {
+  background-color: var(--color-primary-700);
+}
+
+.highlight-hover {
+  transition: background-color var(--color-transition-fast);
+  border-radius: var(--color-radius-md);
+}
+.highlight-hover:hover {
+  background-color: var(--color-hover);
+}
+
+/* Utilidades pequeñas */
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.rounded-card {
+  border-radius: var(--color-radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--color-shadow-sm);
+  padding: 1rem;
+  margin: 0.5rem;
+  transition: transform var(--color-transition-fast), box-shadow var(--color-transition-fast);
+  width: calc(100% - 1rem); /* Respeta márgenes laterales */
+}
+
+.rounded-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--color-shadow-lg);
+}
+
+/* RESPONSIVE DESIGN */
+@media (min-width: 640px) {
+  .app-container {
+    padding: 1rem;
+  }
+  
+  .btn-rounded {
+    width: auto; /* En desktop, botones de ancho automático */
+  }
+  
+  .rounded-card {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .user-header {
+    padding: 0;
+  }
+  
+  .rounded-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* Para tablets en orientación landscape */
+@media (orientation: landscape) and (max-height: 768px) {
+  .app-container {
+    min-height: 100vh;
+  }
+}
+
+/* Para dispositivos muy pequeños */
+@media (max-width: 320px) {
+  .user-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .user-actions {
+    justify-content: center;
+  }
+}
+
+.user-menu { position: relative; }
+.user-menu__btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:999px; border:1px solid var(--color-border);
+  background:var(--color-surface); cursor:pointer;
+}
+.user-menu__btn img { width:100%; height:100%; border-radius:999px; object-fit:cover; }
+.avatar-fallback { font-weight:600; }
+
+.user-menu__dropdown {
+  position:absolute; top:calc(100% + 10px); right:0; z-index:30;
+  width:280px; padding:8px;
+  background:var(--color-surface); border:1px solid var(--color-border); border-radius:16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  animation: menu-in .12s ease;
+}
+@keyframes menu-in { from { opacity:0; transform:translateY(-4px) scale(.98) }
+                     to   { opacity:1; transform:translateY(0)   scale(1) } }
+
+.user-menu__item {
+  display:flex; align-items:center; gap:10px;
+  width:100%; padding:10px 12px; border-radius:12px; text-decoration:none;
+  color:var(--color-text); background:transparent; border:none; cursor:pointer; text-align:left;
+}
+.user-menu__item:hover { background:var(--color-hover); }
+.user-menu__item.danger { color:var(--color-danger); }
+.user-menu__item.danger:hover { background:var(--color-danger-bg); }
+
+.user-menu__divider {
+  height:1px; background:var(--color-border); margin:6px 4px;
+}
+
+.user-menu { position: relative; }
+.user-menu.open .user-menu__chevron { transform: rotate(180deg); }
+
+.user-menu__dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  min-width: 260px;
+  max-width: 280px;
+  padding: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  display: flex;
+  flex-direction: column;
+  animation: menu-in .12s ease;
+}
+
+/* â€œpicoâ€ del popup (como en la captura) */
+.user-menu__pointer {
+  position: absolute;
+  top: -6px;
+  right: 18px;
+  width: 12px; height: 12px;
+  background: var(--color-surface);
+  transform: rotate(45deg);
+  border-left: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.user-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.user-menu__item:hover { background: var(--color-hover); }
+.user-menu__item.danger { color: var(--color-danger); }
+.user-menu__item.danger:hover { background: var(--color-danger-bg); }
+
+.user-menu__divider { height: 1px; background: var(--color-border); margin: 6px 4px; }
+
+/* hace que â€œCerrar sesiónâ€ quede claro como acción final */
+.user-menu__footer { margin-top: 2px; }
+

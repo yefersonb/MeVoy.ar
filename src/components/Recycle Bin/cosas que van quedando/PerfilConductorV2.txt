@@ -1,0 +1,207 @@
+// src/components/PerfilConductorV2.js
+import React, { useState, useEffect } from "react";
+import { useUser } from "../contexts/UserContext";
+import { db } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+
+export default function PerfilConductorV2() {
+  const { usuario } = useUser();
+  const [modoLectura, setModoLectura] = useState(true);
+  const [guardado, setGuardado] = useState(false);
+
+  // Estado único para todos los campos del perfil
+  const [perfil, setPerfil] = useState({
+    whatsapp: "",
+    fechaNacimiento: "",
+    modeloVehiculo: "",
+    descripcion: "",
+    nivelExperiencia: "Novato",
+    preferencias: {},
+    verificaciones: {}
+  });
+
+  const reputacion = 4.8;
+  const opiniones = 36;
+
+  // Carga inicial de datos
+  useEffect(() => {
+    if (!usuario) return;
+    (async () => {
+      const ref = doc(db, "usuarios", usuario.uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const data = snap.data();
+        setPerfil({
+          whatsapp: data.whatsapp || "",
+          fechaNacimiento: data.fechaNacimiento || "",
+          modeloVehiculo: data.modeloVehiculo || "",
+          descripcion: data.descripcion || "",
+          nivelExperiencia: data.nivelExperiencia || "Novato",
+          preferencias: data.preferencias || {},
+          verificaciones: data.verificaciones || {}
+        });
+      }
+    })();
+  }, [usuario]);
+
+  // Calcula edad a partir de fecha de nacimiento
+  const calcularEdad = (fecha) => {
+    if (!fecha) return null;
+    const hoy = new Date();
+    const nacimiento = new Date(fecha);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const m = hoy.getMonth() - nacimiento.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
+    return edad;
+  };
+  const edad = calcularEdad(perfil.fechaNacimiento);
+
+  // Guarda los cambios en Firestore
+  const handleGuardar = async () => {
+    try {
+      await setDoc(doc(db, "usuarios", usuario.uid), perfil, { merge: true });
+      setGuardado(true);
+      setModoLectura(true);
+      setTimeout(() => setGuardado(false), 3000);
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar perfil");
+    }
+  };
+
+  // Textos para preferences/verifications
+  const textosPreferencias = {
+    musica: "Le gusta la música",
+    fumar: "Permite fumar",
+    mascotas: "Acepta mascotas",
+    aire: "Usa aire acondicionado",
+    charla: "Le gusta conversar"
+  };
+  const textosVerificaciones = {
+    email: "Correo confirmado",
+    telefono: "Teléfono confirmado",
+    dni: "DNI verificado",
+    licencia: "Licencia de conducir"
+  };
+
+  // Configuración de campos de edición
+  const camposEdicion = [
+    { label: "WhatsApp", field: "whatsapp", type: "text" },
+    { label: "Fecha de nacimiento", field: "fechaNacimiento", type: "date" },
+    { label: "Modelo del vehículo", field: "modeloVehiculo", type: "text" },
+    { label: "Acerca de mí", field: "descripcion", type: "textarea" },
+    {
+      label: "Nivel de experiencia",
+      field: "nivelExperiencia",
+      type: "select",
+      options: ["Novato", "Experimentado", "Embajador", "Super Driver"]
+    }
+  ];
+
+  return (
+    <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-md border mt-6 space-y-8">
+      {/* Editar / Cancelar */}
+      <div className="flex justify-end">
+        {modoLectura ? (
+          <button onClick={() => setModoLectura(false)} className="link-btn">
+            ✏️ Editar perfil
+          </button>
+        ) : (
+          <button onClick={() => setModoLectura(true)} className="link-btn">
+            ✖️ Cancelar edición
+          </button>
+        )}
+      </div>
+
+      {/* Cabecera: foto y datos */}
+      <div className="flex items-center gap-6">
+        <img src={usuario?.photoURL} alt="Perfil" className="w-24 h-24 rounded-full" />
+        <div>
+          <h2 className="text-2xl font-bold mb-1">{usuario?.displayName}</h2>
+          {edad != null && <p className="text-lg text-gray-600 mb-1">{edad} años</p>}
+          <p className="text-lg mb-1">
+            Nivel de conducción: <strong>{perfil.nivelExperiencia}</strong>
+          </p>
+          <div className="flex items-center gap-1 text-xl text-yellow-500">
+            {[...Array(Math.floor(reputacion))].map((_, i) => (
+              <span key={i}>★</span>
+            ))}
+            {reputacion % 1 >= 0.5 && <span>½</span>}
+            <span className="ml-2 text-lg text-gray-600">({opiniones} opiniones)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenido */}
+      {modoLectura ? (
+        <div className="space-y-6">
+          <p className="text-lg"><strong>WhatsApp:</strong> {perfil.whatsapp}</p>
+          <p className="text-lg"><strong>Fecha de nacimiento:</strong> {perfil.fechaNacimiento}</p>
+          <p className="text-lg"><strong>Modelo del vehículo:</strong> {perfil.modeloVehiculo}</p>
+          <p className="text-lg"><strong>Acerca de mí:</strong> {perfil.descripcion}</p>
+
+          <div>
+            <h4 className="text-xl font-semibold mb-2">Preferencias</h4>
+            <ul className="list-disc list-inside text-lg space-y-1">
+              {Object.entries(perfil.preferencias)
+                .filter(([, v]) => v)
+                .map(([k]) => <li key={k}>{textosPreferencias[k]}</li>)}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xl font-semibold mb-2">Verificaciones</h4>
+            <ul className="list-disc list-inside text-lg space-y-1">
+              {Object.entries(perfil.verificaciones)
+                .filter(([, v]) => v)
+                .map(([k]) => <li key={k}>{textosVerificaciones[k]}</li>)}
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-10">
+          {/* Campos de edición */}
+          {camposEdicion.map(({ label, field, type, options }) => (
+            <div key={field} className="mb-6">
+              <label className="block text-lg font-medium mb-1">{label}</label>
+              {type === "textarea" ? (
+                <textarea
+                  rows={4}
+                  value={perfil[field]}
+                  onChange={e => setPerfil(prev => ({ ...prev, [field]: e.target.value }))}
+                  className="w-full text-xl border-0 focus:ring-0"
+                />
+              ) : type === "select" ? (
+                <select
+                  value={perfil[field]}
+                  onChange={e => setPerfil(prev => ({ ...prev, [field]: e.target.value }))}
+                  className="w-full text-xl border-0 focus:ring-0"
+                >
+                  {options.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={type}
+                  value={perfil[field]}
+                  onChange={e => setPerfil(prev => ({ ...prev, [field]: e.target.value }))}
+                  className="w-full text-xl border-0 focus:ring-0"
+                />
+              )}
+            </div>
+          ))}
+
+          {/* Botón Guardar */}
+          <div className="mt-10">
+            <button onClick={handleGuardar} className="link-btn">
+              💾 Guardar perfil
+            </button>
+          </div>
+        </div>
+      )}
+
+      {guardado && <p className="text-green-600 text-center mt-6">✅ Perfil guardado con éxito</p>}
+    </div>
+  );
+}

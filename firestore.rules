@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* Helpers */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Admin “real” vía custom claim (recomendado)
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.admin == true ||                 // futuro (claims)
+        request.auth.uid in ["KadtSZ3NJwcJCA8wpR9gt1PvrjT2"]  // 👈 whitelist temporal
+      );
+    }
+
+    /* =====================  VERIFICACIONES  ===================== 
+       - Dueño puede crear/editar sus datos y ENVIAR A 'pending'
+       - NO puede tocar status -> verified/rejected/incomplete ni campos de admin
+       - Admin puede leer todas y cambiar status + notas + historial
+    */
+    match /verificaciones/{uid} {
+
+      // Leer: dueño o admin
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
+
+      // Crear: dueño
+      allow create: if isSignedIn() && request.auth.uid == uid;
+
+      // Actualizar por DUEÑO (con restricciones)
+      allow update: if isSignedIn() && request.auth.uid == uid
+        // no puede escribir campos exclusivos de admin
+        && !("adminNotes" in request.resource.data.keys())
+        && !("history" in request.resource.data.keys())
+        && !("reviewedAt" in request.resource.data.keys())
+        && !("reviewedBy" in request.resource.data.keys())
+        // status: o no cambia, o lo cambia a 'pending' (enviar a revisión)
+        && (
+          !( "status" in request.resource.data.diff(resource.data).changedKeys() )
+          || (request.resource.data.status == "pending")
+        );
+
+      // Actualizar por ADMIN (puede todo en este doc)
+      allow update: if isAdmin();
+    }
+
+    /* =====================  USUARIOS  ===================== 
+       - Dueño puede leer/crear/actualizar su doc, pero NO puede cambiar 'rol'
+       - Admin puede actualizar (incluye 'rol')
+    */
+    match /usuarios/{uid} {
+      // Leer: cualquier logueado (o si preferís, solo dueño)
+      allow read: if isSignedIn();
+
+      // Crear: dueño
+      allow create: if isSignedIn() && request.auth.uid == uid;
+
+      // Actualizar: dueño (sin tocar 'rol')
+      allow update: if isSignedIn() && request.auth.uid == uid
+        && !("rol" in request.resource.data.diff(resource.data).changedKeys());
+
+      // Admin puede actualizar cualquier campo (incluye 'rol')
+      allow update: if isAdmin();
+
+      /* Subcolecciones habituales */
+
+      // /usuarios/{uid}/vehiculos/{vehiculoId}
+      match /vehiculos/{vehiculoId} {
+        allow read: if isSignedIn();
+        allow create, update, delete: if isSignedIn() && request.auth.uid == uid;
+      }
+
+      // /usuarios/{uid}/documentos/{docId}  (si la usás)
+      match /documentos/{docId} {
+        allow read: if isSignedIn();
+        allow create, update, delete: if isSignedIn() && request.auth.uid == uid;
+      }
+    }
+
+    /* =====================  VIAJES  ===================== */
+    match /viajes/{viajeId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if false; // lo mantenés cerrado según tu comentario
+    }
+
+    /* =====================  SUBCOLECCIONES DE VIAJES  ===================== */
+    match /viajes/{viajeId}/{document=**} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    /* =====================  RESERVAS  ===================== */
+    match /reservas/{reservaId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    /* Bloqueo por defecto */
+    match /{document=**} { allow read, write: if false; }
+  }
+}

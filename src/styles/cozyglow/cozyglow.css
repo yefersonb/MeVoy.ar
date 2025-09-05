@@ -1,0 +1,148 @@
+/*
+    CozyGlow CSS Variables
+    ======================
+    This includes color schemes engineered for light and dark modes,
+    as well as some base styles for body and html elements.
+*/
+
+/* Classic nifty trick, helps with padding auto-sizing. */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 200px;
+    height: 90%;
+    margin: 0;
+}
+
+body {
+    margin: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text);
+}
+
+/*
+    Modifiers, utilities
+*/
+.hidden {
+    display: none !important;
+}
+
+/*
+    Elements
+*/
+.header-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.5rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+    background-color: var(--color-surface);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+    .header {
+        width: 100%;
+        max-width: 1200px;
+        padding: 0.5rem;
+        height: 3.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--color-text-primary);
+        gap: 0.5rem; 
+    }
+    .header > .module {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; 
+    }
+
+
+.button {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    border: 1px solid #0002;
+    padding: 0.5rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    margin: 0.1rem;
+}
+    .button.neutral {
+        background-color: var(--color-surface-alt);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border);
+    }
+
+    .button.pill {
+        border-radius: 9999px;
+    }
+
+    .button.borderless {
+        border: none;
+    }
+
+    .button:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+
+input{
+    width: calc(100% - 1rem);
+    margin: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.7rem;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 2px solid #0002;
+    transition: 0.2s;
+    height: 3rem;
+    letter-spacing: 1px;
+    background-color: transparent;
+}
+    input:focus{
+        outline: none;
+        padding: 0.8rem 0.5rem;
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+label{
+    margin-left: 0.2rem;
+    letter-spacing: 1px;
+    font-size: 1rem;
+    color: #0009;
+}
+
+.input-number {
+    display: flex;
+}
+    .input-number input{
+        margin-left: 0;
+    }
+    .input-number label{
+        margin: 0.5rem;
+        margin-bottom: 1.5rem;
+        margin-right: 0;
+        padding: 0.7rem;
+        font-size: 1rem;
+        border: none;
+        border-bottom: 2px solid #0002;
+        transition: 0.2s;
+        height: 3rem;
+        letter-spacing: 1px;
+        background-color: transparent;
+        cursor: pointer;
+    }
+
+.menu-item:hover{
+    background-color: #00000008;
+}

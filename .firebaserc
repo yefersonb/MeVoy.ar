@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "viajes-compartidos-nativa",
+    "prod": "viajes-compartidos-nativa"
+  },
+  "targets": {},
+  "etags": {}
+}

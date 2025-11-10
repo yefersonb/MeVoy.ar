@@ -24,7 +24,7 @@ export default function ViajeroDashboard({
       </section>
 
       <section id="mis-viajes" style={{ scrollMarginTop: 80 }}>
-        <div style={{ marginTop: 32 }}>
+        <div className="panel">
           {/* Usá los props que ya tenías en tu buscador, esto es seguro */}
           <BuscadorViajes usuario={usuario} onReservar={onReservar} />
         </div>

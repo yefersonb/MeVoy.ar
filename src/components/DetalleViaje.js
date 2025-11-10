@@ -19,7 +19,6 @@ import { db } from "../firebase";
 import { useUser } from "../contexts/UserContext";
 import { usePerfilViajeroCompleto } from "../hooks/usePerfilViajeroCompleto";
 import { abreviarUbicacion } from "../utils/ubicacion";
-import "./DetalleViaje.css";
 import SolicitarEnvio from "./SolicitarEnvio"; // opcional, si aún no lo creaste, quitá esta línea y lo relacionado
 
 function haversineKm(a, b) {

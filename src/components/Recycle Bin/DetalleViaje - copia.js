@@ -19,7 +19,6 @@ import { db } from "../firebase";
 import { useUser } from "../contexts/UserContext";
 import { usePerfilViajeroCompleto } from "../hooks/usePerfilViajeroCompleto";
 import { abreviarUbicacion } from "../utils/ubicacion";
-import "./DetalleViaje.css";
 
 function haversineKm(a, b) {
   const toRad = (deg) => (deg * Math.PI) / 180;

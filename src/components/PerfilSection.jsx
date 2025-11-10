@@ -19,6 +19,7 @@ import Spinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
 import ErrorMessage from './common/ErrorMessage';
 import UserCard from "./UserCard"
 import PerfilProgress from './ui/PerfilProgress/PerfilProgress';
+import Rating from './ui/StarRating';
 
 // Icons an dutilities
 import Markdown from 'react-markdown';
@@ -143,7 +144,7 @@ const perfilPercent = (() => {
           )}
 
           {/* Insignias */}
-          <div style={{display: "flex", gap: "1rem"}}>
+          <div style={{display: "flex", gap: "1rem", flexWrap: "wrap"}}>
             {/* ToDo: Generar dinámicamente: */}
             <Badge variant="verificado">Conductor verificado</Badge>
             <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
@@ -174,20 +175,15 @@ const perfilPercent = (() => {
             </div>
 
             {/* Valoraciones */}
-            <div>
+            <div className='panel'>
               <h3> Valoraciones de Conductores </h3>
-              <div>
-                <div>
-                  <RatingRow label="Conducción" value={valoraciones.conduccion} />
+              <div style={{borderRadius: "8px", overflow: "hidden"}}>
+                  <RatingRow label="Conducción" value={3} />
                   <RatingRow label="Puntualidad" value={valoraciones.puntualidad} />
-                </div>
-                <div>
                   <RatingRow label="Amabilidad" value={valoraciones.amabilidad} />
                   <RatingRow label="Limpieza" value={valoraciones.limpieza} />
-                </div>
-              </div>
-              
-              <div>
+              </div>              
+              <div style={{marginTop: "8px"}}>
                 <span> {perfil.viajesCompletados || 0} viajes completados </span>
                 <div> {completadosPercent}% de éxito </div>
               </div>

@@ -23,6 +23,7 @@ body {
     flex-direction: column;
     align-items: center;
     color: var(--text);
+    background-color: var(--color-background);
 }
 
 /*
@@ -95,6 +96,16 @@ body {
         background-color: var(--color-primary-hover);
     }
 
+    .button.fill{
+        width: 100%;
+    }
+
+    .button.big-button{
+        width: 100%;
+        padding: 1rem;
+        font-size: large;
+    }
+
 
 input{
     width: calc(100% - 1rem);
@@ -103,11 +114,12 @@ input{
     padding: 0.7rem;
     font-size: 1rem;
     border: none;
-    border-bottom: 2px solid #0002;
+    border-bottom: 2px solid #fff2;
     transition: 0.2s;
     height: 3rem;
     letter-spacing: 1px;
     background-color: transparent;
+    color: white;
 }
     input:focus{
         outline: none;
@@ -119,7 +131,7 @@ label{
     margin-left: 0.2rem;
     letter-spacing: 1px;
     font-size: 1rem;
-    color: #0009;
+    color: #fff9;
 }
 
 .input-number {
@@ -135,7 +147,7 @@ label{
         padding: 0.7rem;
         font-size: 1rem;
         border: none;
-        border-bottom: 2px solid #0002;
+        border-bottom: 2px solid #fff2;
         transition: 0.2s;
         height: 3rem;
         letter-spacing: 1px;
@@ -145,4 +157,32 @@ label{
 
 .menu-item:hover{
     background-color: #00000008;
+}
+
+/*
+    Adaptive Text
+*/
+
+h1, h2, h3, h4, h5, h6 {
+    margin: auto;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    color: white;
+}
+
+.panel{
+    background-color: var(--color-surface-stackable);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 8px;
+}
+
+.rating-row:nth-child(even){
+    background-color: #ffffff08;
+}
+
+.rating-row:nth-child(odd){
+    background-color: #ffffff05;
 }

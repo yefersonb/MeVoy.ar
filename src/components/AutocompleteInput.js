@@ -168,16 +168,6 @@ console.log("GMAPS KEY?", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
   if (loadError) return <p>Error cargando Autocomplete</p>;
   if (!isLoaded) return <p>Cargando Autocomplete…</p>;
 
-  const inputStyle = {
-    width: "100%",
-    padding: "0.5rem",
-    margin: "0.5rem 0",
-    border: error ? "1px solid #c0392b" : "1px solid #ccc",
-    borderRadius: "0.5rem",
-    fontFamily: "inherit",
-    fontSize: "1rem",
-  };
-
   return (
     <div style={{ position: "relative" }}>
       <input
@@ -188,7 +178,6 @@ console.log("GMAPS KEY?", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
         onChange={handleChange}
         onBlur={handleBlur}
         aria-invalid={!!error}
-        style={inputStyle}
       />
       {validating && (
         <div

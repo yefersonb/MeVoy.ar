@@ -15,7 +15,7 @@ export function SearchBar({ value, onChange, placeholder = "Buscar viajes..." })
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
       />
-      <Search style={{position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", color: "#888"}}/>
+      <Search style={{position: "absolute", right: "1rem", top: "50%", transform: "translateY(-55%)", color: "#fff5"}}/>
     </div>
   );
 }

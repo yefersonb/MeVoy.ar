@@ -210,7 +210,7 @@ export default function PerfilViajeroPage() {
   const edadTexto = edad != null ? ` (${edad} años)` : "";
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="panel">
       <nav
         style={{
           display: "flex",
@@ -236,10 +236,10 @@ export default function PerfilViajeroPage() {
         ))}
       </nav>
 
-      <main className="max-w-3xl mx-auto p-6">
+      <main >
         {activeTab === "Perfil" && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Perfil del Viajero</h1>
+            <h1 >Perfil del Viajero</h1>
 
             <ActionBar
               editMode={editMode}
@@ -258,7 +258,7 @@ export default function PerfilViajeroPage() {
             {errorPerfil && <ErrorMessage error={errorPerfil} />}
 
             <div
-              className="flex"
+              
               style={{
                 gap: 12,
                 flexWrap: "wrap",
@@ -369,13 +369,7 @@ export default function PerfilViajeroPage() {
                     {perfil.nombre || "Sin nombre"}
                     {edadTexto}
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: 6,
-                      flexWrap: "wrap",
-                    }}
-                  >
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                     <Badge style={{ cursor: "default" }} title="Viajero activo">
                       Viajero activo
                     </Badge>
@@ -453,25 +447,8 @@ export default function PerfilViajeroPage() {
 
             {/* Valoraciones en recuadro */}
             <div style={{ marginTop: 8 }}>
-              <div
-                style={{
-                  border: `1px solid #e2e8f0`,
-                  borderRadius: 10,
-                  padding: 16,
-                  background: "var(--color-surface)",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
-                  marginBottom: 12,
-                }}
-              >
-                <div
-                  style={{
-                    fontWeight: 600,
-                    marginBottom: 8,
-                    fontSize: 16,
-                  }}
-                >
-                  Valoraciones
-                </div>
+              <div className="panel">
+                <b>Valoraciones</b>
                 <div
                   style={{
                     display: "flex",
@@ -488,9 +465,9 @@ export default function PerfilViajeroPage() {
                     <RatingRow label="Comunicación" value={perfil.valoraciones.comunicacion} />
                   </div>
                 </div>
-                <div style={{ fontSize: 14, color: "#555" }}>
+                <h>
                   {perfil.viajesCompletados} viajes completados
-                </div>
+                </h>
               </div>
             </div>
           </section>
@@ -498,7 +475,7 @@ export default function PerfilViajeroPage() {
 
         {activeTab === "Datos de pago" && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Datos de pago</h1>
+            <h1>Datos de pago</h1>
             <div
               style={{
                 border: "1px solid #e2e8f0",
@@ -571,7 +548,7 @@ export default function PerfilViajeroPage() {
 
         {activeTab === "Viajes frecuentes" && (
           <section>
-            <h1 className="text-2xl font-bold mb-4">Viajes frecuentes</h1>
+            <h1 >Viajes frecuentes</h1>
             {viajesFrecuentes.length === 0 ? (
               <div>No tenés viajes frecuentes aún.</div>
             ) : (

@@ -172,59 +172,45 @@ export default function BuscadorViajes({ usuario, onReservar }) {
 
   // ---------- UI ----------
   return (
-    <section style={{ padding: "1rem" }}>
-      <h3
-        style={{
-          fontSize: "1.125rem",
-          fontWeight: 600,
-          marginBottom: "0.75rem",
-          textAlign: "center",
-        }}
-      >
-        Buscar viajes
-      </h3>
+    <section>
+      <h2 style={{margin: "auto"}}>Buscar viajes</h2>
 
       {/* ----- BUSCADOR DE VIAJES ----- */}
       <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="origen" style={labelStyle}>Origen</label>
         <AutocompleteInput
           id="origen"
-          placeholder="Ingresá origen"
+          placeholder="Desde"
           value={typeof origen === "object" ? origen.formatted_address : origen}
           onChange={setOrigen}
         />
       </div>
 
       <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="destino" style={labelStyle}>Destino</label>
         <AutocompleteInput
           id="destino"
-          placeholder="Ingresá destino"
+          placeholder="Hasta"
           value={typeof destino === "object" ? destino.formatted_address : destino}
           onChange={setDestino}
         />
       </div>
 
       <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="fecha" style={labelStyle}>Fecha</label>
         <input
           id="fecha"
           type="date"
           value={fecha}
           onChange={(e) => setFecha(e.target.value)}
-          style={inputStyle}
         />
       </div>
 
       <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="momento" style={labelStyle}>Momento del día</label>
+        <label htmlFor="momento" style={labelStyle}>¿Cuándo?</label>
         <select
           id="momento"
           value={momento}
           onChange={(e) => setMomento(e.target.value)}
-          style={inputStyle}
         >
-          <option value="">Cualquiera</option>
+          <option value="">Cualquier momento</option>
           <option value="manana">Mañana (06â€“12)</option>
           <option value="tarde">Tarde (12â€“18)</option>
           <option value="noche">Noche (18â€“06)</option>
@@ -237,7 +223,6 @@ export default function BuscadorViajes({ usuario, onReservar }) {
           id="pasajeros"
           value={pasajeros}
           onChange={(e) => setPasajeros(Number(e.target.value))}
-          style={inputStyle}
         >
           {[...Array(6)].map((_, i) => (
             <option key={i + 1} value={i + 1}>
@@ -248,14 +233,10 @@ export default function BuscadorViajes({ usuario, onReservar }) {
       </div>
 
       {/* Paquetes */}
-      <div style={{ margin: "1rem 0", padding: 12, border: "1px solid #e5e7eb", borderRadius: 8 }}>
-        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-          <input
-            type="checkbox"
-            checked={soloPaquetes}
-            onChange={(e) => setSoloPaquetes(e.target.checked)}
-          />
-          <span style={{ fontWeight: 600 }}>Solo viajes que aceptan paquetes</span>
+      <div className="panel">
+        <label>
+          <input type="checkbox" checked={soloPaquetes} onChange={(e) => setSoloPaquetes(e.target.checked)}/>
+          <span>Solo viajes que aceptan paquetes</span>
         </label>
 
         {soloPaquetes && (
@@ -295,22 +276,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         )}
       </div>
 
-      <button
-        onClick={buscar}
-        disabled={loading}
-        style={{
-          backgroundColor: "var(--color-primary-700)",
-          color: "white",
-          padding: "0.75rem",
-          border: "none",
-          borderRadius: "0.375rem",
-          fontFamily: "inherit",
-          width: "100%",
-          cursor: loading ? "not-allowed" : "pointer",
-          marginBottom: "1rem",
-          opacity: loading ? 0.7 : 1,
-        }}
-      >
+      <button onClick={buscar} disabled={loading} className="button big-button">
         {loading ? "Buscandoâ€¦" : "Buscar"}
       </button>
 

@@ -5,7 +5,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
 // UI
-import logo from "../assets/logo/logo_light.png";
+import logo from "../assets/logo/logo_dark.png";
 import Avatar from "./ui/Avatar";
 import { Caret } from "./cozyglow/icons/Caret";
 

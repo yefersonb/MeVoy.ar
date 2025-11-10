@@ -87,66 +87,63 @@ export default function PerfilViajero({ onPerfilCompletoChange }) {
     }
   };
 
-  if (cargando) return <div className="text-center py-6">Cargando perfil...</div>;
+  if (cargando) return <div >Cargando perfil...</div>;
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg">
-      <h2 className="text-3xl font-extrabold mb-6 text-center">🧳 Completá tu perfil de viajero</h2>
+    <div>
+      <h2>🧳 Completá tu perfil de viajero</h2>
 
-      {error && <div className="mb-4 text-red-600 text-center">{error}</div>}
+      {error && <div>{error}</div>}
 
       {!perfilCompleto && (
-        <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded">
-          <p className="text-sm">
+        <div>
+          <p>
             Faltan datos para completar el perfil. Necesitás nombre, WhatsApp y dirección para poder reservar viajes. Completálos y guardá. 👇
           </p>
         </div>
       )}
 
-      <label className="block mb-4">
-        <span className="block font-semibold mb-1">Nombre completo</span>
+      <label>
+        <span>Nombre completo</span>
         <input
           type="text"
-          className="input mt-1 w-full rounded-md border px-3 py-2"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           placeholder="Ej: Juan Pérez"
         />
       </label>
 
-      <label className="block mb-4">
-        <span className="block font-semibold mb-1">WhatsApp</span>
+      <label>
+        <span>WhatsApp</span>
         <input
           type="text"
-          className="input mt-1 w-full rounded-md border px-3 py-2"
           value={whatsapp}
           onChange={(e) => setWhatsapp(e.target.value)}
           placeholder="+54 9 3751 XXXX"
         />
       </label>
 
-      <label className="block mb-6">
-        <span className="block font-semibold mb-1">Dirección</span>
+      <label>
+        <span>Dirección</span>
         <input
           type="text"
-          className="input mt-1 w-full rounded-md border px-3 py-2"
           value={direccion}
           onChange={(e) => setDireccion(e.target.value)}
           placeholder="Ciudad, barrio, etc."
         />
       </label>
 
-      <div className="mb-6">
-        <label className="flex items-center gap-2">
+      <div >
+        <label>
           <input
             type="checkbox"
             checked={perfilVisible}
             onChange={(e) => setPerfilVisible(e.target.checked)}
           />
-          <span className="font-medium">Mostrar mi perfil al conductor</span>
+          <span >Mostrar mi perfil al conductor</span>
         </label>
         {!perfilVisible && (
-          <p className="text-yellow-600 text-sm mt-1">
+          <p>
             ⚠️ Si ocultás tu perfil, los conductores no podrán ver quién les reservó.
           </p>
         )}
@@ -155,13 +152,12 @@ export default function PerfilViajero({ onPerfilCompletoChange }) {
       <button
         onClick={handleGuardarPerfil}
         disabled={guardando}
-        className="w-full py-3 font-bold rounded-xl shadow hover:scale-[1.01] transition disabled:opacity-50 bg-blue-600 text-white"
       >
         {guardando ? "Guardando..." : perfilCompleto ? "Guardar perfil" : "Faltan datos necesarios"}
       </button>
 
       {guardado && (
-        <p className="mt-3 text-center text-green-600">
+        <p>
           ✅ Perfil guardado con éxito. Redirigiendo...
         </p>
       )}

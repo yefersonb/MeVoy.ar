@@ -26,6 +26,9 @@ import Markdown from 'react-markdown';
 import Avatar from "./ui/Avatar"
 import { Edit3 } from 'react-feather';
 import { License } from "./cozyglow/icons/License"
+import okdriver from "../assets/badges/conductor_verificado.png"
+import goals from "../assets/badges/metas.png"
+import CozyBadge from "./ui/CozyBadge"
 
 const PerfilSection = ({
     usuario,
@@ -105,14 +108,12 @@ const PerfilSection = ({
     const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
 
     return (
-        <div style={{ padding: "0 10px" }}>
+        <div style={{ padding: "0 8px" }}>
             {/* NUEVA TARJETA DE PERFIL */}
             {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx — Debería usar el contexto de perfil */}
 
             {/* Barra de progreso del perfil */}
-            <div style={{ padding: "2rem 0" }}>
-                <PerfilProgress progress={perfilPercent} click={() => { window.location.hash = 'verificacion'; }} />
-            </div>
+            <PerfilProgress progress={perfilPercent} click={() => { window.location.hash = 'verificacion'; }} />            
 
             {/* Tarjeta */}
             <div style={{ width: "100%", padding: "0.5rem", display: "flex", gap: "1rem", alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap" }}>
@@ -144,12 +145,26 @@ const PerfilSection = ({
                     )}
 
                     {/* Insignias */}
-                    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                    {/* Experimental: Insignas grásficas */}
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8}}>
+                        <div style={{width: "4rem", height: "4rem", position: "relative"}}>
+                            <CozyBadge percentage={100} color="#62c2e9ff"/>
+                            <img src={okdriver} style={{width: "4rem", position: "absolute", top: 0, left: 0, transform: "scale(0.75)"}}/>
+                        </div>
+
+                        <div style={{width: "4rem", height: "4rem", position: "relative"}}>
+                            <CozyBadge percentage={35} color="#00FFAA"/>
+                            <img src={goals} style={{width: "4rem", position: "absolute", top: 0, left: 0, transform: "scale(0.75)"}}/>
+                        </div>                        
+                    </div>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                         {/* ToDo: Generar dinámicamente: */}
                         <Badge variant="verificado">Conductor verificado</Badge>
                         <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
                         <Badge variant="rapido">Responde rápido</Badge>
+
                     </div>
+                    
                     {/* Fin Presentación */}
 
                     {/* Información personal */}
@@ -241,7 +256,7 @@ const PerfilSection = ({
             {/* Fin Tarjeta */}
 
 
-            {/* ToDo: Eliminar. Esto debería ser parte de la tarjeta _o_ debería haber un menu de edición 
+            {
             <ActionBar
                 editMode={editMode}
                 onEdit={onEdit}
@@ -249,7 +264,7 @@ const PerfilSection = ({
                 onCancel={onCancel}
                 guardado={guardado}
             />
-            */}
+            }
         </div>
     );
 };

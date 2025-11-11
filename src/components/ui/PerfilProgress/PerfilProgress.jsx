@@ -15,7 +15,7 @@ export default function PerfilProgress({progress, click}) {
     return (
         <div className={styles.container} onClick={click}>
             <div className={styles.content}>
-                <h>¡Seguí completando tu perfil!</h>
+                ¡Seguí completando tu perfil!
                 <div style={{marginTop: "10px", width: "100%", color: "white", padding: "2px", backgroundColor: "#0003", borderRadius: "999px", fontWeight: 600}}>
                     <div className={styles.progressbar} style={{width: visible ? `${progress}%` : "0%"}}>{progress}%</div>
                 </div>

@@ -465,9 +465,7 @@ export default function PerfilViajeroPage() {
                     <RatingRow label="Comunicación" value={perfil.valoraciones.comunicacion} />
                   </div>
                 </div>
-                <h>
-                  {perfil.viajesCompletados} viajes completados
-                </h>
+                <div> {perfil.viajesCompletados} viajes completados </div>
               </div>
             </div>
           </section>

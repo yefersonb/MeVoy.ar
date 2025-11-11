@@ -16,7 +16,6 @@ export function SearchBar({ value, onChange, placeholder = "Buscar viajes..." })
                 border: "none",
                 color: "#fff9"
             }}>
-
             <input
                 style={{ margin: 0, padding: 0, height: "auto", border: "none" }}
                 type="text"

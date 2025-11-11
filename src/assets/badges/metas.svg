@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Goal Flag Icon — centered, circular, black & white, 1:1 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="flagShade" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#cccccc"/>
+    </linearGradient>
+  </defs>
+
+  <!-- circular background -->
+  <circle cx="512" cy="512" r="480" fill="#f2f2f2" stroke="rgba(0,0,0,0.1)" stroke-width="4"/>
+
+  <!-- flag pole -->
+  <rect x="488" y="260" width="20" height="460" rx="10" fill="#222"/>
+
+  <!-- flag cloth -->
+  <path d="M508 260 
+           q120 20 240 0 
+           q-12 80 0 160 
+           q-120 24 -240 0 
+           z"
+        fill="url(#flagShade)" stroke="#111" stroke-width="4"/>
+
+  <!-- checkerboard pattern -->
+  <g transform="translate(508,260)" stroke="#000" stroke-width="2">
+    <rect x="0" y="0" width="60" height="40" fill="#000"/>
+    <rect x="60" y="40" width="60" height="40" fill="#000"/>
+    <rect x="120" y="0" width="60" height="40" fill="#000"/>
+    <rect x="180" y="40" width="60" height="40" fill="#000"/>
+    <rect x="0" y="80" width="60" height="40" fill="#000"/>
+    <rect x="60" y="120" width="60" height="40" fill="#000"/>
+    <rect x="120" y="80" width="60" height="40" fill="#000"/>
+    <rect x="180" y="120" width="60" height="40" fill="#000"/>
+  </g>
+
+  <!-- shadow for subtle depth -->
+  <ellipse cx="512" cy="740" rx="80" ry="18" fill="rgba(0,0,0,0.15)"/>
+</svg>

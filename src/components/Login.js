@@ -5,7 +5,7 @@ import { auth, db, googleProvider } from "../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { useUser } from "../contexts/UserContext";
 import { useTheme } from "../contexts/ThemeContext";
-import logoLight from "../assets/logo/logotype_light.png";
+import imgLogo from "../assets/logo/logotype_dark.png";
 import GLoginButton from "./google/GLoginButton";
 
 export default function Login() {
@@ -141,11 +141,7 @@ export default function Login() {
       maxWidth: 360,
       margin: "0 auto"
     }}>
-      <img
-        src={/* isDark ? logoDark : */ logoLight}
-        alt="[Logo de MeVoy]"
-        style={{ marginTop: "2rem", marginBottom: "1rem", width: "70%", maxWidth: 280 }}
-      />
+      <img src={imgLogo} alt="[Logo de MeVoy]" style={{ marginTop: "4rem", marginBottom: "3rem", width: "70%", maxWidth: 280 }} />
 
       <div style={{ opacity: 0.7, marginBottom: 8 }}>Iniciá sesión</div>
 

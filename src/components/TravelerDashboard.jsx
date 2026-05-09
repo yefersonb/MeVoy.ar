@@ -9,7 +9,7 @@ export default function TravelerDashboard({
     viajeReservado,
     onReservar,
 }) {
-    // si hay hash (#mis-viajes / #perfil), hace scroll al cargar
+    // scroll to hash target on mount
     useEffect(() => {
         const id = (window.location.hash || "").replace("#", "");
         if (!id) return;
@@ -23,7 +23,7 @@ export default function TravelerDashboard({
 
             <section id="mis-viajes" style={{ scrollMarginTop: 80 }}>
                 <div className="panel">
-                    <TripSearch usuario={usuario} onReservar={onReservar} />
+                    <TripSearch user={usuario} onBook={onReservar} />
                 </div>
             </section>
         </div>

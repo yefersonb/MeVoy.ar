@@ -23,7 +23,7 @@ export default function RegistroUsuario() {
     if (!auth.currentUser) return;
 
     const nombre = auth.currentUser.displayName || "Anónimo";
-    const numero = whatsapp.replace(/\D/g, ""); // quita todo menos números
+    const numero = whatsapp.replace(/\D/g, ""); // strip non-digits
     const numeroFormateado = "+54" + numero;
 
     try {

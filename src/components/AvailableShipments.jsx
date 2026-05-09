@@ -5,7 +5,7 @@ import { Link as RouterLink, useInRouterContext } from "react-router-dom";
 import { db } from "../firebase";
 
 const SafeLink = React.forwardRef(({ to, children, ...rest }, ref) => {
-  // ✅ Hook llamado SIEMPRE en el tope del componente
+  // ✅ Hook always called at the top of the component
   const inRouter = useInRouterContext();
   return inRouter ? (
     <RouterLink ref={ref} to={to} {...rest}>{children}</RouterLink>

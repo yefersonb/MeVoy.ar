@@ -10,7 +10,7 @@ export default function RatingModal({ isOpen, onClose, onSubmit }) {
 
   const handleSend = () => {
     console.log("Enviando calificación", { rating, comment });
-    // Aquí podrías implementar el envío de push por WhatsApp
+    // Here you could implement a WhatsApp push notification
     onSubmit({ rating, comment });
     setRating(0);
     setComment("");

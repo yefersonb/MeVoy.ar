@@ -1,4 +1,4 @@
-﻿// src/components/BuscadorViajes.jsx
+﻿// src/components/TripSearch.js
 import React, { useState } from "react";
 import TripDetail from "./TripDetail";
 import AutocompleteInput from "./AutocompleteInput";
@@ -8,11 +8,11 @@ import { db } from "../firebase";
 
 /**
  * Props:
- * - usuario
- * - onReservar?: (viajeId: string) => Promise<void> | void
+ * - user
+ * - onBook?: (tripId: string) => Promise<void> | void
  */
-export default function BuscadorViajes({ usuario, onReservar }) {
-  // ---------- estilos ----------
+export default function TripSearch({ user, onBook }) {
+  // ---------- styles ----------
   const inputStyle = {
     width: "100%",
     padding: "0.5rem",
@@ -29,17 +29,17 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     fontWeight: 500,
   };
 
-  // ---------- hook de búsqueda ----------
+  // ---------- search hook ----------
   const { results, loading: loadingHook, filters, setFilters, clear } = useTripsSearch();
 
-  // UI controlada local
+  // locally controlled UI state
   const [origen, setOrigen] = useState("");
   const [destino, setDestino] = useState("");
   const [fecha, setFecha] = useState("");
   const [pasajeros, setPasajeros] = useState(1);
   const [momento, setMomento] = useState("");
 
-  // Paquetes
+  // Packages
   const [soloPaquetes, setSoloPaquetes] = useState(false);
   const [pesoReq, setPesoReq] = useState("");
   const [volumenReq, setVolumenReq] = useState("");
@@ -51,7 +51,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
   const parseNumber = (v) => (v === "" || v == null ? null : Number(v));
 
   const getFechaHora = (v) => {
-    // soporta v.horario (Timestamp o fecha) y v.fecha (ISO)
+    // supports v.horario (Timestamp or date) and v.fecha (ISO)
     let d = null;
     if (v?.horario?.toDate) d = v.horario.toDate();
     else if (v?.horario) d = new Date(v.horario);
@@ -59,7 +59,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     return d || null;
   };
 
-  // aplica filtros extra encima de los de origen/destino/fecha del hook
+  // applies extra filters on top of hook's origin/destination/date filters
   const filtrarExtras = (lista) => {
     const reqPeso = parseNumber(pesoReq);
     const reqVol = parseNumber(volumenReq);
@@ -67,7 +67,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     return (lista || []).filter((v) => {
       const asientosOk = (v.asientos ?? 0) >= pasajeros;
 
-      // Momento (según hora)
+      // Time-of-day filter
       let momentoOk = true;
       if (momento) {
         const fechaViaje = getFechaHora(v);
@@ -79,10 +79,10 @@ export default function BuscadorViajes({ usuario, onReservar }) {
         }
       }
 
-      // Paquetes
+      // Packages
       const aceptaPaquetesOk = soloPaquetes ? !!v.aceptaPaquetes : true;
 
-      // Peso / Volumen
+      // Weight / volume
       let pesoVolOk = true;
       if (soloPaquetes && (reqPeso != null || reqVol != null)) {
         if (!v.aceptaPaquetes) {
@@ -102,7 +102,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
   const listaFinal = filtrarExtras(results);
   const loading = loadingHook || loadingAction;
 
-  // ---------- acciones ----------
+  // ---------- actions ----------
   const buscar = () => {
     const origText = typeof origen === "object" ? origen.formatted_address : origen;
     const destText = typeof destino === "object" ? destino.formatted_address : destino;
@@ -122,7 +122,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
   };
 
   const confirmarReserva = async (viajeId) => {
-    if (!usuario) {
+    if (!user) {
       alert("Iniciá sesión para reservar");
       return;
     }
@@ -132,23 +132,23 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     }
     setLoadingAction(true);
     try {
-      if (typeof onReservar === "function") {
-        // Usá la lógica del padre (App.reservarViaje)
-        await onReservar(viajeId);
+      if (typeof onBook === "function") {
+        // Use parent's booking logic
+        await onBook(viajeId);
       } else {
-        // Fallback local: crea reserva básica
+        // Local fallback: create basic reservation
         const reservasCol = collection(db, "viajes", viajeId, "reservas");
         await addDoc(reservasCol, {
-          viajanteUid: usuario.uid,
+          viajanteUid: user.uid,
           fechaReserva: serverTimestamp(),
           cantidadPasajeros: 1,
           estadoReserva: "pendiente",
-          creadoPor: usuario.uid,
+          creadoPor: user.uid,
         });
         alert("¡Reserva creada! Esperando aprobación del conductor.");
       }
       setDetalle(null);
-      buscar(); // refresca resultados
+      buscar(); // refresh results
     } catch (err) {
       console.error("Error creando reserva:", err);
       alert("Hubo un problema al reservar.");
@@ -157,7 +157,7 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     }
   };
 
-  // ---------- detalle ----------
+  // ---------- detail ----------
   if (detalle) {
     return (
       <TripDetail
@@ -170,12 +170,11 @@ export default function BuscadorViajes({ usuario, onReservar }) {
     );
   }
 
-  // ---------- UI ----------
   return (
     <section>
       <h2 style={{margin: "auto"}}>Buscar viajes</h2>
 
-      {/* ----- BUSCADOR DE VIAJES ----- */}
+      {/* ----- TRIP SEARCH ----- */}
       <div style={{ margin: "0.5rem 0" }}>
         <AutocompleteInput
           id="origen"

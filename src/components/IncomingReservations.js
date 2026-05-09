@@ -65,7 +65,7 @@ function ReservaItem({
     res.pasajeroNombre ||
     "Sin nombre";
 
-  // Mostrar UID o info de quien reservó si está disponible
+  // Show UID or reservation info if available
   const quienReservo =
     perfilPasajero?.nombre ||
     res.pasajeroNombre ||
@@ -117,7 +117,7 @@ function ReservaItem({
           )}
         </div>
         <div style={{ flex: 1, minWidth: 120 }}>
-          {/* Nombre como botón (accesible) */}
+          {/* Name as accessible button */}
           <div>
             {perfilPasajero ? (
               <button
@@ -159,7 +159,7 @@ function ReservaItem({
                 ).toLocaleString()
               : ""}
           </div>
-          {/* Mostrar quién reservó */}
+          {/* Show who made the reservation */}
           <div style={{ fontSize: "0.89rem", color: "var(--color-primary-700)", marginTop: 2 }}>
             <span style={{ fontWeight: 400 }}>
               Reservado por: {quienReservo}

@@ -12,7 +12,7 @@ function toCoords(v) {
   return loc ? { lat: loc.lat(), lng: loc.lng() } : null;
 }
 function rndPIN() {
-  return String(Math.floor(100000 + Math.random() * 900000)); // 6 dígitos
+  return String(Math.floor(100000 + Math.random() * 900000)); // 6 digits
 }
 
 export default function RequestShipment({ viaje, usuario, onClose, onCreated }) {
@@ -67,7 +67,7 @@ export default function RequestShipment({ viaje, usuario, onClose, onCreated }) 
         receptor: {
           nombre: receptorNombre,
           whatsapp: receptorWhatsapp,
-          pinEntrega: rndPIN(), // se usará al confirmar entrega
+          pinEntrega: rndPIN(), // used when confirming delivery
         },
       });
 

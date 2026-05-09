@@ -15,7 +15,7 @@ import TripShipments from "./TripShipments";
 import AvailableShipments from "./AvailableShipments";
 import IDCard from "./idcard/IDCard";
 
-// 👇 NUEVO: agregamos "Envíos"
+// Added "Envíos" tab
 //const menuItems = ["Perfil", "Verificación", "Vehículos", "Reservas", "Envíos", "Nuevo Viaje"];
 const DEFAULT_TAB = "Perfil"; // fallback estable sin depender de menuItems
 export default function DriverProfile({
@@ -26,7 +26,7 @@ export default function DriverProfile({
   const { usuario } = useUser();
   const { isMobile } = useResponsive();
 
-  // Hash ↔ pestaña (mapea links del Header)
+  // Hash ↔ tab mapping (mirrors Header links)
   const section = useHashSection();
   const tabFromHash = (h) =>
     ({
@@ -72,14 +72,14 @@ export default function DriverProfile({
     deleteTrip,
   } = useTripsData(usuario);
 
-  // Sincroniza cuando cambia el hash (click en menú)
+  // Sync when hash changes (menu click)
   useEffect(() => {
     const next = tabFromHash(section);
     if (next && next !== activeTab) setActiveTab(next);
     // eslint-disable-next-line
   }, [section]);
 
-  // Carga inicial de viajes y reservas
+  // Initial load of trips and reservations
   useEffect(() => {
     if (usuario) {
       loadTripsAndReservations();
@@ -147,7 +147,7 @@ export default function DriverProfile({
           />
         );
 
-      /* Todo: Mover esto a una página componente */
+      /* TODO: Move this to a page component */
       case "Verificación":
         return (
           <div>
@@ -174,7 +174,7 @@ export default function DriverProfile({
           />
         );
 
-      // 👇 Envíos para el CONDUCTOR
+      // Shipments tab for the driver
       case "Envíos":
         return (
           <section >
@@ -191,7 +191,7 @@ export default function DriverProfile({
             </div>
 
             <div >
-              {/* Bloque 1: Envíos disponibles para aceptar */}
+              {/* Block 1: Available shipments to accept */}
               <div >
                 <div >
                   <h3 >Envíos disponibles</h3>
@@ -205,7 +205,7 @@ export default function DriverProfile({
                 </div>
               </div>
 
-              {/* Bloque 2: Envíos vinculados a tus viajes */}
+              {/* Block 2: Shipments linked to your trips */}
               <div >
                 <div >
                   <h3 >Vinculados a tus viajes</h3>
@@ -252,7 +252,7 @@ export default function DriverProfile({
   // ===== RENDER PRINCIPAL =====
   return (
     <div>
-      {/* Barra horizontal removida: navegación queda por hash via Header */}
+      {/* Horizontal bar removed: navigation handled by hash via Header */}
       {renderTabContent()}
     </div>
   );

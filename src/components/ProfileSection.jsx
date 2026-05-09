@@ -59,7 +59,7 @@ const ProfileSection = ({
         limpieza: 0,
     };
 
-    // ESTO ES LO QUE HAY Q SACAR SI NO QUEDA BIEN % de perfil (suma foto, bio, whatsapp, fecha, vehículo y % de verificación de documentos)
+    // TODO: Remove if profile percentage display is unwanted (sums: photo, bio, WhatsApp, DOB, vehicle, and doc verification %)
     const { percent: _verDocPct } = useDriverVerification(usuario?.uid);
     const hasFoto = !!(preview || perfil.fotoURL || usuario?.photoURL);
     const perfilPercent = (() => {
@@ -68,7 +68,7 @@ const ProfileSection = ({
         if (perfil?.descripcion) p += 10;           // bio
         if (perfil?.whatsapp) p += 10;              // contacto
         if (perfil?.fechaNacimiento) p += 10;       // fecha nac.
-        if (vehiculos && vehiculos.length > 0) p += 20; // ≥1 vehículo
+        if (vehiculos && vehiculos.length > 0) p += 20; // ≥1 vehicle
         const docs = Math.max(0, Math.min(100, _verDocPct || 0));
         p += Math.round(docs * 0.35);               // documentos (DNI/licencia/selfie) hasta +35
         return Math.min(100, p);
@@ -110,7 +110,7 @@ const ProfileSection = ({
     return (
         <div style={{ padding: "0 8px" }}>
             {/* NUEVA TARJETA DE PERFIL */}
-            {/* ToDo: Mover la tarjeta generalizada a ./UserCard.jsx — Debería usar el contexto de perfil */}
+            {/* TODO: Move generalized card to ./UserCard.jsx — should use profile context */}
 
             {/* Barra de progreso del perfil */}
             <ProfileProgress progress={perfilPercent} click={() => { window.location.hash = 'verificacion'; }} />            
@@ -126,7 +126,7 @@ const ProfileSection = ({
                 </div>
 
                 <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>
-                    {/* Presentación */}
+                    {/* Introduction */}
                     <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>{perfil.nombre}</div>
 
                     {/* AboutMe + editor */}
@@ -145,7 +145,7 @@ const ProfileSection = ({
                     )}
 
                     {/* Insignias */}
-                    {/* Experimental: Insignas grásficas */}
+                    {/* Experimental: Graphic badges */}
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8}}>
                         <div style={{width: "4rem", height: "4rem", position: "relative"}}>
                             <CozyBadge percentage={100} color="#62c2e9ff"/>
@@ -158,18 +158,18 @@ const ProfileSection = ({
                         </div>                        
                     </div>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                        {/* ToDo: Generar dinámicamente: */}
+                        {/* TODO: Generate dynamically: */}
                         <Badge variant="verificado">Conductor verificado</Badge>
                         <Badge variant="viajes">{completadosPercent === 100 ? '100% viajes completados' : `${completadosPercent}% viajes completados`} </Badge>
                         <Badge variant="rapido">Responde rápido</Badge>
 
                     </div>
                     
-                    {/* Fin Presentación */}
+                    {/* End Introduction */}
 
-                    {/* Información personal */}
+                    {/* Personal info */}
                     <div>
-                        {/* ToDo: Reemplazar estos inputs por _vistas_. Sólo usar Inputs en un panel de edición — Ésto permite mantener tarjetas generalizadas para todos -> menos código */}
+                        {/* TODO: Replace these inputs with _views_. Only use inputs in an edit panel — this keeps cards generalized for all roles → less code */}
                         <div className='panel'>
                             <InputField
                                 label="WhatsApp"
@@ -205,7 +205,7 @@ const ProfileSection = ({
                         </div>
                         {/* Fin Valoraciones */}
 
-                        {/* Vehículos */}
+                        {/* Vehicles */}
                         <div className='panel'>
                             <h3> Mis Vehículos </h3>
                             {loadingVehiculos ? (
@@ -250,7 +250,7 @@ const ProfileSection = ({
                         </div>
                         {/* Fin Vehiculos */}
                     </div>
-                    {/* Fin Información personal */}
+                    {/* End Personal info */}
                 </div>
             </div>
             {/* Fin Tarjeta */}

@@ -51,7 +51,7 @@ export default function PassengerDetail({
         if (snap.exists()) {
           const data = snap.data();
           console.log("Datos del perfil:", data); // Debug para ver los datos
-          console.log("URL de foto:", data.fotoPerfil); // Debug específico para la foto
+          console.log("Profile photo URL:", data.fotoPerfil);
           setPerfil(data);
         }
 
@@ -79,7 +79,7 @@ export default function PassengerDetail({
     if (!esConductorQueDecide) return;
     setAccionando(true);
     try {
-      // Actualizás el viaje con la decisión: ejemplo simplificado
+      // Update the trip with the decision: simplified example
       await setDoc(
         doc(db, "viajes", viajeId),
         { estadoReserva: estado },
@@ -182,7 +182,7 @@ export default function PassengerDetail({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Botón cerrar */}
+        {/* Close button */}
         <button 
           onClick={onClose} 
           style={{
@@ -208,7 +208,7 @@ export default function PassengerDetail({
           Ã—
         </button>
 
-        {/* Título */}
+        {/* Title */}
         <h2 style={{
           margin: '0 0 24px 0',
           fontSize: '24px',
@@ -299,7 +299,7 @@ export default function PassengerDetail({
               )}
             </div>
 
-            {/* Debug info - puedes remover esto después */}
+            {/* Debug info - can be removed later */}
             {perfil.fotoPerfil && (
               <div style={{ 
                 padding: '8px', 
@@ -317,7 +317,7 @@ export default function PassengerDetail({
           </div>
         </div>
 
-        {/* Botones de decisión */}
+        {/* Decision buttons */}
         {esConductorQueDecide && (
           <div style={{ marginTop: 24, display: "flex", gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
             <button

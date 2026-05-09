@@ -1,4 +1,4 @@
-﻿// src/components/NuevoViaje.js
+﻿// src/components/NewTrip.js
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../firebase";
 import {
@@ -21,7 +21,7 @@ export default function NewTrip() {
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
   const [vehiculosCargando, setVehiculosCargando] = useState(true);
 
-  // ðŸ‘‡ Nuevo: estados para Paquetes
+  // Package field states
   const [aceptaPaquetes, setAceptaPaquetes] = useState(false);
   const [pesoMax, setPesoMax] = useState("");
   const [volumenMax, setVolumenMax] = useState("");
@@ -37,7 +37,7 @@ export default function NewTrip() {
     return `${pad(now.getHours())}:${pad(now.getMinutes())}`;
   }
 
-  // Geolocalización para origen (opcional)
+  // Geolocation for origin (optional)
   useEffect(() => {
     if (!origen && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -66,7 +66,7 @@ export default function NewTrip() {
     }
   }, [origen]);
 
-  // Cargar vehículos
+  // Load vehicles
   useEffect(() => {
     const loadVehiculos = async () => {
       setVehiculosCargando(true);
@@ -78,7 +78,7 @@ export default function NewTrip() {
         setVehiculos(lista);
         if (lista.length === 1) setVehiculoSeleccionado(lista[0]);
       } catch (e) {
-        console.error("Error cargando vehículos para nuevo viaje:", e);
+        console.error("Error loading vehicles:", e);
       } finally {
         setVehiculosCargando(false);
       }
@@ -99,7 +99,7 @@ export default function NewTrip() {
     }
     if (!vehiculoSeleccionado) { alert("Seleccioná un vehículo para el viaje."); return; }
 
-    // Validaciones de paquetes cuando aplica
+    // Package field validation
     if (aceptaPaquetes) {
       if (!pesoMax || !volumenMax || !costoBasePaquete) {
         alert("Completá peso máximo, volumen máximo y costo base de paquete."); return;
@@ -161,7 +161,7 @@ export default function NewTrip() {
           patente: vehiculoSeleccionado.patente || null,
           asientos: vehiculoSeleccionado.asientos || null,
         },
-        // ðŸ‘‡ NUEVO: configuración de paquetes
+        // Package settings
         aceptaPaquetes,
         pesoMax: aceptaPaquetes ? Number(pesoMax) : null,            // kg
         volumenMax: aceptaPaquetes ? Number(volumenMax) : null,      // litros
@@ -230,7 +230,7 @@ export default function NewTrip() {
         </div>
       </div>
 
-      {/* ðŸ‘‡ NUEVO: Aceptar paquetes */}
+      {/* Package acceptance */}
       <div style={{ margin: "1rem 0", padding: "12px", border: "1px solid #e5e7eb", borderRadius: 8 }}>
         <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
           <input
@@ -274,7 +274,7 @@ export default function NewTrip() {
         )}
       </div>
 
-      {/* Vehículo */}
+      {/* Vehicle */}
       <div style={{ margin: "0.5rem 0" }}>
         <div style={{ fontWeight: 500, marginBottom: 6 }}>Vehículo</div>
         {vehiculosCargando ? (

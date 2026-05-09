@@ -65,14 +65,14 @@ export function UserProvider({ children }) {
         const data = snap.exists() ? { id: snap.id, ...snap.data() } : null;
         setPerfil(data);
 
-        // Refrescamos isAdmin combinando claim ya leída + fallback por perfil.role
+        // Refresh isAdmin combining already-read claim + fallback from profile.role
         setIsAdmin((prevClaim) => computeIsAdmin(prevClaim, data));
         setLoading(false);
       },
       (e) => {
         console.error("Error fetching perfil:", e);
         setPerfil(null);
-        // Mantener isAdmin solo por claims si perfil no carga
+        // Keep isAdmin from claims only if profile fails to load
         setLoading(false);
       }
     );

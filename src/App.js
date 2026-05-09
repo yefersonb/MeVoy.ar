@@ -35,29 +35,29 @@ import { useUser } from "./contexts/UserContext";
 export default function App() {
     const { usuario, perfil, isAdmin, loading, modoVista } = useUser();
 
-    // Rol efectivo: si el perfil tiene rol lo usamos, si no 'viajero'
-    // Nota: el admin real lo determina isAdmin (claims/seguridad). El "rol" en perfil es para UX.
+    // Effective role: use profile role if set, otherwise default to 'viajero'.
+    // Note: real admin access is determined by isAdmin (claims). The "rol" in profile is UX-only.
     const rol = useMemo(() => perfil?.rol || "viajero", [perfil?.rol]);
 
-    const [viajeReservado, setViajeReservado] = useState(null);
+    const [bookedTrip, setBookedTrip] = useState(null);
 
     const { profileComplete, loadingProfile } = useTravelerProfileMinimal(usuario, rol === "viajero");
 
-    // Datos del conductor (suscripción en vivo)
+    // Driver data (live subscription)
     const { viajes, reservas } = useConductorData(usuario, rol === "conductor");
 
-    // Toggle de rol (Header) — alterna viajero/conductor SIN tocar admin
+    // Role toggle (Header) — switches between traveler/driver without touching admin
     const handleToggleRol = async () => {
         if (!usuario) return;
         const nuevoRol = rol === "viajero" ? "conductor" : "viajero";
         try {
             await setDoc(doc(db, "usuarios", usuario.uid), { rol: nuevoRol }, { merge: true });
         } catch (error) {
-            console.error("Error al cambiar el rol:", error);
+            console.error("Error changing role:", error);
         }
     };
 
-    // Reservar viaje (modo viajero)
+    // Book trip (traveler mode)
     const reservarViaje = async (id) => {
         if (!usuario) return;
         try {
@@ -71,7 +71,7 @@ export default function App() {
             await updateDoc(doc(db, "viajes", id), { asientos: increment(-1) });
 
             const vSnap = await getDoc(doc(db, "viajes", id));
-            if (vSnap.exists()) setViajeReservado({ id, ...vSnap.data() });
+            if (vSnap.exists()) setBookedTrip({ id, ...vSnap.data() });
 
             alert("¡Reserva exitosa! Ahora podés pagar el viaje.");
         } catch (e) {
@@ -116,10 +116,10 @@ export default function App() {
                 isAdmin={isAdmin}
             />
             <div className="app-container">
-                {/* <PageMain rol={rol} /> No se usea por ahora... está causando ruido. Buscar viajes no pertenece acá */}
+                {/* <PageMain rol={rol} /> Disabled for now — causing noise. Trip search doesn't belong here */}
                 {
                     isAdmin && modoVista === "admin" ? (
-                        // Admin real (claims) solo cuando el usuario ELIGE modo admin
+                        // Real admin (claims) only when the user explicitly chooses admin mode
                         <AdminVerificador />
                     )
                     : rol === "conductor" ? (
@@ -130,7 +130,7 @@ export default function App() {
                             usuario={usuario}
                             viajes={[]}
                             perfilCompleto={profileComplete}
-                            viajeReservado={viajeReservado}
+                            viajeReservado={bookedTrip}
                             onReservar={reservarViaje}
                         />
                     )

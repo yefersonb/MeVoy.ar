@@ -56,10 +56,10 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
   const [totalOpiniones, setTotalOpiniones] = useState(0);
   const [reservando, setReservando] = useState(false);
 
-  // NUEVO: modal solicitar envío
+  // Shipment request modal
   const [abrirEnvio, setAbrirEnvio] = useState(false);
 
-  // cálculo ruta y distancia
+  // Route and distance calculation
   useEffect(() => {
     if (!isLoaded || !viaje) return;
     const { origenCoords, destinoCoords, origen, destino } = viaje;
@@ -96,7 +96,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
     }
   }, [isLoaded, viaje]);
 
-  // datos de conductor y vehículo
+  // Fetch driver and vehicle data
   useEffect(() => {
     if (!viaje?.conductor?.uid) return;
     const fetchDatos = async () => {
@@ -245,7 +245,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
           </details>
         )}
 
-        {/* Vehículo */}
+        {/* Vehicle */}
         {vehiculo && (
           <details className="dv-info" style={{ marginTop: 8 }}>
             <summary style={{ cursor: "pointer", color: "var(--color-primary-700)" }}>
@@ -294,7 +294,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
         </div>
       </div>
 
-      {/* Modal solicitar envío */}
+      {/* Shipment request modal */}
       {abrirEnvio && (
         <RequestShipment
           viaje={viaje}

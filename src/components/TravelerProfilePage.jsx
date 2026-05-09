@@ -12,7 +12,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import usePhotoUpload from "../hooks/usePhotoUpload";
 import useHashSection from "../hooks/useHashSection";
 
-// Reutilizado estilo de pestañas tipo conductor
+// Tab style reused from driver profile
 const TabButton = ({ active, children, onClick }) => (
   <span
     onClick={onClick}
@@ -82,7 +82,7 @@ const calcularEdad = (fechaStr) => {
 export default function PerfilViajeroPage() {
   const { usuario } = useUser();
 
-  // Hash â†” pestaña (por si querés linkear directo)
+  // Hash ↔ tab (for direct deep-linking)
   const section = useHashSection();
   const tabFromHash = (h) =>
     ({
@@ -109,9 +109,9 @@ export default function PerfilViajeroPage() {
     usuario?.uid || ""
   );
 
-  // Viajes frecuentes (placeholder; reemplazar con lógica real)
+  // Frequent trips (placeholder; replace with real logic)
   const [viajesFrecuentes, setViajesFrecuentes] = useState([]);
-  // Métodos de pago (placeholder)
+  // Payment methods (placeholder)
   const [metodosPago, setMetodosPago] = useState([]);
 
   // Carga perfil
@@ -227,7 +227,7 @@ export default function PerfilViajeroPage() {
             active={activeTab === it}
             onClick={() => {
               setActiveTab(it);
-              window.location.hash = hashFromTab(it); // â† actualiza hash
+              window.location.hash = hashFromTab(it); // update hash
               setEditMode(false);
             }}
           >

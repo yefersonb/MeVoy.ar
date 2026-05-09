@@ -15,7 +15,7 @@ export default function AutocompleteInput({
   placeholder,
   value,
   onChange,
-  // opcional: si querés forzar solo selección desde autocomplete
+  // optional: force selection only from autocomplete results
   onlyFromAutocomplete = false,
 }) {
 
@@ -26,7 +26,7 @@ const { isLoaded, loadError } = useJsApiLoader(MAP_LOADER_OPTIONS);
   const [internalValue, setInternalValue] = useState(
     typeof value === "object" ? value.formatted_address : value || ""
   );
-  const [error, setError] = useState(""); // mensaje de validación
+  const [error, setError] = useState(""); // validation message
   const [validating, setValidating] = useState(false);
 
   // Sincronizar si el padre cambia el value
@@ -48,8 +48,8 @@ const { isLoaded, loadError } = useJsApiLoader(MAP_LOADER_OPTIONS);
         inputRef.current,
         {
           types: ["geocode"],
-          componentRestrictions: { country: "AR" }, // mayúsculas
-          fields: ["formatted_address", "geometry"], // <- acá el cambio
+          componentRestrictions: { country: "AR" },
+          fields: ["formatted_address", "geometry"],
         }
       );
       autocompleteRef.current.addListener("place_changed", () => {
@@ -78,7 +78,7 @@ const { isLoaded, loadError } = useJsApiLoader(MAP_LOADER_OPTIONS);
   }, [isLoaded, loadError, onChange]);
 console.log("GMAPS KEY?", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 
-  // Geocode de texto libre (fallback) si no vino place válido
+  // Geocode free-text input (fallback) when no valid place was selected
   const geocodeAddress = useCallback(
     async (address) => {
       if (!address || !window.fetch) return null;
@@ -105,7 +105,7 @@ console.log("GMAPS KEY?", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
           };
         }
       } catch (e) {
-        console.warn("Error en geocoding:", e);
+        console.warn("Geocoding error:", e);
       } finally {
         setValidating(false);
       }
@@ -140,7 +140,7 @@ console.log("GMAPS KEY?", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
   };
 
   const handleBlur = async () => {
-    // Si ya vino un objeto válido no hacemos nada
+    // If a valid place object was already received, do nothing
     if (value && typeof value === "object" && value.geometry) {
       return;
     }
@@ -148,7 +148,7 @@ console.log("GMAPS KEY?", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
       setError("");
       return;
     }
-    // Si está configurado para solo autocomplete, validamos que venga de ahí
+    // If onlyFromAutocomplete is set, validate that the value came from the picker
     if (onlyFromAutocomplete) {
       const geo = await geocodeAddress(internalValue);
       if (geo) {
@@ -161,7 +161,7 @@ console.log("GMAPS KEY?", process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
       return;
     }
 
-    // Para texto libre, geocode y aceptamos si es válido
+    // For free text, geocode and accept if valid
     debouncedGeocode(internalValue);
   };
 

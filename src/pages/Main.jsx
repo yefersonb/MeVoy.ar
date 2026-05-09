@@ -2,7 +2,7 @@ import React from "react";
 import { SearchBar } from "../components/ui/SearchBar/SearchBar";
 
 export default function PageMain({ rol }) {
-  // Si querés ocultar la búsqueda para conductor, descomentá la línea:
+  // To hide search for drivers, uncomment the line below:
   // if (rol === "conductor") return null;
   return (
     <div className="page-main">

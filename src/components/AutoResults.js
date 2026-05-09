@@ -88,7 +88,7 @@ export default function AutoResults({ viajes = [], onReservar }) {
                     : v.conductor}
                 </small>
               </div>
-              {/* El botón que despliega detalles/mapa */}
+              {/* Button that expands details/map */}
               <button
                 onClick={() => toggleDetails(v)}
                 style={{

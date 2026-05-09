@@ -481,7 +481,7 @@ const VehiculosConductor = () => {
               </div>
             {/* Fin ToDo: Reemplazar est... -/+ ... */}
 
-            { // Ésto genera la lista de inputs... la verdad... podría ser más crudo en pos de readabilidad. — Suggestion: Keys deberían ser SIEMPRE en inglés
+            { // Generates the list of inputs. Keys should always be in English.
               [
                 { key: 'marca', label: 'Marca' },
                 { key: 'modelo', label: 'Modelo' },

@@ -1,7 +1,7 @@
 //src/appCheckDebug.js
 /* eslint-env browser */
 
-// Solo en desarrollo y si estás en localhost
+// Dev-only, localhost only
 if (process.env.NODE_ENV !== "production") {
   const isLocalhost =
     typeof window !== "undefined" &&

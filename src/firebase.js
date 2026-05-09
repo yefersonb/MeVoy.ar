@@ -19,8 +19,8 @@ const firebaseConfig = {
   appId: "1:874173356390:web:dbce62df5f5d7a3e01d0a7",
 };
 
-// Toggle: 1=activa AppCheck en dev, 0=desactiva
-// Cambiá en tu .env local: REACT_APP_ENABLE_APPCHECK=0 (para que arranque YA)
+// Toggle: 1=enable AppCheck in dev, 0=disable
+// Set in .env local: REACT_APP_ENABLE_APPCHECK=0 to skip AppCheck
 const ENABLE_APPCHECK =
   (process.env.REACT_APP_ENABLE_APPCHECK ?? "1").trim() === "1";
 
@@ -29,28 +29,28 @@ const ENABLE_APPCHECK =
 // ==========================
 export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// — AppCheck listo (promesa) —
-// Si está desactivado en dev, resolvemos al toque.
+// — AppCheck ready (promise) —
+// If disabled in dev, resolve immediately.
 export const appCheckReady = new Promise((resolve) => {
   if (typeof window === "undefined") return resolve();
 
   if (!ENABLE_APPCHECK || process.env.NODE_ENV !== "production") {
-    // Modo DEV sin AppCheck: no pedimos token, seguimos.
+    // DEV mode without AppCheck: skip token, continue.
     if (!ENABLE_APPCHECK) {
-      console.info("AppCheck desactivado en DEV (REACT_APP_ENABLE_APPCHECK=0).");
+      console.info("AppCheck disabled in DEV (REACT_APP_ENABLE_APPCHECK=0).");
       return resolve();
     }
   }
 
   try {
     if (process.env.NODE_ENV !== "production") {
-      // Podés fijarlo a tu token si querés: window.FIREBASE_APPCHECK_DEBUG_TOKEN = "3167a15f-4d46-4875-9da0-e79988fe9c2e";
+      // To use a specific token: window.FIREBASE_APPCHECK_DEBUG_TOKEN = "3167a15f-4d46-4875-9da0-e79988fe9c2e";
       window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     }
 
     const provider = new ReCaptchaV3Provider(
       process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY
-        || "6LcVEa8rAAAAACH2KE_RkhPwnriDsVnHDcQm1QJj" // fallback a tu clave
+        || "6LcVEa8rAAAAACH2KE_RkhPwnriDsVnHDcQm1QJj" // fallback key
     );
 
     const appCheck = initializeAppCheck(app, {
@@ -58,16 +58,16 @@ export const appCheckReady = new Promise((resolve) => {
       isTokenAutoRefreshEnabled: true,
     });
 
-    // Aseguramos primer token ANTES de seguir:
+    // Ensure first token BEFORE proceeding:
     onTokenChanged(appCheck, async (result) => {
       if (result?.token) {
         resolve();
       }
     });
 
-    // Dispara la obtención del primer token:
+    // Trigger first token fetch:
     getToken(appCheck).catch(() => {
-      // Si falla, igual resolvemos para no bloquear dev
+      // On failure, still resolve to avoid blocking dev
       resolve();
     });
   } catch (e) {
@@ -77,7 +77,7 @@ export const appCheckReady = new Promise((resolve) => {
 });
 
 // ==========================
-// SDKs (usarlos DESPUÉS de appCheckReady)
+// SDKs (use AFTER appCheckReady)
 // ==========================
 export const auth = getAuth(app);
 export const db = getFirestore(app);

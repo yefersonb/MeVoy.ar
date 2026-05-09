@@ -9,7 +9,7 @@ import logo from "../assets/logo/logo_dark.png";
 import Avatar from "./ui/Avatar";
 import { Caret } from "./cozyglow/icons/Caret";
 
-// Menú desprendido
+// Detached menu
 import UserMenuPortal from "./menus/UserMenuPortal";
 
 export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
@@ -38,7 +38,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
         } catch { }
     };
 
-    // Ir a una sección por ID (scroll suave). Si no existe, setea hash igualmente.
+    // Scroll to section by ID (smooth). If not found, sets hash anyway.
     const goToAnchor = (id) => {
         setModoVista?.(null); // salimos de modo admin al ir a secciones normales
         setMenuAbierto(false);
@@ -70,7 +70,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
         }
     }
 
-    // Ítems del menú con href único + onClick (para evitar el warning de onClick boolean)
+    // Menu items with unique href + onClick (avoids boolean onClick warning)
     const MENU_ITEMS = [
         ...(isAdmin
             ? [{ label: "Panel Admin", href: "#admin", onClick: goAdmin }]
@@ -147,7 +147,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
                             <div>{etiquetaRol}</div>
                         </button>
 
-                        {/* Botón Admin SOLO si es admin */}
+                        {/* Admin button ONLY when user is admin */}
                         {isAdmin && (
                             <button
                                 type="button"
@@ -160,7 +160,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
                             </button>
                         )}
 
-                        {/* (Opcional) Salir rápido */}
+                        {/* (Optional) Quick logout */}
                         {onLogout && (
                             <button
                                 type="button"
@@ -176,7 +176,7 @@ export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
                 </div>
             </div>
 
-            {/* Menú desprendido por portal */}
+            {/* Detached portal menu */}
             <UserMenuPortal
                 open={menuAbierto}
                 anchorRef={btnRef}

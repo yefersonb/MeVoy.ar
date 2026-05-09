@@ -1,22 +1,22 @@
-﻿// src/components/VerificacionConductorWizard.jsx
+﻿// src/components/DriverVerificationWizard.jsx
 // ------------------------------------------------------------
-// Wizard paso a paso para que el CONDUCTOR cargue y verifique:
-// 1) Datos básicos (nombre, DNI)
-// 2) Documento DNI (frente/dorso)
-// 3) Licencia de conducir (frente/dorso)
-// 4) Selfie de verificación (opcional pero recomendado)
-// 5) Revisión y envío a verificación (status = "pending")
+// Step-by-step wizard for the DRIVER to upload and verify:
+// 1) Basic info (name, DNI)
+// 2) ID document (front/back)
+// 3) Driver's license (front/back)
+// 4) Verification selfie (optional but recommended)
+// 5) Review and submit for verification (status = "pending")
 //
-// â€¢ Guarda progreso automáticamente en Firestore
-// â€¢ Sube archivos a Firebase Storage con barra de progreso
-// â€¢ Muestra barra de avance global y estado por paso
-// â€¢ Permite retomar donde quedó (resume)
-// â€¢ Diseño simple (funciona con o sin Tailwind)
+// • Auto-saves progress to Firestore
+// • Uploads files to Firebase Storage with progress bar
+// • Shows overall progress bar and per-step status
+// • Allows resuming where the driver left off
+// • Simple design (works with or without Tailwind)
 //
-// Requisitos:
-//  - Tener configurado Firebase en src/firebase.js exportando { auth, db, storage }
-//  - Firestore colección: "verificaciones" doc por uid
-//  - Storage: "verificaciones/{uid}/{docKey}/archivo"
+// Requirements:
+//  - Firebase configured in src/firebase.js exporting { auth, db, storage }
+//  - Firestore collection: "verificaciones" doc per uid
+//  - Storage: "verificaciones/{uid}/{docKey}/file"
 
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { auth, db, storage } from '../firebase';
@@ -38,7 +38,6 @@ import SelfieUploaderMobile from "./verification/SelfieUploaderMobile";
 
 
 export default function DriverVerificationWizard({ onExit }) {
-  // Unificados con reglas
   const COLL = 'verificaciones';
   const STORAGE_ROOT = 'verificaciones';
 
@@ -51,7 +50,7 @@ export default function DriverVerificationWizard({ onExit }) {
   const [status, setStatus] = useState('incomplete'); // incomplete|pending|verified|rejected
   const [error, setError] = useState('');
 
-  // Datos y archivos
+  // Form data and file URLs
   const [datos, setDatos] = useState({ nombreCompleto: '', dniNumero: '' });
   const [urls, setUrls] = useState({
     dniFrente: '',
@@ -62,7 +61,7 @@ export default function DriverVerificationWizard({ onExit }) {
   });
   const [uploading, setUploading] = useState({}); // progreso por clave 0..100
 
-  // Cargar progreso si existe
+  // Load existing progress if any
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -248,7 +247,7 @@ export default function DriverVerificationWizard({ onExit }) {
     if (idx === 0) return !!(datos.nombreCompleto && datos.dniNumero);
     if (idx === 1) return !!(urls.dniFrente && urls.dniDorso);
     if (idx === 2) return !!(urls.licFrente && urls.licDorso);
-    if (idx === 3) return !!urls.selfie; // opcional
+    if (idx === 3) return !!urls.selfie; // optional
     return false;
   };
 
@@ -298,9 +297,9 @@ export default function DriverVerificationWizard({ onExit }) {
   <PasoSelfie
     url={urls.selfie}
     onUploaded={({ url }) => {
-      // guardamos en estado local para que se vea al instante
+      // update local state immediately for instant preview
       setUrls(prev => ({ ...prev, selfie: url }));
-      // ya se guarda en Firestore adentro del componente modular
+      // Firestore save happens inside SelfieUploaderMobile
     }}
   />
 )}
@@ -398,7 +397,7 @@ function Progress({
             fontSize: 12,
             fontWeight: 600,
             color: textColor,
-            // una sombra suave para legibilidad sobre ambos fondos
+            // subtle shadow for readability on both fill levels
             textShadow: '0 1px 2px rgba(0,0,0,0.25)',
             userSelect: 'none'
           }}
@@ -495,10 +494,10 @@ function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile })
 function PasoSelfie({ url, onUploaded }) {
   return (
     <div >
-      {/* Uploader modular (abre cámara frontal en móvil, comprime, sube, guarda en Firestore) */}
+      {/* Modular uploader (opens front camera on mobile, compresses, uploads, saves to Firestore) */}
       <SelfieUploaderMobile onUploaded={onUploaded} />
 
-      {/* Mini-preview si ya hay selfie guardada */}
+      {/* Preview existing selfie if one is saved */}
       {url && (
         <div style={{ marginTop: 12 }}>
           <div style={{color:'var(--color-text-muted)', marginBottom:8}}>Selfie existente</div>
@@ -553,7 +552,7 @@ function KeyVal({ k, v }) {
 }
 
 function Thumb({ label, url }) {
-  // Alto fijo chico para miniatura del resumen
+  // Small fixed height for summary thumbnails
   const boxStyle = { height: 96, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', borderRadius: 12, border:'1px solid #E5E7EB' };
   const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
 
@@ -573,7 +572,7 @@ function Thumb({ label, url }) {
   );
 }
 
-/* ToDo: Esta es una idea para las nuevas etiquetas de estado de perfil. Aplicar la lógica de renderizado: */
+/* TODO: Apply rendering logic for these status labels */
 function StatusTag({ status }) {
   const map = {
     incomplete: { text: 'Incompleto', bg:'#E5E7EB', fg:'var(--color-text)' },
@@ -620,7 +619,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
     e.target.value = '';
   };
 
-  // Drag & drop opcional
+  // Optional drag & drop
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
@@ -628,7 +627,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
   };
   const handleDragOver = (e) => e.preventDefault();
 
-  // Alto fijo chico para que NO se vean gigantes (aplica siempre)
+  // Fixed small height so previews don't dominate (always applied)
   const previewBoxStyle = { height: 160, background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' };
   const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
 
@@ -656,7 +655,7 @@ function DocTile({ label, url, onSelect, progress, hint }) {
         )}
       </div>
 
-      {/* Input real, lo oculto con style para no depender de Tailwind */}
+      {/* Hidden file input — style used instead of Tailwind */}
       <input
         ref={fileRef}
         type="file"

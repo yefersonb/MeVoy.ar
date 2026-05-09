@@ -77,7 +77,7 @@ export default function TravelerProfile({ onPerfilCompletoChange }) {
       );
       setGuardado(true);
       setTimeout(() => {
-        window.location.href = "/"; // o reemplazar por navegación programática
+        window.location.href = "/"; // or replace with programmatic navigation
       }, 1000);
     } catch (e) {
       console.error("Error guardando perfil:", e);
@@ -167,7 +167,7 @@ export default function TravelerProfile({ onPerfilCompletoChange }) {
 
 // Ejemplo de guard / chequeo antes de reservar (puede ser hook separado):
 export function usePuedeReservar(perfil) {
-  // perfil debería tener nombre, whatsapp, direccion y perfilVisible si corresponde
+  // profile should have nombre, whatsapp, direccion, and perfilVisible (Firestore field names)
   return (
     perfil?.nombre?.trim()?.length > 0 &&
     perfil?.whatsapp?.trim()?.length > 0 &&

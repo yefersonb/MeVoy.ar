@@ -111,7 +111,7 @@ export default function UserMenuPortal({
         }}
       />
 
-      {/* Links dinámicos */}
+      {/* Dynamic links */}
       {links.map((it, idx) =>
         it?.type === "divider" ? (
           <div key={`div-${idx}`} style={dividerStyle} />

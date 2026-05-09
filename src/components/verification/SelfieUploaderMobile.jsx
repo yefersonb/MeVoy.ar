@@ -39,7 +39,7 @@ export default function SelfieUploaderMobile({ onUploaded }) {
       <input
         type="file"
         accept="image/*"
-        capture="user"         // cámara frontal en la mayoría de móviles
+        capture="user"         // front camera on most mobile devices
         onChange={onPick}
         disabled={busy}
       />

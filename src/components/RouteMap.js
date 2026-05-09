@@ -17,7 +17,7 @@ function RouteMap({ origen, destino }) {
     // Instancia el mapa centrado en Misiones (puedes cambiar el centro)
     const map = new window.google.maps.Map(mapRef.current, {
       zoom: 7,
-      center: { lat: -27.3671, lng: -55.8961 }, // Ajusta según tu región
+      center: { lat: -27.3671, lng: -55.8961 }, // Adjust to your region
     });
 
     const directionsService = new window.google.maps.DirectionsService();

@@ -42,7 +42,7 @@ export default function AdminVerificador() {
       q = query(baseCol, where("status", "==", tab), orderBy("updatedAt", "desc"), limit(30));
     }
 
-    // suscripción en vivo con fallback por índice
+    // live subscription with index fallback
     const unsub = onSnapshot(
       q,
       (snap) => {
@@ -54,7 +54,7 @@ export default function AdminVerificador() {
         setLoading(false);
       },
       async (error) => {
-        // si falta índice, hacemos lectura sin orderBy y ordenamos local
+        // if index is missing, read without orderBy and sort locally
         if (error?.code === "failed-precondition") {
           try {
             let q2 = tab === "all"
@@ -84,7 +84,7 @@ export default function AdminVerificador() {
     return () => { if (unsubRef.current) unsubRef.current(); };
   }, [tab]);
 
-  // paginar “cargar más” (solo cuando hay índice)
+  // “load more” pagination (only when index is available)
   const loadMore = async () => {
     if (!hasMore || !endCursor) return;
     let q;
@@ -211,7 +211,7 @@ function VerifCard({ item }) {
      const historyEntry = {
        by: user?.uid || null,
        byName: user?.displayName || user?.email || "admin",
-       // ✅ usar Date del cliente (Firestore lo guarda como Timestamp)
+       // ✅ use client Date (Firestore stores it as Timestamp)
        at: new Date(),
        from,
        to,
@@ -223,7 +223,7 @@ function VerifCard({ item }) {
         reviewedAt: serverTimestamp(),
         reviewedBy: user?.uid || null,
         updatedAt: serverTimestamp(),
-       // ✅ apendear de forma segura
+       // ✅ safely append
        history: arrayUnion(historyEntry),
       });
     } catch (e) {

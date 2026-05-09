@@ -28,7 +28,7 @@ export default function Login() {
         }
       })
       .catch((e) => {
-        // si no hay redirect pendiente, Firebase tira error benigno; lo ignoramos salvo casos útiles
+        // Firebase throws a benign error if no redirect is pending; ignore unless meaningful
         const code = e?.code || "";
         if (code && code !== "auth/no-auth-event") {
           console.error("Redirect result error:", e);
@@ -44,7 +44,7 @@ export default function Login() {
     setMsg(null);
 
     try {
-      // Si el sitio está aislado (COOP/COEP), usá redirect para evitar warnings/popups bloqueados
+      // If the site is cross-origin isolated (COOP/COEP), use redirect to avoid blocked popups
       if (window.crossOriginIsolated) {
         await signInWithRedirect(auth, googleProvider);
         return; // redirige; no seguimos
@@ -55,7 +55,7 @@ export default function Login() {
       await handlePostLogin(result.user);
     } catch (e) {
       const code = e?.code || "";
-      // Fallback a REDIRECT si el popup está bloqueado/cancelado
+      // Fall back to redirect if the popup is blocked or cancelled
       if (code === "auth/popup-blocked" || code === "auth/cancelled-popup-request") {
         try {
           await signInWithRedirect(auth, googleProvider);
@@ -122,7 +122,7 @@ export default function Login() {
       setMsg("¡Listo! Ya podés continuar.");
       setPidiendoWhatsapp(false);
       setUserTemp(null);
-      // El UserContext detecta la sesión y actualizará el estado
+      // UserContext detects the session and will update state
     } catch (e) {
       console.error("Error guardando WhatsApp:", e);
       setMsg("Error guardando WhatsApp. Probá de nuevo.");

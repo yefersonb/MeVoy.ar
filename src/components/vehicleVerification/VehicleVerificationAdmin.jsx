@@ -7,7 +7,7 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../../firebase"; // ✅ Ruta corregida
+import { db } from "../../firebase";
 
 export default function VerificacionVehiculosAdmin() {
   const [vehiculos, setVehiculos] = useState([]);

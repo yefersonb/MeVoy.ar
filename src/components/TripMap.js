@@ -28,7 +28,7 @@ const ViajeMapa = ({ origen, destino }) => {
       (result, status) => {
         if (status === "OK") {
           directionsRenderer.setDirections(result);
-          // Extraer distancia y duración
+          // Extract distance and duration
           const leg = result.routes[0].legs[0];
           setInfoViaje({
             distancia: leg.distance.text,

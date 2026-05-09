@@ -166,9 +166,9 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
   };
 
   return (
-    <div className="dv-overlay" onClick={onClose}>
-      <div className="dv-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="dv-close" onClick={onClose}>Ã—</button>
+    <div className="trip-detail-overlay" onClick={onClose}>
+      <div className="trip-detail-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="trip-detail-close" onClick={onClose}>Ã—</button>
         <h2>Detalle de Viaje</h2>
 
         {isLoaded ? (
@@ -177,9 +177,9 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
           </GoogleMap>
         ) : <p>Cargando mapaâ€¦</p>}
 
-        {rutaError && <p className="dv-error" style={{ margin: 0 }}>{rutaError}</p>}
+        {rutaError && <p className="trip-detail-error" style={{ margin: 0 }}>{rutaError}</p>}
 
-        <div className="dv-info" style={{ margin: "1rem 0" }}>
+        <div className="trip-detail-info" style={{ margin: "1rem 0" }}>
           <p><strong>Origen:</strong> {abbreviateLocation(viaje.origen)}</p>
           <p><strong>Destino:</strong> {abbreviateLocation(viaje.destino)}</p>
           <p><strong>Horario:</strong> {viaje.horario}</p>
@@ -217,7 +217,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
 
         {/* Conductor */}
         {datosConductor && (
-          <div className="dv-info">
+          <div className="trip-detail-info">
             <p>ðŸ§‘ {datosConductor.nombre || "Conductor"}</p>
             {/* toggle local sin estado previo: lo agregamos arriba */}
           </div>
@@ -247,7 +247,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
 
         {/* Vehicle */}
         {vehiculo && (
-          <details className="dv-info" style={{ marginTop: 8 }}>
+          <details className="trip-detail-info" style={{ marginTop: 8 }}>
             <summary style={{ cursor: "pointer", color: "var(--color-primary-700)" }}>
               ðŸš— {vehiculo.marca || "Vehículo"} {vehiculo.modelo || ""}
             </summary>
@@ -265,7 +265,7 @@ const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
           </details>
         )}
 
-        <div className="dv-actions">
+        <div className="trip-detail-actions">
           <button onClick={onClose} disabled={parentLoading || reservando}>Volver</button>
           <button
             onClick={handleConfirmarReserva}

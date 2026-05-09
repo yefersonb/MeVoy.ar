@@ -2,7 +2,7 @@
 /* eslint-env browser */
 
 // Dev-only, localhost only
-if (process.env.NODE_ENV !== "production") {
+if (import.meta.env.DEV) {
   const isLocalhost =
     typeof window !== "undefined" &&
     window.location &&

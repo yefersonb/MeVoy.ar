@@ -4,7 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 
 import "./appCheckDebug";           // ensures debug token is set before App is imported
 import App from "./App";
-import "./testRules";
 import { UserProvider } from "./contexts/UserContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(

@@ -42,7 +42,7 @@ export default function NewTrip() {
     if (!origen && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async ({ coords }) => {
-          const key = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+          const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
           try {
             const res = await fetch(
               `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${key}`

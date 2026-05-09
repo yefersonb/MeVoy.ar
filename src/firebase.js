@@ -20,9 +20,9 @@ const firebaseConfig = {
 };
 
 // Toggle: 1=enable AppCheck in dev, 0=disable
-// Set in .env local: REACT_APP_ENABLE_APPCHECK=0 to skip AppCheck
+// Set in .env local: VITE_ENABLE_APPCHECK=0 to skip AppCheck
 const ENABLE_APPCHECK =
-  (process.env.REACT_APP_ENABLE_APPCHECK ?? "1").trim() === "1";
+  (import.meta.env.VITE_ENABLE_APPCHECK ?? "1").trim() === "1";
 
 // ==========================
 // INIT
@@ -34,22 +34,22 @@ export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const appCheckReady = new Promise((resolve) => {
   if (typeof window === "undefined") return resolve();
 
-  if (!ENABLE_APPCHECK || process.env.NODE_ENV !== "production") {
+  if (!ENABLE_APPCHECK || import.meta.env.DEV) {
     // DEV mode without AppCheck: skip token, continue.
     if (!ENABLE_APPCHECK) {
-      console.info("AppCheck disabled in DEV (REACT_APP_ENABLE_APPCHECK=0).");
+      console.info("AppCheck disabled in DEV (VITE_ENABLE_APPCHECK=0).");
       return resolve();
     }
   }
 
   try {
-    if (process.env.NODE_ENV !== "production") {
+    if (import.meta.env.DEV) {
       // To use a specific token: window.FIREBASE_APPCHECK_DEBUG_TOKEN = "3167a15f-4d46-4875-9da0-e79988fe9c2e";
       window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     }
 
     const provider = new ReCaptchaV3Provider(
-      process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY
+      import.meta.env.VITE_RECAPTCHA_V3_SITE_KEY
         || "6LcVEa8rAAAAACH2KE_RkhPwnriDsVnHDcQm1QJj" // fallback key
     );
 

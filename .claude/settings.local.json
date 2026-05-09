@@ -6,7 +6,9 @@
       "Bash(git mv *)",
       "Bash(git add *)",
       "Bash(git rm *)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(ls *.env .env*)",
+      "Bash(cat .env)"
     ]
   }
 }

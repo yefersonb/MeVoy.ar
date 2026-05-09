@@ -22,7 +22,7 @@ passengers to send packages on the same routes.
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 18 (Create React App) |
+| Frontend | React 18 (Vite) |
 | Routing | React Router v6 |
 | Auth | Firebase Auth — Google OAuth only |
 | Database | Cloud Firestore (NoSQL) |
@@ -44,8 +44,8 @@ npm run server    # Express backend only
 npm run build     # production build
 ```
 
-The frontend proxies API calls to `http://localhost:3001` (see `proxy` in
-`package.json`). The backend is only needed for MercadoPago payment flows.
+The frontend proxies API calls to `http://localhost:3001` (see `server.proxy` in
+`vite.config.js`). The backend is only needed for MercadoPago payment flows.
 
 ---
 
@@ -54,9 +54,9 @@ The frontend proxies API calls to `http://localhost:3001` (see `proxy` in
 Create a `.env` file in the project root. The app requires:
 
 ```
-REACT_APP_GOOGLE_MAPS_API_KEY=...
-REACT_APP_RECAPTCHA_V3_SITE_KEY=...
-REACT_APP_ENABLE_APPCHECK=0   # set to 1 in production; 0 skips AppCheck in dev
+VITE_GOOGLE_MAPS_API_KEY=...
+VITE_RECAPTCHA_V3_SITE_KEY=...
+VITE_ENABLE_APPCHECK=0   # set to 1 in production; 0 skips AppCheck in dev
 ```
 
 Firebase config is hardcoded in `src/firebase.js` (project:
@@ -69,28 +69,28 @@ references.
 
 ```
 src/
-├── App.js                    # root — auth gate, role routing
+├── App.jsx                   # root — auth gate, role routing
 ├── firebase.js               # Firebase init + AppCheck + SDK exports
 ├── googleMapsConfig.js       # shared loader options (language: es, region: AR)
 ├── appCheckDebug.js          # sets debug token on localhost (dev only)
-├── index.js                  # ReactDOM root, UserProvider, BrowserRouter
+├── index.jsx                 # ReactDOM root, UserProvider, BrowserRouter
 │
 ├── contexts/
-│   ├── UserContext.js        # auth state, profile snapshot, admin flag, avatar
-│   └── ThemeContext.js       # cozyglow theme switching
+│   ├── UserContext.jsx       # auth state, profile snapshot, admin flag, avatar
+│   └── ThemeContext.jsx      # cozyglow theme switching
 │
 ├── hooks/
-│   ├── useAuthRole.js        # standalone auth+role hook (not used by App.js)
-│   ├── useConductorData.js   # live subscription: driver's trips + reservations
-│   ├── useDriverVerification.js  # driver doc verification status + percent
-│   ├── useHashSection.js     # reads window.location.hash → tab name
+│   ├── useAuthRole.jsx       # standalone auth+role hook (not used by App.jsx)
+│   ├── useConductorData.jsx  # live subscription: driver's trips + reservations
+│   ├── useDriverVerification.jsx  # driver doc verification status + percent
+│   ├── useHashSection.jsx    # reads window.location.hash → tab name
 │   ├── usePerfilData.js      # profile read/write helpers
 │   ├── usePhotoUpload.js     # profile photo upload to Storage
-│   ├── useResponsive.js      # isMobile breakpoint
-│   ├── useTravelerProfileComplete.js  # full profile object + canReserve flag
-│   ├── useTravelerProfileMinimal.js   # lightweight: profileComplete boolean
+│   ├── useResponsive.jsx     # isMobile breakpoint
+│   ├── useTravelerProfileComplete.jsx  # full profile object + canReserve flag
+│   ├── useTravelerProfileMinimal.js    # lightweight: profileComplete boolean
 │   ├── useTripsData.js       # driver: publishedTrips, incomingReservations
-│   └── useTripsSearch.js     # traveler: filter trips by origin/destination/date
+│   └── useTripsSearch.jsx    # traveler: filter trips by origin/destination/date
 │
 ├── utils/
 │   ├── location.js           # abbreviateLocation(str) helper
@@ -102,9 +102,9 @@ src/
 │
 ├── components/
 │   ├── App.js                # (see root)
-│   ├── Login.js              # Google sign-in, WhatsApp capture on first login
-│   ├── Header.js             # top nav, role toggle, admin mode entry
-│   ├── SelectRole.js         # first-time role picker (conductor / viajero)
+│   ├── Login.jsx             # Google sign-in, WhatsApp capture on first login
+│   ├── Header.jsx            # top nav, role toggle, admin mode entry
+│   ├── SelectRole.jsx        # first-time role picker (conductor / viajero)
 │   │
 │   ├── DriverDashboard.jsx   # thin wrapper → DriverProfile
 │   ├── DriverProfile.jsx     # tabbed driver UI (hash-based tabs via Header)
@@ -114,32 +114,32 @@ src/
 │   │
 │   ├── TravelerDashboard.jsx # traveler layout: profile page + trip search
 │   ├── TravelerProfilePage.jsx  # tabbed traveler profile
-│   ├── TravelerProfile.js    # profile form + usePuedeReservar export
-│   ├── TravelersScreen.js    # legacy traveler screen (mostly superseded)
-│   ├── TripSearch.js         # search form + results list
-│   ├── TripDetail.js         # trip modal: route map, reserve, request shipment
-│   ├── TripMap.js            # Google Maps directions renderer
-│   ├── RouteMap.js           # simpler map (used in driver flow)
+│   ├── TravelerProfile.jsx   # profile form + usePuedeReservar export
+│   ├── TravelersScreen.jsx   # legacy traveler screen (mostly superseded)
+│   ├── TripSearch.jsx        # search form + results list
+│   ├── TripDetail.jsx        # trip modal: route map, reserve, request shipment
+│   ├── TripMap.jsx           # Google Maps directions renderer
+│   ├── RouteMap.jsx          # simpler map (used in driver flow)
 │   ├── TripsSection.jsx      # driver's published trips + incoming reservations
-│   ├── IncomingReservations.js  # reservation list for driver
+│   ├── IncomingReservations.jsx # reservation list for driver
 │   ├── PassengerDetail.jsx   # driver view of a specific passenger
 │   │
-│   ├── NewTrip.js            # publish a trip form
+│   ├── NewTrip.jsx           # publish a trip form
 │   ├── NewShipment.jsx       # publish a shipment form
-│   ├── NewVehicle.js         # add vehicle form
+│   ├── NewVehicle.jsx        # add vehicle form
 │   ├── MyShipments.jsx       # traveler's own shipments
-│   ├── MyVehicles.js         # driver's vehicle list
+│   ├── MyVehicles.jsx        # driver's vehicle list
 │   ├── VehiculosConductor.jsx  # full vehicle management (largest component)
 │   ├── AvailableShipments.jsx  # driver: browse open shipment requests
-│   ├── AvailableTrips.js     # traveler: browse available trips
+│   ├── AvailableTrips.jsx    # traveler: browse available trips
 │   ├── TripShipments.jsx     # driver: shipments linked to a specific trip
 │   ├── RequestShipment.jsx   # traveler: submit a shipment request
 │   │
 │   ├── ProfileSection.jsx    # driver profile card + badges + vehicles summary
-│   ├── AutocompleteInput.js  # Google Places autocomplete with geocode fallback
-│   ├── AutoResults.js        # search result cards
-│   ├── UserRegistration.js   # WhatsApp capture form
-│   ├── RatingModal.js        # post-trip rating UI
+│   ├── AutocompleteInput.jsx # Google Places autocomplete with geocode fallback
+│   ├── AutoResults.jsx       # search result cards
+│   ├── UserRegistration.jsx  # WhatsApp capture form
+│   ├── RatingModal.jsx       # post-trip rating UI
 │   │
 │   ├── admin/
 │   │   ├── AdminGuard.jsx    # route guard for admin-only views
@@ -262,10 +262,10 @@ because it must match the Firestore schema. This is documented with a comment:
 
 ---
 
-## Naming conventions (enforced as of commit `5acc01f`)
+## Naming conventions (enforced as of commit `5acc01f`, Vite migration commit)
 
-- **Files**: PascalCase for components (`DriverProfile.jsx`), camelCase for
-  hooks (`useTripsData.js`) and utils (`location.js`)
+- **Files**: PascalCase components use `.jsx`; hooks and utils use `.js`  
+  (`DriverProfile.jsx`, `useTripsData.js`, `location.js`)
 - **Hook exports**: named exports only, function name matches file name
   (`export function useTripsData()`)
 - **Component exports**: default export, function name matches file name

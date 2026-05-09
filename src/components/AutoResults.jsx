@@ -5,7 +5,7 @@ export default function AutoResults({ viajes = [], onReservar }) {
 
   const [openId, setOpenId] = useState(null);
   const [routeInfo, setRouteInfo] = useState({});
-  const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+  const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   const toggleDetails = (v) => {
     if (openId === v.id) {

@@ -21,12 +21,12 @@ import AdminVerificador from "./components/admin/AdminVerificador";
 import CozyBadge from "./components/ui/CozyBadge"
 
 // Dashboards
-import ConductorDashboard from "./components/ConductorDashboard";
-import ViajeroDashboard from "./components/ViajeroDashboard";
+import DriverDashboard from "./components/DriverDashboard";
+import TravelerDashboard from "./components/TravelerDashboard";
 
 // Hooks
 import useConductorData from "./hooks/useConductorData";
-import usePerfilViajeroMinimo from "./hooks/usePerfilViajeroMinimo";
+import useTravelerProfileMinimal from "./hooks/useTravelerProfileMinimal";
 import PageMain from "./pages/Main";
 
 // Context
@@ -41,8 +41,7 @@ export default function App() {
 
     const [viajeReservado, setViajeReservado] = useState(null);
 
-    // Perfil mínimo del viajero
-    const { perfilCompleto, loadingPerfil } = usePerfilViajeroMinimo(usuario, rol === "viajero");
+    const { profileComplete, loadingProfile } = useTravelerProfileMinimal(usuario, rol === "viajero");
 
     // Datos del conductor (suscripción en vivo)
     const { viajes, reservas } = useConductorData(usuario, rol === "conductor");
@@ -100,7 +99,7 @@ export default function App() {
         );
     }
 
-    if (rol === "viajero" && loadingPerfil) {
+    if (rol === "viajero" && loadingProfile) {
         return (
             <ThemeProvider>
                 <CozySpinner />
@@ -124,13 +123,13 @@ export default function App() {
                         <AdminVerificador />
                     )
                     : rol === "conductor" ? (
-                        <ConductorDashboard viajes={viajes} reservas={reservas} />
+                        <DriverDashboard viajes={viajes} reservas={reservas} />
                     )
                     : /* rol === "viajero" */ (                        
-                        <ViajeroDashboard
+                        <TravelerDashboard
                             usuario={usuario}
                             viajes={[]}
-                            perfilCompleto={perfilCompleto}
+                            perfilCompleto={profileComplete}
                             viajeReservado={viajeReservado}
                             onReservar={reservarViaje}
                         />

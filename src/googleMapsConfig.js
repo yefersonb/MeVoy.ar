@@ -4,6 +4,6 @@ version: "weekly",
 id: "google-map-script",
 googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
 libraries: ["places", "geometry"],
-language: "en",
-region: "US",
+language: "es",
+region: "AR",
 };

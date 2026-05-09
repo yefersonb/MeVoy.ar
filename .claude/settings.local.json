@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Celestia\\\\Desktop\\\\Rhode\\\\mevoy\\\\mevoy.ar\" -Recurse -Include \"*.js\", \"*.jsx\", \"*.ts\", \"*.tsx\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(git mv *)",
+      "Bash(git add *)",
+      "Bash(git rm *)"
+    ]
+  }
+}

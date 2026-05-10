@@ -1,6 +1,8 @@
 // src/components/DriverProfile.jsx
 import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import { usePerfilData } from "../hooks/usePerfilData";
 import { useTripsData } from "../hooks/useTripsData";
 import { useResponsive } from "../hooks/useResponsive";
@@ -117,11 +119,9 @@ export default function DriverProfile({
 
   const onPhotoSelected = async (e) => {
     const url = await handlePhotoSelected(e);
-    if (url) {
-      updatePerfil("fotoURL", url);
-      if (usuario) {
-        await savePerfil();
-      }
+    if (url && usuario) {
+      await setDoc(doc(db, "usuarios", usuario.uid), { fotoURL: url }, { merge: true });
+      // UserContext onSnapshot picks this up automatically — no stale closure issue
     }
   };
 

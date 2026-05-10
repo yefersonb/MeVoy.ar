@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Calendar, Users, Clock, Package, Search } from "react-feather";
 import TripDetail from "./TripDetail";
 import AutocompleteInput from "./AutocompleteInput";
 import useTripsSearch from "../hooks/useTripsSearch";
@@ -115,22 +116,37 @@ export default function TripSearch({ user, onBook }) {
   return (
     <section className="trip-search">
 
-      {/* Search form */}
-      <div className="trip-search__form stack-l">
-        <AutocompleteInput
-          placeholder="¿Desde dónde salís?"
-          value={typeof origen === "object" ? origen.formatted_address : origen}
-          onChange={setOrigen}
-        />
-        <AutocompleteInput
-          placeholder="¿A dónde vas?"
-          value={typeof destino === "object" ? destino.formatted_address : destino}
-          onChange={setDestino}
-        />
+      {/* Search form panel */}
+      <div className="trip-search__form">
 
+        {/* Route picker with connecting line */}
+        <div className="route-picker">
+          <div className="route-picker__stop">
+            <span className="route-picker__dot" />
+            <div className="route-picker__input">
+              <AutocompleteInput
+                placeholder="¿Desde dónde salís?"
+                value={typeof origen === "object" ? origen.formatted_address : origen}
+                onChange={setOrigen}
+              />
+            </div>
+          </div>
+          <div className="route-picker__stop">
+            <span className="route-picker__dot route-picker__dot--dest" />
+            <div className="route-picker__input">
+              <AutocompleteInput
+                placeholder="¿A dónde vas?"
+                value={typeof destino === "object" ? destino.formatted_address : destino}
+                onChange={setDestino}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Secondary filters */}
         <div className="trip-search__row">
           <div className="trip-search__field">
-            <label htmlFor="ts-fecha">Fecha</label>
+            <label htmlFor="ts-fecha"><Calendar size={11} /> Fecha</label>
             <input
               id="ts-fecha"
               type="date"
@@ -139,7 +155,7 @@ export default function TripSearch({ user, onBook }) {
             />
           </div>
           <div className="trip-search__field">
-            <label htmlFor="ts-pasajeros">Pasajeros</label>
+            <label htmlFor="ts-pasajeros"><Users size={11} /> Pasajeros</label>
             <select
               id="ts-pasajeros"
               value={pasajeros}
@@ -151,7 +167,7 @@ export default function TripSearch({ user, onBook }) {
             </select>
           </div>
           <div className="trip-search__field">
-            <label htmlFor="ts-momento">Horario</label>
+            <label htmlFor="ts-momento"><Clock size={11} /> Horario</label>
             <select
               id="ts-momento"
               value={momento}
@@ -165,20 +181,20 @@ export default function TripSearch({ user, onBook }) {
           </div>
         </div>
 
-        {/* Packages toggle */}
-        <label className="trip-search__check">
-          <input
-            type="checkbox"
-            checked={soloPaquetes}
-            onChange={(e) => setSoloPaquetes(e.target.checked)}
-          />
-          Solo viajes que aceptan paquetes
-        </label>
+        {/* Package toggle chip */}
+        <button
+          type="button"
+          className={`pkg-toggle${soloPaquetes ? " pkg-toggle--active" : ""}`}
+          onClick={() => setSoloPaquetes((v) => !v)}
+        >
+          <Package size={14} />
+          Solo con paquetes
+        </button>
 
         {soloPaquetes && (
           <div className="trip-search__row">
             <div className="trip-search__field">
-              <label htmlFor="ts-peso">Peso (kg)</label>
+              <label htmlFor="ts-peso"><Package size={11} /> Peso (kg)</label>
               <input
                 id="ts-peso"
                 type="number" min={0} step="0.1"
@@ -205,13 +221,14 @@ export default function TripSearch({ user, onBook }) {
           disabled={loading}
           className="button button--fill"
         >
+          <Search size={15} />
           {loading ? "Buscando…" : "Buscar viajes"}
         </button>
       </div>
 
       {/* Results */}
       {listaFinal.length > 0 && (
-        <ul className="trip-search__results stack-l">
+        <ul className="trip-search__results">
           {listaFinal.map((v) => {
             const fechaViaje = getFechaHora(v);
             return (
@@ -224,15 +241,27 @@ export default function TripSearch({ user, onBook }) {
 
                 <div className="trip-card__meta">
                   {fechaViaje && (
-                    <span>{fechaViaje.toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" })} · {fechaViaje.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}</span>
+                    <span className="trip-card__meta-item">
+                      <Calendar size={12} />
+                      {fechaViaje.toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" })}
+                    </span>
                   )}
-                  <span>{v.asientos ?? "?"} asiento{v.asientos !== 1 ? "s" : ""}</span>
-                  {v.conductor?.nombre && <span>🧑 {v.conductor.nombre}</span>}
+                  {fechaViaje && (
+                    <span className="trip-card__meta-item">
+                      <Clock size={12} />
+                      {fechaViaje.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  )}
+                  <span className="trip-card__meta-item">
+                    <Users size={12} />
+                    {v.asientos ?? "?"} asiento{v.asientos !== 1 ? "s" : ""}
+                  </span>
                 </div>
 
                 {v.aceptaPaquetes && (
                   <div className="trip-card__packages">
-                    <span>📦 Acepta paquetes</span>
+                    <Package size={12} />
+                    <span>Acepta paquetes</span>
                     {v.pesoMax    && <span>· {v.pesoMax} kg máx</span>}
                     {v.volumenMax && <span>· {v.volumenMax} L máx</span>}
                     {v.costoBasePaquete != null && (

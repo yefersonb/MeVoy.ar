@@ -76,8 +76,6 @@ const { isLoaded, loadError } = useJsApiLoader(MAP_LOADER_OPTIONS);
       });
     }
   }, [isLoaded, loadError, onChange]);
-console.log("GMAPS KEY?", import.meta.env.VITE_GOOGLE_MAPS_API_KEY);
-
   // Geocode free-text input (fallback) when no valid place was selected
   const geocodeAddress = useCallback(
     async (address) => {

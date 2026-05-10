@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { User, CreditCard, List, LogOut } from "react-feather";
 import { collection, doc, addDoc, updateDoc, increment, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -125,7 +126,14 @@ export default function App() {
         }
 
         if (rol === "conductor") {
-            if (activeSection === "mas") return <div className="rack" style={{ paddingTop: "2rem", color: "var(--color-text-muted)", textAlign: "center" }}>Más opciones — próximamente</div>;
+            if (activeSection === "mas") return (
+                <div className="rack">
+                    <div className="action-list">
+                        <button className="action-list__item"><User size={16} /> Perfil</button>
+                        <button className="action-list__item"><CreditCard size={16} /> Medios de Pago</button>
+                    </div>
+                </div>
+            );
             // Bottom nav drives the hash; DriverDashboard responds to hash via useHashSection
             return <DriverDashboard viajes={viajes} reservas={reservas} />;
         }
@@ -145,7 +153,18 @@ export default function App() {
                     />
                 );
             case "mas":
-                return <div className="rack" style={{ paddingTop: "2rem", color: "var(--color-text-muted)", textAlign: "center" }}>Más opciones — próximamente</div>;
+                return (
+                    <div className="rack">
+                        <div className="action-list">
+                            <button className="action-list__item"><User size={16} /> Perfil</button>
+                            <button className="action-list__item"><CreditCard size={16} /> Medios de Pago</button>
+                            <button className="action-list__item"><List size={16} /> Reservas</button>
+                        </div>
+                        <div className="action-list">
+                            <button className="action-list__item"><LogOut/>Cerrar sesión</button>
+                        </div>
+                    </div>
+                );
             default:
                 return <TripSearch user={usuario} onBook={reservarViaje} />;
         }

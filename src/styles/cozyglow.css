@@ -67,7 +67,7 @@ body {
     top: 0;
     z-index: var(--z-header);
     background-color: var(--color-surface);
-    box-shadow: 0 1px 0 var(--color-border);
+    box-shadow: 0 0px 5px var(--color-border-dark);
 }
 
 .header {
@@ -142,8 +142,8 @@ body {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 16%;
-    right: 16%;
+    left: 0;
+    right: 0;
     height: 2px;
     background: var(--color-primary);
     border-radius: 3px 3px 0 0;
@@ -204,18 +204,18 @@ body {
 .button--fill { padding: 14px; font-size: var(--text-lg); }
 
 .button--outline {
-    background: none;
+    background: var(--color-surface-raised);
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-md);
     padding: 8px 16px;
     font-size: var(--text-sm);
     cursor: pointer;
-    transition: border-color var(--transition-fast), color var(--transition-fast);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 .button--outline:hover {
+    background: var(--color-surface-hover);
     color: var(--color-text-primary);
-    border-color: var(--color-text-muted);
 }
 
 /* =============================================
@@ -452,15 +452,65 @@ p { margin: 0 0 var(--space-3) 0; }
 .trip-search {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
+/* Form panel wrapper */
 .trip-search__form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
 }
 
+/* Route picker — two inputs with visual origin/dest dots and connecting line */
+.route-picker {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Vertical line connecting the two dots */
+.route-picker::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 28px;
+    bottom: 28px;
+    width: 2px;
+    background: var(--color-border-strong);
+    border-radius: 1px;
+}
+
+.route-picker__stop {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* The dot nodes — left column, fixed width */
+.route-picker__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--color-text-muted);
+}
+
+.route-picker__dot--dest {
+    background: var(--color-primary);
+    border-radius: 2px;
+}
+
+.route-picker__input {
+    flex: 1;
+}
+
+/* Row of secondary filters */
 .trip-search__row {
     display: flex;
     gap: 12px;
@@ -469,18 +519,46 @@ p { margin: 0 0 var(--space-3) 0; }
 
 .trip-search__field {
     flex: 1;
-    min-width: 120px;
+    min-width: 100px;
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
 .trip-search__field label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-size: var(--text-xs);
-    color: var(--color-text-secondary);
-    letter-spacing: 0.5px;
+    color: var(--color-text-muted);
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     margin: 0;
+    font-weight: 600;
+}
+
+/* Package toggle chip — replaces the native checkbox */
+.pkg-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-surface-raised);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-family: var(--font-stack);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+    align-self: flex-start;
+}
+
+.pkg-toggle--active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
 }
 
 .trip-search__results {
@@ -533,12 +611,18 @@ p { margin: 0 0 var(--space-3) 0; }
     color: var(--color-text-secondary);
 }
 
-.trip-card__meta span::after        { content: "·"; margin-left: 8px; color: var(--color-border-strong); }
-.trip-card__meta span:last-child::after { content: ""; margin: 0; }
+.trip-card__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.trip-card__meta-item::after        { content: "·"; margin-left: 8px; color: var(--color-border-strong); }
+.trip-card__meta-item:last-child::after { content: ""; margin: 0; }
 
 .trip-card__packages {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 6px;
     font-size: var(--text-xs);
     color: var(--color-text-secondary);
@@ -550,6 +634,75 @@ p { margin: 0 0 var(--space-3) 0; }
 
 .trip-card__actions             { display: flex; gap: 8px; margin-top: 4px; }
 .trip-card__actions .button     { flex: 1; padding: 10px; }
+
+/* =============================================
+   ACTION LIST — grouped tappable-item panel
+   ============================================= */
+
+.action-list {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.action-list__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    font-size: var(--text-base);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    border: none;
+    border-bottom: 1px solid var(--color-divider);
+    outline: none;
+    transition: background-color var(--transition-fast);
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font-stack);
+}
+
+.action-list__item:last-child {
+    border-bottom: none;
+}
+
+.action-list__item:hover {
+    background-color: var(--color-surface-hover);
+}
+
+/* First/last corner radius — no overflow:hidden needed */
+.action-list__item:first-child {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.action-list__item:last-child {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.action-list__item:only-child {
+    border-radius: var(--radius-lg);
+}
+
+/* Leading icon — inherits color from the item */
+.action-list__item > svg:first-child {
+    flex-shrink: 0;
+    color: var(--color-text-secondary);
+}
+
+/* Trailing caret */
+.action-list__item::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--color-text-muted);
+    border-top: 2px solid var(--color-text-muted);
+    transform: rotate(45deg);
+    margin-left: auto;
+    flex-shrink: 0;
+}
 
 /* =============================================
    SPINNER

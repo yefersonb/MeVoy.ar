@@ -163,7 +163,7 @@ export default function App() {
                             <button className="action-list__item"><List size={16} /> Reservas</button>
                         </div>
                         <div className="action-list">
-                            <button className="action-list__item"><LogOut size={16} /> Cerrar sesión</button>
+                            <button className="action-list__item" style={{color: "var(--color-danger)"}}><LogOut size={16} style={{color: "var(--color-danger)"}}/> Cerrar sesión</button>
                         </div>
                     </div>
                 );

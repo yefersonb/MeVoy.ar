@@ -911,3 +911,15 @@ p { margin: 0 0 var(--space-3) 0; }
 
 .menu-item              { transition: background-color var(--transition-fast); }
 .menu-item:hover        { background-color: var(--color-surface-hover); }
+
+
+/* Experimental Fieldset */
+fieldset {
+    border: 2px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+}
+
+legend {
+    color: var(--color-text-muted);
+    padding: 0.5rem 1rem;
+}

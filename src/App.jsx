@@ -1,63 +1,72 @@
-// src/App.jsx
-import React, { useMemo, useState } from "react";
-import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
+import React, { useMemo, useState, useEffect } from "react";
+import { collection, doc, addDoc, updateDoc, increment, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
-// UI Components
-import CozySpinner from "./components/cozyglow/components/Spinners/CozySpinner/CozySpinner";
-
-// Styles
-import { ThemeProvider } from "./contexts/ThemeContext";
-import "./styles/cozyglow/cozyglow.css";
-import "./styles/cozyglow/color_themes/classic.css";
+// Styles — tokens → base → markdown
+import "./styles/classic.css";
+import "./styles/cozyglow.css";
 import "./styles/markdown.css";
-import "./App.css";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
-// UI
-import Copyright from "./components/common/Copyright";
-import Login from "./components/Login";
+// Shell
 import Header from "./components/Header";
-import AdminVerificador from "./components/admin/AdminVerificador";
-import CozyBadge from "./components/ui/CozyBadge"
+import BottomNav from "./components/layout/BottomNav";
+import Copyright from "./components/common/Copyright";
 
-// Dashboards
+// Auth screens
+import Login from "./components/Login";
+import Spinner from "./components/common/Spinner";
+
+// Admin
+import AdminVerificador from "./components/admin/AdminVerificador";
+
+// Conductor
 import DriverDashboard from "./components/DriverDashboard";
+
+// Viajero
 import TravelerDashboard from "./components/TravelerDashboard";
+import TripSearch from "./components/TripSearch";
 
 // Hooks
 import useConductorData from "./hooks/useConductorData";
 import useTravelerProfileMinimal from "./hooks/useTravelerProfileMinimal";
-import PageMain from "./pages/Main";
 
 // Context
 import { useUser } from "./contexts/UserContext";
 
+const DEFAULT_SECTION = { conductor: "viajes", viajero: "buscar" };
+
+// Hash that DriverProfile reads for conductor bottom-nav sections
+const CONDUCTOR_HASH = { viajes: "reservas", nuevo: "nuevo-viaje" };
+
 export default function App() {
     const { usuario, perfil, isAdmin, loading, modoVista } = useUser();
 
-    // Effective role: use profile role if set, otherwise default to 'viajero'.
-    // Note: real admin access is determined by isAdmin (claims). The "rol" in profile is UX-only.
     const rol = useMemo(() => perfil?.rol || "viajero", [perfil?.rol]);
 
     const [bookedTrip, setBookedTrip] = useState(null);
+    const [activeSection, setActiveSection] = useState(DEFAULT_SECTION.viajero);
 
     const { profileComplete, loadingProfile } = useTravelerProfileMinimal(usuario, rol === "viajero");
-
-    // Driver data (live subscription)
     const { viajes, reservas } = useConductorData(usuario, rol === "conductor");
 
-    // Role toggle (Header) — switches between traveler/driver without touching admin
-    const handleToggleRol = async () => {
-        if (!usuario) return;
-        const nuevoRol = rol === "viajero" ? "conductor" : "viajero";
-        try {
-            await setDoc(doc(db, "usuarios", usuario.uid), { rol: nuevoRol }, { merge: true });
-        } catch (error) {
-            console.error("Error changing role:", error);
+    // Reset active section whenever role resolves / changes
+    useEffect(() => {
+        const section = DEFAULT_SECTION[rol] ?? "buscar";
+        setActiveSection(section);
+        if (rol === "conductor") {
+            window.location.hash = CONDUCTOR_HASH[section] ?? "";
+        }
+    }, [rol]);
+
+    const handleSectionChange = (section) => {
+        setActiveSection(section);
+        // Conductor: bottom nav drives the hash; DriverProfile responds automatically
+        if (rol === "conductor") {
+            window.location.hash = CONDUCTOR_HASH[section] ?? "";
         }
     };
 
-    // Book trip (traveler mode)
     const reservarViaje = async (id) => {
         if (!usuario) return;
         try {
@@ -69,23 +78,22 @@ export default function App() {
             };
             await addDoc(collection(db, "viajes", id, "reservas"), data);
             await updateDoc(doc(db, "viajes", id), { asientos: increment(-1) });
-
             const vSnap = await getDoc(doc(db, "viajes", id));
             if (vSnap.exists()) setBookedTrip({ id, ...vSnap.data() });
-
-            alert("¡Reserva exitosa! Ahora podés pagar el viaje.");
+            alert("¡Reserva exitosa!");
         } catch (e) {
             console.error(e);
-            alert("Hubo un problema al reservar");
+            alert("Hubo un problema al reservar.");
         }
     };
 
-    // Loaders / login
+    // --- Loading / auth gates ---
+
     if (loading) {
         return (
             <ThemeProvider>
-                <div style={{ height: "90vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <CozySpinner />
+                <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Spinner />
                 </div>
             </ThemeProvider>
         );
@@ -102,41 +110,58 @@ export default function App() {
     if (rol === "viajero" && loadingProfile) {
         return (
             <ThemeProvider>
-                <CozySpinner />
+                <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Spinner />
+                </div>
             </ThemeProvider>
         );
     }
 
-    // App (finally)
+    // --- Main content per role / section ---
+
+    const renderContent = () => {
+        if (isAdmin && modoVista === "admin") {
+            return <AdminVerificador />;
+        }
+
+        if (rol === "conductor") {
+            if (activeSection === "mas") return <div className="rack" style={{ paddingTop: "2rem", color: "var(--color-text-muted)", textAlign: "center" }}>Más opciones — próximamente</div>;
+            // Bottom nav drives the hash; DriverDashboard responds to hash via useHashSection
+            return <DriverDashboard viajes={viajes} reservas={reservas} />;
+        }
+
+        // viajero — bottom nav controls which section is shown
+        switch (activeSection) {
+            case "buscar":
+                return <TripSearch user={usuario} onBook={reservarViaje} />;
+            case "viajes":
+                return (
+                    <TravelerDashboard
+                        usuario={usuario}
+                        viajes={[]}
+                        perfilCompleto={profileComplete}
+                        viajeReservado={bookedTrip}
+                        onReservar={reservarViaje}
+                    />
+                );
+            case "mas":
+                return <div className="rack" style={{ paddingTop: "2rem", color: "var(--color-text-muted)", textAlign: "center" }}>Más opciones — próximamente</div>;
+            default:
+                return <TripSearch user={usuario} onBook={reservarViaje} />;
+        }
+    };
+
     return (
         <ThemeProvider>
-            <Header
-                rol={rol}
-                onToggleRol={handleToggleRol}
-                isAdmin={isAdmin}
-            />
+            <Header isAdmin={isAdmin} />
             <div className="app-container">
-                {/* <PageMain rol={rol} /> Disabled for now — causing noise. Trip search doesn't belong here */}
-                {
-                    isAdmin && modoVista === "admin" ? (
-                        // Real admin (claims) only when the user explicitly chooses admin mode
-                        <AdminVerificador />
-                    )
-                    : rol === "conductor" ? (
-                        <DriverDashboard viajes={viajes} reservas={reservas} />
-                    )
-                    : /* rol === "viajero" */ (                        
-                        <TravelerDashboard
-                            usuario={usuario}
-                            viajes={[]}
-                            perfilCompleto={profileComplete}
-                            viajeReservado={bookedTrip}
-                            onReservar={reservarViaje}
-                        />
-                    )
-                }
+                {renderContent()}
             </div>
-
+            <BottomNav
+                rol={isAdmin && modoVista === "admin" ? null : rol}
+                activeSection={activeSection}
+                onSectionChange={handleSectionChange}
+            />
             <Copyright />
         </ThemeProvider>
     );

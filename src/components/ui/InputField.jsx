@@ -1,133 +1,103 @@
-﻿import React from "react";
+import React, { useState } from "react";
 
 /*
- * InputField reutilizable para formularios.
+ * InputField — dark-theme aware form field.
  * Props:
- * - label: texto del label
- * - type: "text", "date", "select", "textarea"
- * - value: valor actual
- * - onChange: función de cambio (e => ...)
- * - options: opciones para select (array de strings)
- * - readOnly / disabled: boolean
- * - placeholder: string
- * - name: id/for para accesibilidad
+ *   label       string
+ *   type        "text" | "date" | "number" | "select" | "textarea" (default "text")
+ *   value       any
+ *   onChange    (e) => void
+ *   options     string[]  — for type="select"
+ *   readOnly    bool
+ *   disabled    bool
+ *   placeholder string
+ *   name        string    — id/for, derived from label if omitted
  */
+export default function InputField({
+  label,
+  type = "text",
+  value,
+  onChange,
+  options = [],
+  readOnly = false,
+  disabled = false,
+  placeholder = "",
+  name,
+  ...rest
+}) {
+  const [focused, setFocused] = useState(false);
+  const inputId = name || label?.replace(/\s+/g, "-").toLowerCase() || "field";
 
-export default function InputField({ label, type = "text", value, onChange, options = [], readOnly = false, disabled = false, placeholder = "", name, ...rest })
-{
-  const inputId = name || label.replace(/\s+/g, "-").toLowerCase();
-  const baseStyle = {
-    width: "100%",
-    fontSize: "1rem",
-    background: "transparent",
-    color: "#222",
-    border: !readOnly ? "1px solid #e2e8f0" : "none",
-    outline: "none",
-    borderRadius: 6,
-    padding: "8px 10px",
-    transition: "border 0.18s, box-shadow 0.18s",
-    boxShadow: "none",
-    minHeight: 50,
-    cursor: !readOnly ? "text" : "default",
-    marginBottom: 2,
+  const fieldClass = [
+    "input-field",
+    focused   ? "input-field--focused"  : "",
+    readOnly  ? "input-field--readonly" : "",
+    disabled  ? "input-field--disabled" : "",
+  ].filter(Boolean).join(" ");
+
+  const sharedProps = {
+    id:        inputId,
+    name:      inputId,
+    disabled:  disabled || readOnly,
+    tabIndex:  (disabled || readOnly) ? -1 : 0,
+    onFocus:   () => setFocused(true),
+    onBlur:    () => setFocused(false),
+    "aria-label": label,
+    ...rest,
   };
 
-  const focusStyle = {
-    border: "1.5px solid var(--color-primary)",
-    boxShadow: "0 0 0 1px var(--color-primary), 0 1px 4px var(--color-shadow-sm)",
-  };
+  let control;
 
-  const [isFocused, setIsFocused] = React.useState(false);
-
-  let inputEl;
-  if (type === "select")
-  {
-    inputEl =
-    (
-      <select
-        id={inputId}
-        name={inputId}
-        value={value}
-        onChange={onChange}
-        style={{
-          ...baseStyle,
-          ...(isFocused ? focusStyle : {}),
-          cursor: !readOnly ? "pointer" : "default",
-        }}
-        disabled={readOnly || disabled}
-        aria-label={label}
-        tabIndex={readOnly || disabled ? -1 : 0}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        {...rest}>
-
-        {options.map((opt) => ( <option key={opt} value={opt}> {opt} </option> ))}
-      </select>
+  if (type === "select") {
+    control = (
+      <div className="input-field__select-wrap">
+        <select
+          {...sharedProps}
+          value={value}
+          onChange={onChange}
+          className="input-field__control input-field__select"
+        >
+          {options.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+        <span className="input-field__caret" aria-hidden="true">▾</span>
+      </div>
     );
-  }
-  else if (type === "textarea")
-  {
-    inputEl =
-    (
+  } else if (type === "textarea") {
+    control = (
       <textarea
-        id={inputId}
-        name={inputId}
+        {...sharedProps}
         value={value}
         onChange={onChange}
-        rows={3}
-        style={{
-          ...baseStyle,
-          ...(isFocused ? focusStyle : {}),
-          resize: "vertical",
-        }}
         readOnly={readOnly}
-        disabled={disabled}
-        aria-label={label}
-        tabIndex={readOnly || disabled ? -1 : 0}
         placeholder={placeholder}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        {...rest}
+        rows={3}
+        className="input-field__control input-field__textarea"
       />
     );
-  } 
-  else
-  {
-    inputEl = (
+  } else {
+    control = (
       <input
-        id={inputId}
-        name={inputId}
+        {...sharedProps}
         type={type}
         value={value}
         onChange={onChange}
         readOnly={readOnly}
-        disabled={disabled}
-        aria-label={label}
-        tabIndex={readOnly || disabled ? -1 : 0}
         placeholder={placeholder}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        {...rest}
+        className="input-field__control"
       />
     );
   }
 
   return (
-    <div style={{ marginBottom: 12 }}>
-      <label
-        htmlFor={inputId}
-        style={{
-          fontSize: "0.85rem",
-          color: "#64748b",
-          fontWeight: 600,
-          marginBottom: 5,
-          display: "block",
-        }}
-        >
-        {label}
-      </label>
-      {inputEl}
+    <div className={fieldClass}>
+      {label && (
+        <label htmlFor={inputId} className="input-field__label">
+          {label}
+        </label>
+      )}
+      {control}
     </div>
   );
 }
-

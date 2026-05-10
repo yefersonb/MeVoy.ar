@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Badge from './Badge';
 import IncomingReservations from './IncomingReservations';
-import CozySpinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
+import Spinner from './common/Spinner';
 import ErrorMessage from './common/ErrorMessage';
 import { Trash2 } from 'react-feather';
 
@@ -29,7 +29,7 @@ const TripsSection = ({
     }
   };
 
-  if (loading) return <CozySpinner size="md" text="Cargando viajes y reservas..." />;
+  if (loading) return <Spinner />;
   if (error) return <ErrorMessage error={error} onRetry={onLoadData} />;
 
   return (

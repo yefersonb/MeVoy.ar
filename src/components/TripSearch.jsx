@@ -1,4 +1,3 @@
-﻿// src/components/TripSearch.js
 import React, { useState } from "react";
 import TripDetail from "./TripDetail";
 import AutocompleteInput from "./AutocompleteInput";
@@ -6,149 +5,93 @@ import useTripsSearch from "../hooks/useTripsSearch";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 
-/**
- * Props:
- * - user
- * - onBook?: (tripId: string) => Promise<void> | void
- */
 export default function TripSearch({ user, onBook }) {
-  // ---------- styles ----------
-  const inputStyle = {
-    width: "100%",
-    padding: "0.5rem",
-    margin: "0.5rem 0",
-    border: "1px solid #ccc",
-    borderRadius: "0.5rem",
-    fontFamily: "inherit",
-    fontSize: "1rem",
-  };
-  const labelStyle = {
-    display: "block",
-    fontSize: "0.875rem",
-    marginBottom: "0.25rem",
-    fontWeight: 500,
-  };
-
-  // ---------- search hook ----------
   const { results, loading: loadingHook, filters, setFilters, clear } = useTripsSearch();
 
-  // locally controlled UI state
-  const [origen, setOrigen] = useState("");
-  const [destino, setDestino] = useState("");
-  const [fecha, setFecha] = useState("");
-  const [pasajeros, setPasajeros] = useState(1);
-  const [momento, setMomento] = useState("");
-
-  // Packages
+  const [origen,       setOrigen]       = useState("");
+  const [destino,      setDestino]      = useState("");
+  const [fecha,        setFecha]        = useState("");
+  const [pasajeros,    setPasajeros]    = useState(1);
+  const [momento,      setMomento]      = useState("");
   const [soloPaquetes, setSoloPaquetes] = useState(false);
-  const [pesoReq, setPesoReq] = useState("");
-  const [volumenReq, setVolumenReq] = useState("");
-
-  const [detalle, setDetalle] = useState(null);
+  const [pesoReq,      setPesoReq]      = useState("");
+  const [volumenReq,   setVolumenReq]   = useState("");
+  const [detalle,      setDetalle]      = useState(null);
   const [loadingAction, setLoadingAction] = useState(false);
 
-  // ---------- helpers ----------
+  const loading = loadingHook || loadingAction;
+
   const parseNumber = (v) => (v === "" || v == null ? null : Number(v));
 
   const getFechaHora = (v) => {
-    // supports v.horario (Timestamp or date) and v.fecha (ISO)
-    let d = null;
-    if (v?.horario?.toDate) d = v.horario.toDate();
-    else if (v?.horario) d = new Date(v.horario);
-    else if (v?.fecha) d = new Date(v.fecha);
-    return d || null;
+    if (v?.horario?.toDate) return v.horario.toDate();
+    if (v?.horario) return new Date(v.horario);
+    if (v?.fecha)   return new Date(v.fecha);
+    return null;
   };
 
-  // applies extra filters on top of hook's origin/destination/date filters
   const filtrarExtras = (lista) => {
     const reqPeso = parseNumber(pesoReq);
-    const reqVol = parseNumber(volumenReq);
+    const reqVol  = parseNumber(volumenReq);
 
     return (lista || []).filter((v) => {
-      const asientosOk = (v.asientos ?? 0) >= pasajeros;
+      if ((v.asientos ?? 0) < pasajeros) return false;
 
-      // Time-of-day filter
-      let momentoOk = true;
       if (momento) {
-        const fechaViaje = getFechaHora(v);
-        const hour = fechaViaje ? fechaViaje.getHours() : null;
-        if (hour != null) {
-          if (momento === "manana") momentoOk = hour >= 6 && hour < 12;
-          else if (momento === "tarde") momentoOk = hour >= 12 && hour < 18;
-          else if (momento === "noche") momentoOk = hour >= 18 || hour < 6;
+        const hora = getFechaHora(v)?.getHours() ?? null;
+        if (hora != null) {
+          if (momento === "manana" && !(hora >= 6  && hora < 12)) return false;
+          if (momento === "tarde"  && !(hora >= 12 && hora < 18)) return false;
+          if (momento === "noche"  && !(hora >= 18 || hora < 6))  return false;
         }
       }
 
-      // Packages
-      const aceptaPaquetesOk = soloPaquetes ? !!v.aceptaPaquetes : true;
+      if (soloPaquetes && !v.aceptaPaquetes) return false;
 
-      // Weight / volume
-      let pesoVolOk = true;
-      if (soloPaquetes && (reqPeso != null || reqVol != null)) {
-        if (!v.aceptaPaquetes) {
-          pesoVolOk = false;
-        } else {
-          const pMax = typeof v.pesoMax === "number" ? v.pesoMax : Number(v.pesoMax);
-          const vMax = typeof v.volumenMax === "number" ? v.volumenMax : Number(v.volumenMax);
-          if (reqPeso != null && !(pMax >= reqPeso)) pesoVolOk = false;
-          if (reqVol != null && !(vMax >= reqVol)) pesoVolOk = false;
-        }
+      if (soloPaquetes && (reqPeso != null || reqVol != null) && v.aceptaPaquetes) {
+        const pMax = Number(v.pesoMax);
+        const vMax = Number(v.volumenMax);
+        if (reqPeso != null && !(pMax >= reqPeso)) return false;
+        if (reqVol  != null && !(vMax >= reqVol))  return false;
       }
 
-      return asientosOk && momentoOk && aceptaPaquetesOk && pesoVolOk;
+      return true;
     });
   };
 
   const listaFinal = filtrarExtras(results);
-  const loading = loadingHook || loadingAction;
 
-  // ---------- actions ----------
   const buscar = () => {
-    const origText = typeof origen === "object" ? origen.formatted_address : origen;
+    const origText = typeof origen  === "object" ? origen.formatted_address  : origen;
     const destText = typeof destino === "object" ? destino.formatted_address : destino;
     setFilters({ origen: origText || "", destino: destText || "", fecha: fecha || "" });
   };
 
   const limpiar = () => {
-    setOrigen("");
-    setDestino("");
-    setFecha("");
-    setPasajeros(1);
-    setMomento("");
-    setSoloPaquetes(false);
-    setPesoReq("");
-    setVolumenReq("");
+    setOrigen(""); setDestino(""); setFecha(""); setPasajeros(1);
+    setMomento(""); setSoloPaquetes(false); setPesoReq(""); setVolumenReq("");
     clear();
   };
 
   const confirmarReserva = async (viajeId) => {
-    if (!user) {
-      alert("Iniciá sesión para reservar");
-      return;
-    }
-    if (!viajeId) {
-      alert("Error interno: viaje desconocido.");
-      return;
-    }
+    if (!user)    { alert("Iniciá sesión para reservar"); return; }
+    if (!viajeId) { alert("Error interno: viaje desconocido."); return; }
     setLoadingAction(true);
     try {
       if (typeof onBook === "function") {
-        // Use parent's booking logic
         await onBook(viajeId);
       } else {
-        // Local fallback: create basic reservation
-        const reservasCol = collection(db, "viajes", viajeId, "reservas");
-        await addDoc(reservasCol, {
-          viajanteUid: user.uid,
-          fechaReserva: serverTimestamp(),
+        await addDoc(collection(db, "viajes", viajeId, "reservas"), {
+          viajanteUid:       user.uid,
+          fechaReserva:      serverTimestamp(),
           cantidadPasajeros: 1,
-          estadoReserva: "pendiente",
-          creadoPor: user.uid,
+          estadoReserva:     "pendiente",
+          creadoPor:         user.uid,
         });
         alert("¡Reserva creada! Esperando aprobación del conductor.");
       }
       setDetalle(null);
-      buscar(); // refresh results
+      buscar();
     } catch (err) {
       console.error("Error creando reserva:", err);
       alert("Hubo un problema al reservar.");
@@ -157,7 +100,6 @@ export default function TripSearch({ user, onBook }) {
     }
   };
 
-  // ---------- detail ----------
   if (detalle) {
     return (
       <TripDetail
@@ -171,202 +113,163 @@ export default function TripSearch({ user, onBook }) {
   }
 
   return (
-    <section>
-      <h2 style={{margin: "auto"}}>Buscar viajes</h2>
+    <section className="trip-search">
 
-      {/* ----- TRIP SEARCH ----- */}
-      <div style={{ margin: "0.5rem 0" }}>
+      {/* Search form */}
+      <div className="trip-search__form stack-l">
         <AutocompleteInput
-          id="origen"
-          placeholder="Desde"
+          placeholder="¿Desde dónde salís?"
           value={typeof origen === "object" ? origen.formatted_address : origen}
           onChange={setOrigen}
         />
-      </div>
-
-      <div style={{ margin: "0.5rem 0" }}>
         <AutocompleteInput
-          id="destino"
-          placeholder="Hasta"
+          placeholder="¿A dónde vas?"
           value={typeof destino === "object" ? destino.formatted_address : destino}
           onChange={setDestino}
         />
-      </div>
 
-      <div style={{ margin: "0.5rem 0" }}>
-        <input
-          id="fecha"
-          type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
-        />
-      </div>
+        <div className="trip-search__row">
+          <div className="trip-search__field">
+            <label htmlFor="ts-fecha">Fecha</label>
+            <input
+              id="ts-fecha"
+              type="date"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+            />
+          </div>
+          <div className="trip-search__field">
+            <label htmlFor="ts-pasajeros">Pasajeros</label>
+            <select
+              id="ts-pasajeros"
+              value={pasajeros}
+              onChange={(e) => setPasajeros(Number(e.target.value))}
+            >
+              {[1,2,3,4,5,6].map((n) => (
+                <option key={n} value={n}>{n} {n === 1 ? "pasajero" : "pasajeros"}</option>
+              ))}
+            </select>
+          </div>
+          <div className="trip-search__field">
+            <label htmlFor="ts-momento">Horario</label>
+            <select
+              id="ts-momento"
+              value={momento}
+              onChange={(e) => setMomento(e.target.value)}
+            >
+              <option value="">Cualquiera</option>
+              <option value="manana">Mañana (06–12)</option>
+              <option value="tarde">Tarde (12–18)</option>
+              <option value="noche">Noche (18–06)</option>
+            </select>
+          </div>
+        </div>
 
-      <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="momento" style={labelStyle}>¿Cuándo?</label>
-        <select
-          id="momento"
-          value={momento}
-          onChange={(e) => setMomento(e.target.value)}
-        >
-          <option value="">Cualquier momento</option>
-          <option value="manana">Mañana (06â€“12)</option>
-          <option value="tarde">Tarde (12â€“18)</option>
-          <option value="noche">Noche (18â€“06)</option>
-        </select>
-      </div>
-
-      <div style={{ margin: "0.5rem 0" }}>
-        <label htmlFor="pasajeros" style={labelStyle}>Pasajeros</label>
-        <select
-          id="pasajeros"
-          value={pasajeros}
-          onChange={(e) => setPasajeros(Number(e.target.value))}
-        >
-          {[...Array(6)].map((_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {i + 1} pasajero{i > 0 ? "s" : ""}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Paquetes */}
-      <div className="panel">
-        <label>
-          <input type="checkbox" checked={soloPaquetes} onChange={(e) => setSoloPaquetes(e.target.checked)}/>
-          <span>Solo viajes que aceptan paquetes</span>
+        {/* Packages toggle */}
+        <label className="trip-search__check">
+          <input
+            type="checkbox"
+            checked={soloPaquetes}
+            onChange={(e) => setSoloPaquetes(e.target.checked)}
+          />
+          Solo viajes que aceptan paquetes
         </label>
 
         {soloPaquetes && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
-              gap: 12,
-              marginTop: 12,
-            }}
-          >
-            <div>
-              <label style={labelStyle}>Peso a enviar (kg) â€” opcional</label>
+          <div className="trip-search__row">
+            <div className="trip-search__field">
+              <label htmlFor="ts-peso">Peso (kg)</label>
               <input
-                type="number"
-                min={0}
-                step="0.1"
+                id="ts-peso"
+                type="number" min={0} step="0.1"
                 value={pesoReq}
                 onChange={(e) => setPesoReq(e.target.value)}
                 placeholder="Ej: 3"
-                style={inputStyle}
               />
             </div>
-            <div>
-              <label style={labelStyle}>Volumen (L) â€” opcional</label>
+            <div className="trip-search__field">
+              <label htmlFor="ts-vol">Volumen (L)</label>
               <input
-                type="number"
-                min={0}
-                step={0.1}
+                id="ts-vol"
+                type="number" min={0} step="0.1"
                 value={volumenReq}
                 onChange={(e) => setVolumenReq(e.target.value)}
                 placeholder="Ej: 15"
-                style={inputStyle}
               />
             </div>
           </div>
         )}
+
+        <button
+          onClick={buscar}
+          disabled={loading}
+          className="button button--fill"
+        >
+          {loading ? "Buscando…" : "Buscar viajes"}
+        </button>
       </div>
 
-      <button onClick={buscar} disabled={loading} className="button big-button">
-        {loading ? "Buscandoâ€¦" : "Buscar"}
-      </button>
-
-      {/* Resultados */}
-      <div style={{ marginTop: "1.5rem" }}>
-        {listaFinal.length === 0 ? (
-          <p style={{ color: "#4b5563" }}>
-            {loading ? "Cargando resultadosâ€¦" : `No hay viajes disponibles${soloPaquetes ? " que acepten paquetes" : ""}.`}
-          </p>
-        ) : (
-          listaFinal.map((v) => {
+      {/* Results */}
+      {listaFinal.length > 0 && (
+        <ul className="trip-search__results stack-l">
+          {listaFinal.map((v) => {
             const fechaViaje = getFechaHora(v);
             return (
-              <div
-                key={v.id}
-                style={{
-                  backgroundColor: "white",
-                  borderRadius: "0.5rem",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                  padding: "1rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                <p style={{ fontWeight: 500 }}>
-                  {v.origen} â†’ {v.destino}
-                </p>
-                {fechaViaje && (
-                  <p style={{ fontSize: "0.875rem" }}>
-                    {fechaViaje.toLocaleString()}
-                  </p>
-                )}
-                <p style={{ fontSize: "0.875rem" }}>Asientos: {v.asientos ?? "-"}</p>
+              <li key={v.id} className="trip-card">
+                <div className="trip-card__route">
+                  <span className="trip-card__city">{v.origen}</span>
+                  <span className="trip-card__arrow">→</span>
+                  <span className="trip-card__city">{v.destino}</span>
+                </div>
+
+                <div className="trip-card__meta">
+                  {fechaViaje && (
+                    <span>{fechaViaje.toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" })} · {fechaViaje.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}</span>
+                  )}
+                  <span>{v.asientos ?? "?"} asiento{v.asientos !== 1 ? "s" : ""}</span>
+                  {v.conductor?.nombre && <span>🧑 {v.conductor.nombre}</span>}
+                </div>
 
                 {v.aceptaPaquetes && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontSize: 12,
-                      display: "inline-flex",
-                      gap: 8,
-                      alignItems: "center",
-                      background: "#eef2ff",
-                      color: "#3730a3",
-                      padding: "6px 10px",
-                      borderRadius: 999,
-                    }}
-                  >
-                    <span>ðŸ“¦ Acepta paquetes</span>
-                    <span>â€¢ Peso máx: <strong>{v.pesoMax ?? "â€”"}</strong> kg</span>
-                    <span>â€¢ Volumen máx: <strong>{v.volumenMax ?? "â€”"}</strong> L</span>
+                  <div className="trip-card__packages">
+                    <span>📦 Acepta paquetes</span>
+                    {v.pesoMax    && <span>· {v.pesoMax} kg máx</span>}
+                    {v.volumenMax && <span>· {v.volumenMax} L máx</span>}
                     {v.costoBasePaquete != null && (
-                      <span>â€¢ Desde <strong>${Number(v.costoBasePaquete).toLocaleString("es-AR")}</strong></span>
+                      <span>· Desde ${Number(v.costoBasePaquete).toLocaleString("es-AR")}</span>
                     )}
                   </div>
                 )}
 
-                <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>
-                  <button
-                    onClick={() => setDetalle(v)}
-                    style={{
-                      padding: "0.5rem 0.75rem",
-                      borderRadius: "0.375rem",
-                      backgroundColor: "var(--color-primary)",
-                      color: "white",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
-                  >
+                <div className="trip-card__actions">
+                  <button className="button button--outline" onClick={() => setDetalle(v)}>
                     Ver detalles
                   </button>
                   <button
+                    className="button"
                     onClick={() => confirmarReserva(v.id)}
                     disabled={loading}
-                    style={{
-                      padding: "0.5rem 0.75rem",
-                      borderRadius: "0.375rem",
-                      backgroundColor: loading ? "#a5d1c2" : "#10b981",
-                      color: "white",
-                      border: "none",
-                      cursor: loading ? "not-allowed" : "pointer",
-                    }}
                   >
                     Reservar
                   </button>
                 </div>
-              </div>
+              </li>
             );
-          })
-        )}
-      </div>
+          })}
+        </ul>
+      )}
+
+      {!loading && listaFinal.length === 0 && filters.origen && (
+        <p className="trip-search__empty">
+          No hay viajes disponibles para esa búsqueda.
+        </p>
+      )}
+
+      {!loading && !filters.origen && (
+        <p className="trip-search__hint">
+          Ingresá origen y destino para ver los viajes disponibles.
+        </p>
+      )}
     </section>
   );
 }
-

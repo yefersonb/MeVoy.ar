@@ -15,9 +15,8 @@ import InputField from './ui/InputField';
 import Badge from './Badge';
 import RatingRow from './RatingRow';
 import ActionBar from './ActionBar';
-import Spinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
+import Spinner from './common/Spinner';
 import ErrorMessage from './common/ErrorMessage';
-import UserCard from "./UserCard"
 import ProfileProgress from './ui/ProfileProgress/ProfileProgress';
 import Rating from './ui/StarRating';
 
@@ -25,7 +24,7 @@ import Rating from './ui/StarRating';
 import Markdown from 'react-markdown';
 import Avatar from "./ui/Avatar"
 import { Edit3 } from 'react-feather';
-import { License } from "./cozyglow/icons/License"
+import { License } from "./common/icons"
 import okdriver from "../assets/badges/conductor_verificado.png"
 import goals from "../assets/badges/metas.png"
 import CozyBadge from "./ui/CozyBadge"
@@ -108,7 +107,7 @@ const ProfileSection = ({
     const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
 
     return (
-        <div style={{ padding: "0 8px" }}>
+        <div>
             {/* NUEVA TARJETA DE PERFIL */}
             {/* TODO: Move generalized card to ./UserCard.jsx — should use profile context */}
 
@@ -168,7 +167,7 @@ const ProfileSection = ({
                     {/* End Introduction */}
 
                     {/* Personal info */}
-                    <div>
+                    <div class="v-rack">
                         {/* TODO: Replace these inputs with _views_. Only use inputs in an edit panel — this keeps cards generalized for all roles → less code */}
                         <div className='panel'>
                             <InputField

@@ -33,7 +33,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage';
 import ProgressBar from './ui/ProgressBar/Basic/Basic';
-import CozySpinner from './cozyglow/components/Spinners/CozySpinner/CozySpinner';
+import Spinner from './common/Spinner';
 import SelfieUploaderMobile from "./verification/SelfieUploaderMobile";
 
 
@@ -251,7 +251,7 @@ export default function DriverVerificationWizard({ onExit }) {
     return false;
   };
 
-  if (loading) return <CozySpinner text="Cargando verificación..." />;
+  if (loading) return <Spinner />;
   if (!uid) return (
     <EmptyCard title="Iniciá sesión">
       <p>Tenés que iniciar sesión para verificar tu identidad.</p>

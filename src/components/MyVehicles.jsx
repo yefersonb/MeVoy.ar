@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { useUser } from "../contexts/UserContext";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import CozySpinner from "./cozyglow/components/Spinners/CozySpinner/CozySpinner";
+import Spinner from "./common/Spinner";
 
 export default function MyVehicles() {
   const { usuario } = useUser();
@@ -46,7 +46,7 @@ export default function MyVehicles() {
     }
   };
 
-  if (loading) return <CozySpinner/>;
+  if (loading) return <Spinner />;
 
   if (vehiculos.length === 0) return <p>No tenés vehículos cargados aún.</p>;
 

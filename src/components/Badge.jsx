@@ -16,7 +16,7 @@ import React from "react";
 
 // Icons
 import { Star, Clock } from "react-feather"
-import { License } from "./cozyglow/icons/License"
+import { License } from "./common/icons"
 
 const variantMap = {
   verificado: { bg: "#047857f0", color: "#047857", border: "#fff2" },

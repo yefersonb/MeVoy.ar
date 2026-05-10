@@ -1,189 +1,53 @@
-// src/components/Header.js
 import React from "react";
 import { useUser } from "../contexts/UserContext";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
-
-// UI
 import logo from "../assets/logo/logo_dark.png";
 import Avatar from "./ui/Avatar";
-import { Caret } from "./cozyglow/icons/Caret";
 
-// Detached menu
-import UserMenuPortal from "./menus/UserMenuPortal";
-
-export default function Header({ rol = "viajero", onToggleRol, onLogout }) {
-    const { usuario, perfil, isAdmin, setModoVista } = useUser() || {};
-
-    const nombre =
-        perfil?.nombre ||
-        usuario?.displayName ||
-        (usuario?.email ? usuario.email.split("@")[0] : "Invitado");
-
-    const etiquetaRol = rol === "viajero" ? "Viajante" : "Conductor";
-    const proximoRol = rol === "viajero" ? "conductor" : "viajero";
-
-    const [menuAbierto, setMenuAbierto] = React.useState(false);
-    const btnRef = React.useRef(null);
-
-    function toggleMenu() {
-        setMenuAbierto((v) => !v);
-    }
-
-    // Cambiar rol y salir de modo admin (si estaba activo)
-    const handleToggleRol = async () => {
-        try {
-            setModoVista?.(null);
-            await onToggleRol?.();
-        } catch { }
-    };
-
-    // Scroll to section by ID (smooth). If not found, sets hash anyway.
-    const goToAnchor = (id) => {
-        setModoVista?.(null); // salimos de modo admin al ir a secciones normales
-        setMenuAbierto(false);
-        const sel = `#${id}`;
-        const el = document.querySelector(sel);
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
-        } else {
-            window.location.hash = sel;
-        }
-    };
-
-    // Entrar al panel admin (sin cambiar rol)
-    const goAdmin = () => {
-        setModoVista?.("admin");
-        setMenuAbierto(false);
-        // opcional: window.location.hash = "#admin";
-    };
-
-    async function doLogout() {
-        try {
-            if (onLogout) await onLogout();
-            else await signOut(auth);
-        } catch (e) {
-            console.error(e);
-            alert("No se pudo cerrar sesión");
-        } finally {
-            setMenuAbierto(false);
-        }
-    }
-
-    // Menu items with unique href + onClick (avoids boolean onClick warning)
-    const MENU_ITEMS = [
-        ...(isAdmin
-            ? [{ label: "Panel Admin", href: "#admin", onClick: goAdmin }]
-            : []),
-        { label: "Perfil", href: "#perfil", onClick: () => goToAnchor("perfil") },
-        { label: "Verificación", href: "#verificacion", onClick: () => goToAnchor("verificacion") },
-        { label: "Reservas", href: "#reservas", onClick: () => goToAnchor("reservas") },
-        { label: "Vehículos", href: "#mis-vehiculos", onClick: () => goToAnchor("mis-vehiculos") },
-        { label: "Envíos", href: "#envios", onClick: () => goToAnchor("envios") },
-        { label: "Nuevo viaje", href: "#nuevo-viaje", onClick: () => goToAnchor("nuevo-viaje") },
-    ];
+export default function Header({ isAdmin }) {
+    const { setModoVista } = useUser() || {};
 
     return (
         <div className="header-container">
             <div className="header">
-                {/* IZQUIERDA: logo + saludo */}
                 <div className="module">
-                    <img src={logo} alt="MeVoy Logo" style={{ height: "70%" }} />
-                    <div>
-                        <span id="header-hola">Hola, </span>
-                        {nombre}
-                        <span id="header-hola-exclamation">!</span>
-                    </div>
+                    <img
+                        src={logo}
+                        alt="MeVoy"
+                        style={{ height: "52%", opacity: 0.8 }}
+                    />
                 </div>
 
-                {/* DERECHA: avatar/menu + rol + (opcional) salir */}
                 <div className="module">
-                    <div
+                    {isAdmin && (
+                        <button
+                            type="button"
+                            className="button neutral"
+                            style={{ padding: "4px 10px", fontSize: "var(--text-xs)" }}
+                            onClick={() => setModoVista?.("admin")}
+                        >
+                            Admin
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        onClick={() => { window.location.hash = "perfil"; }}
+                        aria-label="Mi perfil"
                         style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            gap: "0.8rem",
-                            height: "100%",
+                            background: "none",
+                            border: "none",
                             padding: 0,
+                            cursor: "pointer",
+                            height: "68%",
+                            aspectRatio: "1 / 1",
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                            opacity: 0.85,
                         }}
                     >
-                        {/* Avatar + caret */}
-                        <button
-                            id="user-menu-button"
-                            ref={btnRef}
-                            type="button"
-                            aria-haspopup="menu"
-                            aria-expanded={menuAbierto}
-                            aria-controls={menuAbierto ? "user-menu" : undefined}
-                            onClick={toggleMenu}
-                            title="Menú de usuario"
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.1rem",
-                                padding: "0.1rem",
-                                borderRadius: 999,
-                                border: "1px solid var(--color-border)",
-                                background: "var(--color-surface)",
-                                cursor: "pointer",
-                                height: "100%",
-                            }}
-                        >
-                            <div style={{ height: "100%" }}>
-                                <Avatar />
-                            </div>
-                            <Caret size="30px" direction={menuAbierto ? "up" : "down"} />
-                        </button>
-
-                        {/* Cambiar rol (viajero/conductor) */}
-                        <button
-                            type="button"
-                            className="button row neutral"
-                            onClick={handleToggleRol}
-                            title={`Cambiar a ${proximoRol}`}
-                            style={{ cursor: "pointer" }}
-                        >
-                            <div>{etiquetaRol}</div>
-                        </button>
-
-                        {/* Admin button ONLY when user is admin */}
-                        {isAdmin && (
-                            <button
-                                type="button"
-                                className="button row neutral"
-                                onClick={goAdmin}
-                                title="Panel Admin"
-                                style={{ cursor: "pointer" }}
-                            >
-                                <div>Admin</div>
-                            </button>
-                        )}
-
-                        {/* (Optional) Quick logout */}
-                        {onLogout && (
-                            <button
-                                type="button"
-                                className="button borderless row danger"
-                                onClick={onLogout}
-                                title="Cerrar sesión"
-                                style={{ cursor: "pointer" }}
-                            >
-                                Salir
-                            </button>
-                        )}
-                    </div>
+                        <Avatar />
+                    </button>
                 </div>
             </div>
-
-            {/* Detached portal menu */}
-            <UserMenuPortal
-                open={menuAbierto}
-                anchorRef={btnRef}
-                onClose={() => setMenuAbierto(false)}
-                onLogout={doLogout}
-                items={MENU_ITEMS}
-            />
         </div>
     );
 }

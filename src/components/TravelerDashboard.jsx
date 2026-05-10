@@ -1,31 +1,9 @@
-import React, { useEffect } from "react";
-import TravelerProfilePage from "./TravelerProfilePage";
-import TripSearch from "./TripSearch";
+import React from "react";
 
-export default function TravelerDashboard({
-    usuario,
-    viajes,
-    perfilCompleto,
-    viajeReservado,
-    onReservar,
-}) {
-    // scroll to hash target on mount
-    useEffect(() => {
-        const id = (window.location.hash || "").replace("#", "");
-        if (!id) return;
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, []);
-
+export default function TravelerDashboard() {
     return (
-        <div style={{margin: 8}}>
-            <TravelerProfilePage perfilCompleto={perfilCompleto} />
-
-            <section id="mis-viajes" style={{ scrollMarginTop: 80 }}>
-                <div className="panel">
-                    <TripSearch user={usuario} onBook={onReservar} />
-                </div>
-            </section>
+        <div className="rack" style={{ paddingTop: "2rem", textAlign: "center", color: "var(--color-text-muted)" }}>
+            Mis viajes reservados — próximamente
         </div>
     );
 }

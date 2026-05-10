@@ -296,7 +296,6 @@ export default function TripSearch({ user, onBook }) {
 
       {!loading && !filters.origen && (
         <p className="trip-search__hint">
-          Ingresá origen y destino para ver los viajes disponibles.
         </p>
       )}
     </section>

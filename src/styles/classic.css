@@ -30,9 +30,9 @@
   --color-on-info:    #fff;
 
   /* Surfaces — pure neutral, zero color cast */
-  --color-background:        #252525;
-  --color-surface:           #303030;
-  --color-surface-raised:    #353535;
+  --color-background:        #1d1d1d;
+  --color-surface:           #2b2b2b;
+  --color-surface-raised:    #303030;
   --color-surface-stackable: #464545a0;
   --color-on-surface:        #e0e0e0;
   --color-surface-alt:       #383838;

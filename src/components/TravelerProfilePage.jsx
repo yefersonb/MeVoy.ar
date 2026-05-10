@@ -1,606 +1,206 @@
-﻿// src/components/PerfilViajeroPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
+import { Edit2 } from "react-feather";
 import { useUser } from "../contexts/UserContext";
-import InputField from "./ui/InputField";
-import ActionBar from "./ActionBar";
-import LoadingSpinner from "./common/LoadingSpinner";
-import ErrorMessage from "./common/ErrorMessage";
-import Badge from "./Badge";
-import RatingRow from "./RatingRow";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import usePhotoUpload from "../hooks/usePhotoUpload";
-import useHashSection from "../hooks/useHashSection";
-
-// Tab style reused from driver profile
-const TabButton = ({ active, children, onClick }) => (
-  <span
-    onClick={onClick}
-    style={{
-      cursor: "pointer",
-      color: active ? "var(--color-primary-700)" : "#444",
-      fontWeight: 500,
-      fontSize: "1.05rem",
-      position: "relative",
-      marginRight: "2.5rem",
-      paddingBottom: 6,
-      transition: "color 0.2s ease",
-      display: "inline-block",
-    }}
-    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary-700)")}
-    onMouseLeave={(e) =>
-      (e.currentTarget.style.color = active ? "var(--color-primary-700)" : "#444")
-    }
-  >
-    {children}
-    <span
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 2,
-        background: "var(--color-primary-700)",
-        transform: active ? "scaleX(1)" : "scaleX(0)",
-        transformOrigin: "left",
-        transition: "transform 0.3s",
-      }}
-    />
-  </span>
-);
+import InputField from "./ui/InputField";
+import Toggle from "./ui/Toggle";
+import Avatar from "./ui/Avatar";
+import Spinner from "./common/Spinner";
 
 const defaultPerfil = {
-  nombre: "",
-  whatsapp: "",
-  email: "",
-  descripcion: "",
-  fotoURL: "",
-  direccion: "",
-  fechaNacimiento: "",
-  viajesCompletados: 0,
-  valoraciones: {
-    amabilidad: 0,
-    puntualidad: 0,
-    comunicacion: 0,
-  },
+    nombre: "",
+    whatsapp: "",
+    email: "",
+    descripcion: "",
+    fotoURL: "",
+    direccion: "",
+    perfilVisible: true,
 };
 
-// calcula edad desde fecha YYYY-MM-DD o ISO
-const calcularEdad = (fechaStr) => {
-  if (!fechaStr) return null;
-  const hoy = new Date();
-  const nacimiento = new Date(fechaStr);
-  if (isNaN(nacimiento)) return null;
-  let edad = hoy.getFullYear() - nacimiento.getFullYear();
-  const m = hoy.getMonth() - nacimiento.getMonth();
-  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--;
-  }
-  return edad;
-};
+export default function TravelerProfilePage() {
+    const { usuario } = useUser();
 
-export default function PerfilViajeroPage() {
-  const { usuario } = useUser();
+    const [perfil, setPerfil]           = useState(defaultPerfil);
+    const [loading, setLoading]         = useState(true);
+    const [error, setError]             = useState(null);
+    const [editMode, setEditMode]       = useState(false);
+    const [saving, setSaving]           = useState(false);
+    const [saved, setSaved]             = useState(false);
+    const [snapshot, setSnapshot]       = useState(defaultPerfil);
 
-  // Hash ↔ tab (for direct deep-linking)
-  const section = useHashSection();
-  const tabFromHash = (h) =>
-    ({
-      perfil: "Perfil",
-      "datos-de-pago": "Datos de pago",
-      "viajes-frecuentes": "Viajes frecuentes",
-    }[h] || "Perfil");
+    const { uploading, handlePhotoSelected } = usePhotoUpload(usuario?.uid || "");
 
-  const hashFromTab = (t) =>
-    ({
-      Perfil: "perfil",
-      "Datos de pago": "datos-de-pago",
-      "Viajes frecuentes": "viajes-frecuentes",
-    }[t] || "perfil");
+    const loadPerfil = useCallback(async () => {
+        if (!usuario) return;
+        setLoading(true);
+        setError(null);
+        try {
+            const snap = await getDoc(doc(db, "usuarios", usuario.uid));
+            const data = snap.exists() ? snap.data() : {};
+            const loaded = {
+                nombre:        data.nombre        || usuario.displayName || "",
+                whatsapp:      data.whatsapp       || "",
+                email:         data.email          || usuario.email       || "",
+                descripcion:   data.descripcion    || "",
+                fotoURL:       data.fotoURL        || usuario.photoURL    || "",
+                direccion:     data.direccion      || "",
+                perfilVisible: data.perfilVisible  ?? true,
+            };
+            setPerfil(loaded);
+            setSnapshot(loaded);
+        } catch (e) {
+            console.error("Error cargando perfil:", e);
+            setError("No se pudo cargar el perfil.");
+        } finally {
+            setLoading(false);
+        }
+    }, [usuario]);
 
-  const [activeTab, setActiveTab] = useState(tabFromHash(section));
-  const [perfil, setPerfil] = useState(defaultPerfil);
-  const [loadingPerfil, setLoadingPerfil] = useState(true);
-  const [errorPerfil, setErrorPerfil] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [guardado, setGuardado] = useState(false);
+    useEffect(() => { loadPerfil(); }, [loadPerfil]);
 
-  const { preview, uploading, handlePhotoSelected } = usePhotoUpload(
-    usuario?.uid || ""
-  );
+    const handleChange = (field, value) =>
+        setPerfil((p) => ({ ...p, [field]: value }));
 
-  // Frequent trips (placeholder; replace with real logic)
-  const [viajesFrecuentes, setViajesFrecuentes] = useState([]);
-  // Payment methods (placeholder)
-  const [metodosPago, setMetodosPago] = useState([]);
+    const handleSave = async () => {
+        if (!usuario) return;
+        setSaving(true);
+        try {
+            await setDoc(doc(db, "usuarios", usuario.uid), {
+                nombre:        perfil.nombre.trim(),
+                whatsapp:      perfil.whatsapp.trim(),
+                email:         perfil.email.trim(),
+                descripcion:   perfil.descripcion.trim(),
+                direccion:     perfil.direccion.trim(),
+                perfilVisible: perfil.perfilVisible,
+            }, { merge: true });
+            setSnapshot(perfil);
+            setSaved(true);
+            setEditMode(false);
+            setTimeout(() => setSaved(false), 2000);
+        } catch (e) {
+            console.error("Error guardando perfil:", e);
+            alert("No se pudo guardar el perfil.");
+        } finally {
+            setSaving(false);
+        }
+    };
 
-  // Carga perfil
-  const loadPerfil = useCallback(async () => {
-    if (!usuario) return;
-    setLoadingPerfil(true);
-    setErrorPerfil(null);
-    try {
-      const ref = doc(db, "usuarios", usuario.uid);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const data = snap.data();
-        setPerfil({
-          nombre: data.nombre || usuario.displayName || "",
-          whatsapp: data.whatsapp || "",
-          email: data.email || usuario.email || "",
-          descripcion: data.descripcion || "",
-          fotoURL: data.fotoURL || usuario.photoURL || "",
-          direccion: data.direccion || "",
-          fechaNacimiento: data.fechaNacimiento || "",
-          viajesCompletados: data.viajesCompletados || 0,
-          valoraciones: {
-            amabilidad: data.valoraciones?.amabilidad ?? 0,
-            puntualidad: data.valoraciones?.puntualidad ?? 0,
-            comunicacion: data.valoraciones?.comunicacion ?? 0,
-          },
-        });
-      } else {
-        setPerfil((prev) => ({
-          ...prev,
-          nombre: usuario?.displayName || "",
-          email: usuario?.email || "",
-          fotoURL: usuario?.photoURL || "",
-        }));
-      }
+    const handleCancel = () => {
+        setPerfil(snapshot);
+        setEditMode(false);
+    };
 
-      // Simulado (reemplazar con real)
-      setViajesFrecuentes([
-        { id: "vf1", origen: "Posadas", destino: "Iguazú", frecuencia: "Semanal" },
-        { id: "vf2", origen: "Oberá", destino: "Posadas", frecuencia: "Mensual" },
-      ]);
-      setMetodosPago([
-        { id: "p1", tipo: "Tarjeta de crédito", detalle: "**** **** **** 4242", vencimiento: "12/25" },
-      ]);
-    } catch (e) {
-      console.error("Error cargando perfil viajero:", e);
-      setErrorPerfil("No se pudo cargar el perfil.");
-    } finally {
-      setLoadingPerfil(false);
-    }
-  }, [usuario]);
+    const handlePhoto = async (e) => {
+        const url = await handlePhotoSelected(e);
+        if (url && usuario) {
+            await setDoc(doc(db, "usuarios", usuario.uid), { fotoURL: url }, { merge: true });
+        }
+    };
 
-  useEffect(() => {
-    loadPerfil();
-  }, [loadPerfil]);
+    if (loading) return <Spinner />;
+    if (error)   return <p style={{ color: "var(--color-danger)", padding: "1rem" }}>{error}</p>;
 
-  // Sincroniza cuando cambia el hash
-  useEffect(() => {
-    const next = tabFromHash(section);
-    if (next && next !== activeTab) setActiveTab(next);
-    // eslint-disable-next-line
-  }, [section]);
+    return (
+        <div className="rack">
 
-  const onPerfilChange = (field, value) =>
-    setPerfil((p) => ({ ...p, [field]: value }));
+            {/* Profile card */}
+            <div className="profile-card">
+                <div className="profile-card__photo">
+                    <Avatar />
+                    {editMode && (
+                        <label className="profile-card__photo-edit" aria-label="Cambiar foto">
+                            <Edit2 size={16} />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handlePhoto}
+                                disabled={uploading}
+                            />
+                        </label>
+                    )}
+                </div>
 
-  const handleGuardar = async () => {
-    if (!usuario) return;
-    try {
-      await setDoc(doc(db, "usuarios", usuario.uid), perfil, { merge: true });
-      setGuardado(true);
-      setEditMode(false);
-      setTimeout(() => setGuardado(false), 2000);
-    } catch (e) {
-      console.error("Error guardando perfil viajero:", e);
-      alert("No se pudo guardar el perfil.");
-    }
-  };
-
-  const handlePhoto = async (e) => {
-    const url = await handlePhotoSelected(e);
-    if (url) {
-      setPerfil((p) => ({ ...p, fotoURL: url }));
-      if (usuario) {
-        await setDoc(doc(db, "usuarios", usuario.uid), { fotoURL: url }, { merge: true });
-      }
-    }
-  };
-
-  // Helpers para badges con tooltip
-  const badgeProps = {
-    style: { cursor: "default" },
-  };
-
-  const edad = calcularEdad(perfil.fechaNacimiento);
-  const edadTexto = edad != null ? ` (${edad} años)` : "";
-
-  return (
-    <div className="panel">
-      <nav
-        style={{
-          display: "flex",
-          gap: "0.5rem",
-          borderBottom: "1px solid #e2e8f0",
-          paddingLeft: "2rem",
-          paddingTop: "2rem",
-          marginBottom: "2rem",
-        }}
-      >
-        {["Perfil", "Datos de pago", "Viajes frecuentes"].map((it) => (
-          <TabButton
-            key={it}
-            active={activeTab === it}
-            onClick={() => {
-              setActiveTab(it);
-              window.location.hash = hashFromTab(it); // update hash
-              setEditMode(false);
-            }}
-          >
-            {it}
-          </TabButton>
-        ))}
-      </nav>
-
-      <main >
-        {activeTab === "Perfil" && (
-          <section>
-            <h1 >Perfil del Viajero</h1>
-
-            <ActionBar
-              editMode={editMode}
-              onEdit={() => setEditMode(true)}
-              onSave={handleGuardar}
-              onCancel={() => {
-                loadPerfil();
-                setEditMode(false);
-              }}
-              guardado={guardado}
-            />
-
-            {loadingPerfil && (
-              <LoadingSpinner size="md" text="Cargando perfil..." />
-            )}
-            {errorPerfil && <ErrorMessage error={errorPerfil} />}
-
-            <div
-              
-              style={{
-                gap: 12,
-                flexWrap: "wrap",
-                marginBottom: 24,
-              }}
-            >
-              <div
-                style={{
-                  position: "relative",
-                  width: 98,
-                  height: 98,
-                  minWidth: 98,
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    background: "#f0f4f8",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "relative",
-                  }}
-                >
-                  {preview || perfil.fotoURL ? (
-                    <img
-                      src={preview || perfil.fotoURL}
-                      alt="Foto"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
-                    />
-                  ) : (
-                    <div style={{ fontSize: 12, color: "#64748b" }}>
-                      Sin foto
+                <div className="profile-card__info">
+                    <div className="profile-card__name">
+                        {perfil.nombre || "Sin nombre"}
                     </div>
-                  )}
-                  {uploading && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        background: "rgba(0,0,0,0.4)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                      }}
-                    >
-                      <LoadingSpinner size="sm" />
-                    </div>
-                  )}
+                    {perfil.email && (
+                        <div className="profile-card__meta">{perfil.email}</div>
+                    )}
+                    {perfil.whatsapp && (
+                        <div className="profile-card__meta">WhatsApp: {perfil.whatsapp}</div>
+                    )}
+                    {perfil.direccion && (
+                        <div className="profile-card__meta">{perfil.direccion}</div>
+                    )}
                 </div>
-                {editMode && (
-                  <label
-                    style={{
-                      position: "absolute",
-                      bottom: -6,
-                      right: -6,
-                      background: "var(--color-surface)",
-                      borderRadius: "50%",
-                      padding: 6,
-                      cursor: "pointer",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                    aria-label="Cambiar foto de perfil"
-                    title="Cambiar foto"
-                  >
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhoto}
-                      disabled={uploading}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        opacity: 0,
-                        cursor: "pointer",
-                      }}
-                    />
-                    <div style={{ fontSize: 14, lineHeight: 1 }}>âœŽ</div>
-                  </label>
-                )}
-              </div>
 
-              <div style={{ flex: 1, minWidth: 220 }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "baseline",
-                    gap: 8,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>
-                    {perfil.nombre || "Sin nombre"}
-                    {edadTexto}
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <Badge style={{ cursor: "default" }} title="Viajero activo">
-                      Viajero activo
-                    </Badge>
-                    <Badge style={{ cursor: "default" }} title="Cantidad de viajes compartidos">
-                      {perfil.viajesCompletados} viajes
-                    </Badge>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    marginTop: 8,
-                    color: "#555",
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {perfil.email}{" "}
-                  {perfil.whatsapp && <>â€¢ WhatsApp: {perfil.whatsapp}</>}{" "}
-                  {perfil.direccion && <>â€¢ {perfil.direccion}</>}
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr",
-                gap: "12px 16px",
-                marginBottom: 12,
-              }}
-            >
-              <InputField
-                label="Nombre"
-                type="text"
-                value={perfil.nombre || ""}
-                onChange={(e) => onPerfilChange("nombre", e.target.value)}
-                readOnly={!editMode}
-                placeholder="Tu nombre"
-              />
-              <InputField
-                label="WhatsApp"
-                type="text"
-                value={perfil.whatsapp || ""}
-                onChange={(e) => onPerfilChange("whatsapp", e.target.value)}
-                readOnly={!editMode}
-                placeholder="Tu WhatsApp"
-              />
-              <InputField
-                label="Email"
-                type="email"
-                value={perfil.email || ""}
-                onChange={(e) => onPerfilChange("email", e.target.value)}
-                readOnly={!editMode}
-                placeholder="Tu email"
-              />
-              <InputField
-                label="Dirección"
-                type="text"
-                value={perfil.direccion || ""}
-                onChange={(e) => onPerfilChange("direccion", e.target.value)}
-                readOnly={!editMode}
-                placeholder="Tu dirección"
-              />
-              <div style={{ gridColumn: "1 / span 4" }}>
-                <InputField
-                  label="Acerca de mí"
-                  type="textarea"
-                  value={perfil.descripcion || ""}
-                  onChange={(e) => onPerfilChange("descripcion", e.target.value)}
-                  readOnly={!editMode}
-                  placeholder="Contanos algo sobre vos"
-                />
-              </div>
-            </div>
-
-            {/* Valoraciones en recuadro */}
-            <div style={{ marginTop: 8 }}>
-              <div className="panel">
-                <b>Valoraciones</b>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 24,
-                    flexWrap: "wrap",
-                    marginBottom: 6,
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 140 }}>
-                    <RatingRow label="Amabilidad" value={perfil.valoraciones.amabilidad} />
-                    <RatingRow label="Puntualidad" value={perfil.valoraciones.puntualidad} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 140 }}>
-                    <RatingRow label="Comunicación" value={perfil.valoraciones.comunicacion} />
-                  </div>
-                </div>
-                <div> {perfil.viajesCompletados} viajes completados </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {activeTab === "Datos de pago" && (
-          <section>
-            <h1>Datos de pago</h1>
-            <div
-              style={{
-                border: "1px solid #e2e8f0",
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 16,
-                background: "var(--color-surface)",
-              }}
-            >
-              {metodosPago.length === 0 ? (
-                <div>No tenés métodos de pago guardados.</div>
-              ) : (
-                <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                  {metodosPago.map((m) => (
-                    <li
-                      key={m.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "10px 12px",
-                        borderRadius: 6,
-                        background: "#f9fafe",
-                        marginBottom: 8,
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontWeight: 600 }}>{m.tipo}</div>
-                        <div style={{ fontSize: 12, color: "#555" }}>
-                          {m.detalle} â€¢ Vence {m.vencimiento}
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", gap: 8 }}>
-                        <button
-                          style={{
-                            padding: "6px 14px",
-                            background: "#f1f5f9",
-                            border: "1px solid var(--color-primary-700)",
-                            borderRadius: 6,
-                            cursor: "pointer",
-                            fontSize: 12,
-                            color: "var(--color-primary-700)",
-                            fontWeight: 600,
-                          }}
-                        >
-                          Editar
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <button
-                style={{
-                  marginTop: 6,
-                  padding: "10px 16px",
-                  background: "var(--color-primary-700)",
-                  color: "var(--color-surface)",
-                  border: "none",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                Agregar método de pago
-              </button>
-            </div>
-          </section>
-        )}
-
-        {activeTab === "Viajes frecuentes" && (
-          <section>
-            <h1 >Viajes frecuentes</h1>
-            {viajesFrecuentes.length === 0 ? (
-              <div>No tenés viajes frecuentes aún.</div>
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                  marginBottom: 8,
-                }}
-              >
-                {viajesFrecuentes.map((v) => (
-                  <div
-                    key={v.id}
-                    style={{
-                      border: "1px solid #e2e8f0",
-                      borderRadius: 8,
-                      padding: 16,
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      background: "var(--color-surface)",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 600 }}>
-                        {v.origen} â†’ {v.destino}
-                      </div>
-                      <div style={{ fontSize: 12, color: "#555" }}>
-                        {v.frecuencia}
-                      </div>
-                    </div>
+                {!editMode && (
                     <button
-                      style={{
-                        padding: "8px 14px",
-                        background: "var(--color-primary-700)",
-                        color: "var(--color-surface)",
-                        border: "none",
-                        borderRadius: 6,
-                        cursor: "pointer",
-                        fontSize: 12,
-                        fontWeight: 600,
-                      }}
+                        className="profile-card__edit-btn"
+                        onClick={() => setEditMode(true)}
+                        aria-label="Editar perfil"
                     >
-                      Ver detalles
+                        <Edit2 size={18} />
                     </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-      </main>
-    </div>
-  );
-}
+                )}
+            </div>
 
+            {/* Edit form */}
+            {editMode && (
+                <div className="panel rack">
+                    <InputField
+                        label="Nombre completo"
+                        value={perfil.nombre}
+                        onChange={(e) => handleChange("nombre", e.target.value)}
+                        placeholder="Tu nombre"
+                    />
+                    <InputField
+                        label="WhatsApp"
+                        value={perfil.whatsapp}
+                        onChange={(e) => handleChange("whatsapp", e.target.value)}
+                        placeholder="+54 9 3751 XXXX"
+                    />
+                    <InputField
+                        label="Dirección"
+                        value={perfil.direccion}
+                        onChange={(e) => handleChange("direccion", e.target.value)}
+                        placeholder="Ciudad, barrio, etc."
+                    />
+                    <InputField
+                        label="Acerca de mí"
+                        type="textarea"
+                        value={perfil.descripcion}
+                        onChange={(e) => handleChange("descripcion", e.target.value)}
+                        placeholder="Contanos algo sobre vos"
+                    />
+
+                    <Toggle
+                        checked={perfil.perfilVisible}
+                        onChange={(e) => handleChange("perfilVisible", e.target.checked)}
+                        label="Mostrar mi perfil al conductor"
+                    />
+
+                    <div className="row">
+                        <button
+                            className="button"
+                            onClick={handleSave}
+                            disabled={saving}
+                        >
+                            {saving ? "Guardando…" : saved ? "Guardado" : "Guardar"}
+                        </button>
+                        <button
+                            className="button button--outline"
+                            onClick={handleCancel}
+                            disabled={saving}
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

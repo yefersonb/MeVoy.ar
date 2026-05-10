@@ -222,7 +222,7 @@ body {
    FORMS
    ============================================= */
 
-input,
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 textarea {
     width: 100%;
     padding: 10px 4px;
@@ -634,6 +634,134 @@ p { margin: 0 0 var(--space-3) 0; }
 
 .trip-card__actions             { display: flex; gap: 8px; margin-top: 4px; }
 .trip-card__actions .button     { flex: 1; padding: 10px; }
+
+/* =============================================
+   PROFILE CARD
+   ============================================= */
+
+.profile-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.profile-card__photo {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--color-surface-raised);
+}
+
+.profile-card__photo-edit {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.profile-card__photo:hover .profile-card__photo-edit { opacity: 1; }
+
+.profile-card__photo-edit input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.profile-card__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-card__name {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.2;
+}
+
+.profile-card__meta {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+.profile-card__edit-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color var(--transition-fast);
+}
+
+.profile-card__edit-btn:hover { color: var(--color-text-primary); }
+
+/* Toggle switch */
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+.toggle__track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    flex-shrink: 0;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toggle__track::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: var(--color-text-muted);
+    border-radius: 50%;
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.toggle--on .toggle__track {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.toggle--on .toggle__track::after {
+    transform: translateX(16px);
+    background: #fff;
+}
 
 /* =============================================
    ACTION LIST — grouped tappable-item panel

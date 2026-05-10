@@ -26,6 +26,7 @@ import DriverDashboard from "./components/DriverDashboard";
 
 // Viajero
 import TravelerDashboard from "./components/TravelerDashboard";
+import TravelerProfilePage from "./components/TravelerProfilePage";
 import TripSearch from "./components/TripSearch";
 
 // Hooks
@@ -62,9 +63,8 @@ export default function App() {
 
     const handleSectionChange = (section) => {
         setActiveSection(section);
-        // Conductor: bottom nav drives the hash; DriverProfile responds automatically
-        if (rol === "conductor") {
-            window.location.hash = CONDUCTOR_HASH[section] ?? "";
+        if (rol === "conductor" && CONDUCTOR_HASH[section] !== undefined) {
+            window.location.hash = CONDUCTOR_HASH[section];
         }
     };
 
@@ -125,11 +125,13 @@ export default function App() {
             return <AdminVerificador />;
         }
 
+        if (activeSection === "perfil") return <TravelerProfilePage />;
+
         if (rol === "conductor") {
             if (activeSection === "mas") return (
                 <div className="rack">
                     <div className="action-list">
-                        <button className="action-list__item"><User size={16} /> Perfil</button>
+                        <button className="action-list__item" onClick={() => handleSectionChange("perfil")}><User size={16} /> Mi Perfil</button>
                         <button className="action-list__item"><CreditCard size={16} /> Medios de Pago</button>
                     </div>
                 </div>
@@ -156,12 +158,12 @@ export default function App() {
                 return (
                     <div className="rack">
                         <div className="action-list">
-                            <button className="action-list__item"><User size={16} /> Perfil</button>
+                            <button className="action-list__item" onClick={() => handleSectionChange("perfil")}><User size={16} /> Mi Perfil</button>
                             <button className="action-list__item"><CreditCard size={16} /> Medios de Pago</button>
                             <button className="action-list__item"><List size={16} /> Reservas</button>
                         </div>
                         <div className="action-list">
-                            <button className="action-list__item"><LogOut/>Cerrar sesión</button>
+                            <button className="action-list__item"><LogOut size={16} /> Cerrar sesión</button>
                         </div>
                     </div>
                 );

@@ -169,6 +169,7 @@ export default function TravelerProfilePage() {
                         onChange={(e) => handleChange("direccion", e.target.value)}
                         placeholder="Ciudad, barrio, etc."
                     />
+                    
                     <InputField
                         label="Acerca de mí"
                         type="textarea"

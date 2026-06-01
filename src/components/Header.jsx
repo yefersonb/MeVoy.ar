@@ -4,7 +4,9 @@ import logo from "../assets/logo/logo_dark.png";
 import Avatar from "./ui/Avatar";
 
 export default function Header({ isAdmin, onAvatarClick }) {
-    const { setModoVista } = useUser() || {};
+    const { setModoVista, perfil } = useUser() || {};
+    const rol = perfil?.rol || "viajero";
+    const rolLabel = rol === "conductor" ? "Conductor" : "Pasajero";
 
     return (
         <div className="header-container">
@@ -32,19 +34,12 @@ export default function Header({ isAdmin, onAvatarClick }) {
                         type="button"
                         onClick={onAvatarClick ?? (() => { window.location.hash = "perfil"; })}
                         aria-label="Mi perfil"
-                        style={{
-                            background: "none",
-                            border: "none",
-                            padding: 0,
-                            cursor: "pointer",
-                            height: "68%",
-                            aspectRatio: "1 / 1",
-                            borderRadius: "50%",
-                            overflow: "hidden",
-                            opacity: 0.85,
-                        }}
+                        className="header-profile-btn"
                     >
-                        <Avatar />
+                        <span className="header-role-label">{rolLabel}</span>
+                        <div className="header-avatar">
+                            <Avatar />
+                        </div>
                     </button>
                 </div>
             </div>

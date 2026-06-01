@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Truck, Plus, Edit2, Trash2, Check, ExternalLink } from "react-feather";
+import { Plus, Edit2, Trash2, Check, ExternalLink } from "react-feather";
+import { CarIcon } from "./common/icons";
 import { useUser } from "../contexts/UserContext";
 import { useToast } from "../contexts/ToastContext";
 import { db, storage } from "../firebase";
@@ -248,7 +249,7 @@ export default function VehiculosConductor() {
                     <div className="spinner-wrap"><Spinner /></div>
                 ) : vehiculos.length === 0 ? (
                     <div className="bookings-empty">
-                        <Truck size={36} />
+                        <CarIcon size={36} />
                         <p>No tenés vehículos registrados.</p>
                         <p className="bookings-empty__hint">
                             Agregá tu primer vehículo para poder publicar viajes.

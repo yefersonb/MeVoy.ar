@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { User, CreditCard, List, LogOut, ChevronRight, Truck } from "react-feather";
+import { User, CreditCard, List, LogOut, ChevronRight } from "react-feather";
+import { CarIcon } from "./components/common/icons";
 import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { db, auth } from "./firebase";
@@ -187,7 +188,7 @@ export default function App() {
                             <List size={16} /> Mis viajes
                         </button>
                         <button className="action-list__item" onClick={() => handleSectionChange("vehiculos")}>
-                            <Truck size={16} /> Mis vehículos
+                            <CarIcon size={16} /> Mis vehículos
                         </button>
                     </>
                 )}

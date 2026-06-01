@@ -24,7 +24,25 @@ export const Caret = ({ color = "currentColor", size = 24, direction = "down", .
     </svg>
 );
 
-export const License = ({ color = "currentColor", size = 24, ...props }) => (
+export const CarIcon = ({ color = "currentColor", size = 24, ...props }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size} height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
+    >
+        <circle cx="7.5" cy="16.5" r="2.5" />
+        <circle cx="16.5" cy="16.5" r="2.5" />
+        <path d="M2 14h3l1.5-4.5a2 2 0 0 1 1.9-1.5h7.2a2 2 0 0 1 1.9 1.5L19 14h3v3a1 1 0 0 1-1 1h-1.5M14 16.5H10M5 16.5H2" />
+    </svg>
+);
+
+export const License =({ color = "currentColor", size = 24, ...props }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width={size} height={size}

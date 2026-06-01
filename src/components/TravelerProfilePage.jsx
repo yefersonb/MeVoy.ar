@@ -1,106 +1,76 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Edit2 } from "react-feather";
+import React, { useState, useMemo } from "react";
+import { Edit2, Check } from "react-feather";
+import Markdown from "react-markdown";
 import { useUser } from "../contexts/UserContext";
-import { db } from "../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useToast } from "../contexts/ToastContext";
+import { useProfile } from "../hooks/useProfile";
 import usePhotoUpload from "../hooks/usePhotoUpload";
 import InputField from "./ui/InputField";
 import Toggle from "./ui/Toggle";
 import Avatar from "./ui/Avatar";
 import Spinner from "./common/Spinner";
+import Badge from "./Badge";
+import RatingRow from "./RatingRow";
 
-const defaultPerfil = {
-    nombre: "",
-    whatsapp: "",
-    email: "",
-    descripcion: "",
-    fotoURL: "",
-    direccion: "",
-    perfilVisible: true,
-};
+function calcCompletion(profile) {
+    if (!profile) return 0;
+    let p = 0;
+    if (profile.photoUrl)         p += 20;
+    if (profile.name?.trim())     p += 20;
+    if (profile.whatsapp?.trim()) p += 20;
+    if (profile.address?.trim())  p += 20;
+    if (profile.bio?.trim())      p += 20;
+    return p;
+}
 
 export default function TravelerProfilePage() {
     const { usuario } = useUser();
+    const toast = useToast();
+    const { profile, loading, error, save, canReserve } = useProfile(usuario);
 
-    const [perfil, setPerfil]           = useState(defaultPerfil);
-    const [loading, setLoading]         = useState(true);
-    const [error, setError]             = useState(null);
-    const [editMode, setEditMode]       = useState(false);
-    const [saving, setSaving]           = useState(false);
-    const [saved, setSaved]             = useState(false);
-    const [snapshot, setSnapshot]       = useState(defaultPerfil);
+    const [editMode, setEditMode] = useState(false);
+    const [draft, setDraft]       = useState(null);
+    const [saving, setSaving]     = useState(false);
+    const [saved, setSaved]       = useState(false);
 
     const { uploading, handlePhotoSelected } = usePhotoUpload(usuario?.uid || "");
 
-    const loadPerfil = useCallback(async () => {
-        if (!usuario) return;
-        setLoading(true);
-        setError(null);
-        try {
-            const snap = await getDoc(doc(db, "usuarios", usuario.uid));
-            const data = snap.exists() ? snap.data() : {};
-            const loaded = {
-                nombre:        data.nombre        || usuario.displayName || "",
-                whatsapp:      data.whatsapp       || "",
-                email:         data.email          || usuario.email       || "",
-                descripcion:   data.descripcion    || "",
-                fotoURL:       data.fotoURL        || usuario.photoURL    || "",
-                direccion:     data.direccion      || "",
-                perfilVisible: data.perfilVisible  ?? true,
-            };
-            setPerfil(loaded);
-            setSnapshot(loaded);
-        } catch (e) {
-            console.error("Error cargando perfil:", e);
-            setError("No se pudo cargar el perfil.");
-        } finally {
-            setLoading(false);
-        }
-    }, [usuario]);
+    const completionPercent = useMemo(() => calcCompletion(profile), [profile]);
+    const isDriver = profile?.role === "conductor";
 
-    useEffect(() => { loadPerfil(); }, [loadPerfil]);
-
-    const handleChange = (field, value) =>
-        setPerfil((p) => ({ ...p, [field]: value }));
+    const startEdit = () => { setDraft({ ...profile }); setEditMode(true); };
+    const cancelEdit = () => { setDraft(null); setEditMode(false); };
+    const handleChange = (field, value) => setDraft(d => ({ ...d, [field]: value }));
 
     const handleSave = async () => {
-        if (!usuario) return;
         setSaving(true);
         try {
-            await setDoc(doc(db, "usuarios", usuario.uid), {
-                nombre:        perfil.nombre.trim(),
-                whatsapp:      perfil.whatsapp.trim(),
-                email:         perfil.email.trim(),
-                descripcion:   perfil.descripcion.trim(),
-                direccion:     perfil.direccion.trim(),
-                perfilVisible: perfil.perfilVisible,
-            }, { merge: true });
-            setSnapshot(perfil);
+            await save(draft);
             setSaved(true);
             setEditMode(false);
+            setDraft(null);
+            toast.success("Perfil actualizado.");
             setTimeout(() => setSaved(false), 2000);
         } catch (e) {
-            console.error("Error guardando perfil:", e);
-            alert("No se pudo guardar el perfil.");
+            console.error("Profile save error:", e);
+            toast.error("No se pudo guardar el perfil.");
         } finally {
             setSaving(false);
         }
     };
 
-    const handleCancel = () => {
-        setPerfil(snapshot);
-        setEditMode(false);
-    };
-
     const handlePhoto = async (e) => {
         const url = await handlePhotoSelected(e);
-        if (url && usuario) {
-            await setDoc(doc(db, "usuarios", usuario.uid), { fotoURL: url }, { merge: true });
+        if (url) {
+            try { await save({ photoUrl: url }); }
+            catch { toast.error("No se pudo guardar la foto."); }
         }
     };
 
-    if (loading) return <Spinner />;
+    if (loading) return <div className="spinner-wrap"><Spinner /></div>;
     if (error)   return <p style={{ color: "var(--color-danger)", padding: "1rem" }}>{error}</p>;
+
+    const displayed = editMode ? draft : profile;
 
     return (
         <div className="rack">
@@ -112,92 +82,124 @@ export default function TravelerProfilePage() {
                     {editMode && (
                         <label className="profile-card__photo-edit" aria-label="Cambiar foto">
                             <Edit2 size={16} />
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handlePhoto}
-                                disabled={uploading}
-                            />
+                            <input type="file" accept="image/*" onChange={handlePhoto} disabled={uploading} />
                         </label>
                     )}
                 </div>
 
                 <div className="profile-card__info">
-                    <div className="profile-card__name">
-                        {perfil.nombre || "Sin nombre"}
-                    </div>
-                    {perfil.email && (
-                        <div className="profile-card__meta">{perfil.email}</div>
-                    )}
-                    {perfil.whatsapp && (
-                        <div className="profile-card__meta">WhatsApp: {perfil.whatsapp}</div>
-                    )}
-                    {perfil.direccion && (
-                        <div className="profile-card__meta">{perfil.direccion}</div>
-                    )}
+                    <div className="profile-card__name">{displayed?.name || "Sin nombre"}</div>
+                    {displayed?.email    && <div className="profile-card__meta">{displayed.email}</div>}
+                    {displayed?.whatsapp && <div className="profile-card__meta">WhatsApp: {displayed.whatsapp}</div>}
+                    {displayed?.address  && <div className="profile-card__meta">{displayed.address}</div>}
                 </div>
 
                 {!editMode && (
-                    <button
-                        className="profile-card__edit-btn"
-                        onClick={() => setEditMode(true)}
-                        aria-label="Editar perfil"
-                    >
+                    <button className="profile-card__edit-btn" onClick={startEdit} aria-label="Editar perfil">
                         <Edit2 size={18} />
                     </button>
                 )}
             </div>
 
-            {/* Edit form */}
-            {editMode && (
-                <div className="panel rack">
-                    <InputField
-                        label="Nombre completo"
-                        value={perfil.nombre}
-                        onChange={(e) => handleChange("nombre", e.target.value)}
-                        placeholder="Tu nombre"
-                    />
-                    <InputField
-                        label="WhatsApp"
-                        value={perfil.whatsapp}
-                        onChange={(e) => handleChange("whatsapp", e.target.value)}
-                        placeholder="+54 9 3751 XXXX"
-                    />
-                    <InputField
-                        label="Dirección"
-                        value={perfil.direccion}
-                        onChange={(e) => handleChange("direccion", e.target.value)}
-                        placeholder="Ciudad, barrio, etc."
-                    />
-                    
-                    <InputField
-                        label="Acerca de mí"
-                        type="textarea"
-                        value={perfil.descripcion}
-                        onChange={(e) => handleChange("descripcion", e.target.value)}
-                        placeholder="Contanos algo sobre vos"
-                    />
+            {/* Thin completion bar — disappears when full */}
+            {completionPercent < 100 && (
+                <div className="profile-completion-bar">
+                    <div className="profile-completion-bar__fill" style={{ width: `${completionPercent}%` }} />
+                </div>
+            )}
 
-                    <Toggle
-                        checked={perfil.perfilVisible}
-                        onChange={(e) => handleChange("perfilVisible", e.target.checked)}
-                        label="Mostrar mi perfil al conductor"
-                    />
+            {/* VIEW MODE */}
+            {!editMode && (
+                <>
+                    {/* Bio */}
+                    {displayed?.bio && (
+                        <div className="panel profile-bio">
+                            <Markdown>{displayed.bio}</Markdown>
+                        </div>
+                    )}
 
-                    <div className="row">
-                        <button
-                            className="button"
-                            onClick={handleSave}
-                            disabled={saving}
-                        >
-                            {saving ? "Guardando…" : saved ? "Guardado" : "Guardar"}
-                        </button>
-                        <button
-                            className="button button--outline"
-                            onClick={handleCancel}
-                            disabled={saving}
-                        >
+                    {/* Trust badges — canReserve only makes sense for passengers */}
+                    <div className="profile-badges">
+                        {!isDriver && canReserve && (
+                            <Badge variant="verificado">Perfil completo</Badge>
+                        )}
+                        {isDriver && profile.tripsCompleted > 0 && (
+                            <Badge variant="viajes">
+                                {profile.tripsCompleted} viaje{profile.tripsCompleted !== 1 ? "s" : ""}
+                            </Badge>
+                        )}
+                        {isDriver && profile.responseRate > 0 && (
+                            <Badge variant="rapido">Responde rápido</Badge>
+                        )}
+                    </div>
+
+                    {/* Driver ratings */}
+                    {isDriver && profile.ratings && (
+                        <div className="profile-ratings">
+                            <p className="profile-editor__section-label">Valoraciones</p>
+                            <div style={{ borderRadius: "var(--radius-md)", overflow: "hidden" }}>
+                                <RatingRow label="Conducción"  value={profile.ratings.conduccion  ?? 0} />
+                                <RatingRow label="Puntualidad" value={profile.ratings.puntualidad ?? 0} />
+                                <RatingRow label="Amabilidad"  value={profile.ratings.amabilidad  ?? 0} />
+                                <RatingRow label="Limpieza"    value={profile.ratings.limpieza    ?? 0} />
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
+
+            {/* EDIT MODE */}
+            {editMode && draft && (
+                <div className="profile-editor">
+                    <p className="profile-editor__section-label">Información de contacto</p>
+                    <div className="profile-editor__group">
+                        <InputField
+                            label="Nombre completo"
+                            value={draft.name}
+                            onChange={(e) => handleChange("name", e.target.value)}
+                            placeholder="Tu nombre"
+                        />
+                        <InputField
+                            label="WhatsApp"
+                            value={draft.whatsapp}
+                            onChange={(e) => handleChange("whatsapp", e.target.value)}
+                            placeholder="+54 9 3751 XXXX"
+                        />
+                        <InputField
+                            label="Ubicación"
+                            value={draft.address}
+                            onChange={(e) => handleChange("address", e.target.value)}
+                            placeholder="Ciudad, barrio, etc."
+                        />
+                    </div>
+
+                    <div className="profile-editor__group">
+                        <InputField
+                            label="Acerca de mí"
+                            type="textarea"
+                            value={draft.bio}
+                            onChange={(e) => handleChange("bio", e.target.value)}
+                            placeholder="Contanos algo sobre vos… **negrita**, _itálica_, etc."
+                        />
+                    </div>
+
+                    <div className="profile-editor__group profile-editor__group--centered">
+                        <Toggle
+                            checked={draft.profileVisible}
+                            onChange={(e) => handleChange("profileVisible", e.target.checked)}
+                            label="Mostrar mi perfil al conductor"
+                        />
+                    </div>
+
+                    <div className="profile-editor__actions">
+                        <button className="button neutral" onClick={cancelEdit} disabled={saving}>
                             Cancelar
+                        </button>
+                        <button className="button" onClick={handleSave} disabled={saving}>
+                            {saving ? "Guardando…" : saved
+                                ? <><Check size={14} /> Guardado</>
+                                : "Guardar cambios"
+                            }
                         </button>
                     </div>
                 </div>

@@ -1,5 +1,26 @@
 import React, { useState } from "react";
 import { Calendar, Users, Clock, Package, Search, Filter } from "react-feather";
+
+function OriginPin() {
+    return (
+        <svg className="route-pin route-pin--origin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+            <circle cx="12" cy="8" r="2" fill="currentColor" />
+            <path d="M16 14c0-1.5-1.5-2.5-4-2.5s-4 1.5-4 2.5" />
+        </svg>
+    );
+}
+
+function DestinationPin() {
+    return (
+        <svg className="route-pin route-pin--dest" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" fill="currentColor" />
+            <circle cx="12" cy="9" r="2.5" fill="white" />
+        </svg>
+    );
+}
 import TripDetail from "./TripDetail";
 import AutocompleteInput from "./AutocompleteInput";
 import useTripsSearch from "../hooks/useTripsSearch";
@@ -123,7 +144,7 @@ export default function TripSearch({ user, onBook }) {
                 {/* Route picker with connecting line */}
                 <div className="route-picker">
                     <div className="route-picker__stop">
-                        <span className="route-picker__dot" />
+                        <OriginPin />
                         <div className="route-picker__input">
                             <AutocompleteInput
                                 placeholder="¿Desde dónde salís?"
@@ -133,7 +154,7 @@ export default function TripSearch({ user, onBook }) {
                         </div>
                     </div>
                     <div className="route-picker__stop">
-                        <span className="route-picker__dot route-picker__dot--dest" />
+                        <DestinationPin />
                         <div className="route-picker__input">
                             <AutocompleteInput
                                 placeholder="¿A dónde vas?"

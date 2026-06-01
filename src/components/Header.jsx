@@ -3,7 +3,7 @@ import { useUser } from "../contexts/UserContext";
 import logo from "../assets/logo/logo_dark.png";
 import Avatar from "./ui/Avatar";
 
-export default function Header({ isAdmin }) {
+export default function Header({ isAdmin, onAvatarClick }) {
     const { setModoVista } = useUser() || {};
 
     return (
@@ -30,7 +30,7 @@ export default function Header({ isAdmin }) {
                     )}
                     <button
                         type="button"
-                        onClick={() => { window.location.hash = "perfil"; }}
+                        onClick={onAvatarClick ?? (() => { window.location.hash = "perfil"; })}
                         aria-label="Mi perfil"
                         style={{
                             background: "none",

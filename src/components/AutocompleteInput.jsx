@@ -163,8 +163,30 @@ const { isLoaded, loadError } = useJsApiLoader(MAP_LOADER_OPTIONS);
     debouncedGeocode(internalValue);
   };
 
-  if (loadError) return <p>Error cargando Autocomplete</p>;
-  if (!isLoaded) return <p>Cargando Autocomplete…</p>;
+  if (loadError) return (
+    <div style={{ position: "relative" }}>
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={internalValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+      <span style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 2, display: "block" }}>
+        Sin autocompletado
+      </span>
+    </div>
+  );
+
+  if (!isLoaded) return (
+    <input
+      type="text"
+      placeholder={placeholder}
+      disabled
+      className="autocomplete-skeleton"
+      aria-busy="true"
+    />
+  );
 
   return (
     <div style={{ position: "relative" }}>

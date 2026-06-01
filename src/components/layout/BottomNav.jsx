@@ -18,6 +18,7 @@ export default function BottomNav({ rol, activeSection, onSectionChange }) {
   const tabs = TABS[rol] ?? TABS.viajero;
 
   return (
+    <div className="bottom-nav-container">
     <nav className="bottom-nav" aria-label="Navegación principal">
       {tabs.map(({ id, label, Icon }) => {
         const active = activeSection === id;
@@ -34,5 +35,6 @@ export default function BottomNav({ rol, activeSection, onSectionChange }) {
         );
       })}
     </nav>
+    </div>
   );
 }

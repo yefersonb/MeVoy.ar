@@ -1,7 +1,10 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { User, CreditCard, List, LogOut } from "react-feather";
-import { collection, doc, addDoc, updateDoc, increment, getDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { User, CreditCard, List, LogOut, ChevronRight } from "react-feather";
+import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import { db, auth } from "./firebase";
+import { useToast } from "./contexts/ToastContext";
+import Avatar from "./components/ui/Avatar";
 
 // Styles — tokens → base → markdown
 import "./styles/classic.css";
@@ -43,6 +46,7 @@ const CONDUCTOR_HASH = { viajes: "reservas", nuevo: "nuevo-viaje" };
 
 export default function App() {
     const { usuario, perfil, isAdmin, loading, modoVista } = useUser();
+    const toast = useToast();
 
     const rol = useMemo(() => perfil?.rol || "viajero", [perfil?.rol]);
 
@@ -68,23 +72,43 @@ export default function App() {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (e) {
+            toast.error("No se pudo cerrar la sesión. Intentá de nuevo.");
+        }
+    };
+
+    const switchRole = async (newRol) => {
+        if (newRol === rol || !usuario) return;
+        try {
+            await setDoc(doc(db, "usuarios", usuario.uid), { rol: newRol }, { merge: true });
+        } catch (e) {
+            toast.error("No se pudo cambiar el modo.");
+        }
+    };
+
     const reservarViaje = async (id) => {
         if (!usuario) return;
         try {
             const data = {
-                uid: usuario.uid,
-                nombre: usuario.displayName || usuario.email,
-                whatsapp: usuario.phoneNumber || "",
-                fechaReserva: new Date(),
+                viajanteUid:       usuario.uid,
+                nombre:            usuario.displayName || usuario.email,
+                whatsapp:          usuario.phoneNumber || "",
+                fechaReserva:      new Date(),
+                estadoReserva:     "pendiente",
+                cantidadPasajeros: 1,
+                creadoPor:         usuario.uid,
             };
             await addDoc(collection(db, "viajes", id, "reservas"), data);
             await updateDoc(doc(db, "viajes", id), { asientos: increment(-1) });
             const vSnap = await getDoc(doc(db, "viajes", id));
             if (vSnap.exists()) setBookedTrip({ id, ...vSnap.data() });
-            alert("¡Reserva exitosa!");
+            toast.success("¡Reserva creada! El conductor confirmará pronto.");
         } catch (e) {
             console.error(e);
-            alert("Hubo un problema al reservar.");
+            toast.error("Hubo un problema al reservar. Intentá de nuevo.");
         }
     };
 
@@ -118,63 +142,93 @@ export default function App() {
         );
     }
 
+    // --- Shared "Más" section — same for both roles ---
+
+    const renderMas = () => (
+        <div className="rack">
+            {/* Mini profile card → opens profile editor */}
+            <button className="mas-profile-card" onClick={() => handleSectionChange("perfil")}>
+                <div className="mas-profile-card__avatar"><Avatar /></div>
+                <div className="mas-profile-card__info">
+                    <span className="mas-profile-card__name">
+                        {perfil?.nombre || usuario?.displayName || "Mi perfil"}
+                    </span>
+                    <span className="mas-profile-card__hint">Editar perfil</span>
+                </div>
+                <ChevronRight size={18} className="mas-profile-card__chevron" />
+            </button>
+
+            {/* Role switcher — always visible so you can always switch back */}
+            <div className="role-switcher">
+                <button
+                    className={`role-switcher__option${rol === "viajero" ? " role-switcher__option--active" : ""}`}
+                    onClick={() => switchRole("viajero")}
+                >
+                    Viajar
+                </button>
+                <button
+                    className={`role-switcher__option${rol === "conductor" ? " role-switcher__option--active" : ""}`}
+                    onClick={() => switchRole("conductor")}
+                >
+                    Conducir
+                </button>
+            </div>
+
+            {/* Role-specific + shared actions */}
+            <div className="action-list">
+                {rol === "viajero" ? (
+                    <button className="action-list__item" onClick={() => handleSectionChange("viajes")}>
+                        <List size={16} /> Mis reservas
+                    </button>
+                ) : (
+                    <button className="action-list__item" onClick={() => handleSectionChange("viajes")}>
+                        <List size={16} /> Mis viajes
+                    </button>
+                )}
+                <button className="action-list__item">
+                    <CreditCard size={16} /> Medios de Pago
+                </button>
+            </div>
+
+            {/* Danger zone */}
+            <div className="action-list">
+                <button
+                    className="action-list__item"
+                    style={{ color: "var(--color-danger)" }}
+                    onClick={handleLogout}
+                >
+                    <LogOut size={16} style={{ color: "var(--color-danger)" }} />
+                    Cerrar sesión
+                </button>
+            </div>
+        </div>
+    );
+
     // --- Main content per role / section ---
 
     const renderContent = () => {
-        if (isAdmin && modoVista === "admin") {
-            return <AdminVerificador />;
-        }
-
+        if (isAdmin && modoVista === "admin") return <AdminVerificador />;
         if (activeSection === "perfil") return <TravelerProfilePage />;
+        if (activeSection === "mas")    return renderMas();
 
         if (rol === "conductor") {
-            if (activeSection === "mas") return (
-                <div className="rack">
-                    <div className="action-list">
-                        <button className="action-list__item" onClick={() => handleSectionChange("perfil")}><User size={16} /> Mi Perfil</button>
-                        <button className="action-list__item"><CreditCard size={16} /> Medios de Pago</button>
-                    </div>
-                </div>
-            );
-            // Bottom nav drives the hash; DriverDashboard responds to hash via useHashSection
+            // Bottom nav drives the hash; DriverDashboard responds via useHashSection
             return <DriverDashboard viajes={viajes} reservas={reservas} />;
         }
 
-        // viajero — bottom nav controls which section is shown
         switch (activeSection) {
-            case "buscar":
-                return <TripSearch user={usuario} onBook={reservarViaje} />;
-            case "viajes":
-                return (
-                    <TravelerDashboard
-                        usuario={usuario}
-                        viajes={[]}
-                        perfilCompleto={profileComplete}
-                        viajeReservado={bookedTrip}
-                        onReservar={reservarViaje}
-                    />
-                );
-            case "mas":
-                return (
-                    <div className="rack">
-                        <div className="action-list">
-                            <button className="action-list__item" onClick={() => handleSectionChange("perfil")}><User size={16} /> Mi Perfil</button>
-                            <button className="action-list__item"><CreditCard size={16} /> Medios de Pago</button>
-                            <button className="action-list__item"><List size={16} /> Reservas</button>
-                        </div>
-                        <div className="action-list">
-                            <button className="action-list__item" style={{color: "var(--color-danger)"}}><LogOut size={16} style={{color: "var(--color-danger)"}}/> Cerrar sesión</button>
-                        </div>
-                    </div>
-                );
-            default:
-                return <TripSearch user={usuario} onBook={reservarViaje} />;
+            case "buscar":  return <TripSearch user={usuario} onBook={reservarViaje} />;
+            case "viajes":  return <TravelerDashboard usuario={usuario} />;
+            default:        return <TripSearch user={usuario} onBook={reservarViaje} />;
         }
     };
 
     return (
         <ThemeProvider>
-            <Header isAdmin={isAdmin} />
+            <Header
+                isAdmin={isAdmin}
+                onAvatarClick={() => handleSectionChange("mas")}
+            />
             <div className="app-container">
                 {renderContent()}
             </div>

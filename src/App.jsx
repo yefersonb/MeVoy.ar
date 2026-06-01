@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { User, CreditCard, List, LogOut, ChevronRight } from "react-feather";
+import { User, CreditCard, List, LogOut, ChevronRight, Truck } from "react-feather";
 import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { db, auth } from "./firebase";
@@ -26,6 +26,7 @@ import AdminVerificador from "./components/admin/AdminVerificador";
 
 // Conductor
 import DriverDashboard from "./components/DriverDashboard";
+import VehiculosConductor from "./components/VehiculosConductor";
 
 // Viajero
 import TravelerDashboard from "./components/TravelerDashboard";
@@ -181,9 +182,14 @@ export default function App() {
                         <List size={16} /> Mis reservas
                     </button>
                 ) : (
-                    <button className="action-list__item" onClick={() => handleSectionChange("viajes")}>
-                        <List size={16} /> Mis viajes
-                    </button>
+                    <>
+                        <button className="action-list__item" onClick={() => handleSectionChange("viajes")}>
+                            <List size={16} /> Mis viajes
+                        </button>
+                        <button className="action-list__item" onClick={() => handleSectionChange("vehiculos")}>
+                            <Truck size={16} /> Mis vehículos
+                        </button>
+                    </>
                 )}
                 <button className="action-list__item">
                     <CreditCard size={16} /> Medios de Pago
@@ -208,12 +214,16 @@ export default function App() {
 
     const renderContent = () => {
         if (isAdmin && modoVista === "admin") return <AdminVerificador />;
-        if (activeSection === "perfil") return <TravelerProfilePage />;
-        if (activeSection === "mas")    return renderMas();
+        if (activeSection === "perfil")                        return <TravelerProfilePage />;
+        if (activeSection === "mas")                           return renderMas();
+        if (activeSection === "vehiculos" && rol === "conductor") return <VehiculosConductor />;
 
         if (rol === "conductor") {
-            // Bottom nav drives the hash; DriverDashboard responds via useHashSection
-            return <DriverDashboard viajes={viajes} reservas={reservas} />;
+            return <DriverDashboard
+                viajes={viajes}
+                reservas={reservas}
+                onGoToVehicles={() => handleSectionChange("vehiculos")}
+            />;
         }
 
         switch (activeSection) {

@@ -39,7 +39,7 @@ function DestinationPin() {
     );
 }
 
-export default function NewTrip() {
+export default function NewTrip({ onGoToVehicles }) {
     const toast = useToast();
 
     const [origen, setOrigen]   = useState("");
@@ -163,11 +163,11 @@ export default function NewTrip() {
                     whatsapp: u.whatsapp || "",
                 },
                 vehiculo: {
-                    id:       vehiculoSeleccionado.id,
-                    marca:    vehiculoSeleccionado.marca   || null,
-                    modelo:   vehiculoSeleccionado.modelo  || null,
-                    patente:  vehiculoSeleccionado.patente || null,
-                    asientos: vehiculoSeleccionado.asientos || null,
+                    id:      vehiculoSeleccionado.id,
+                    brand:   vehiculoSeleccionado.brand  || null,
+                    model:   vehiculoSeleccionado.model  || null,
+                    plate:   vehiculoSeleccionado.plate  || null,
+                    seats:   vehiculoSeleccionado.seats  || null,
                 },
                 aceptaPaquetes,
                 pesoMax:          aceptaPaquetes ? Number(pesoMax)          : null,
@@ -270,13 +270,21 @@ export default function NewTrip() {
                 {vehiculosCargando ? (
                     <div className="spinner-wrap" style={{ height: "3rem" }}><Spinner /></div>
                 ) : vehiculos.length === 0 ? (
-                    <div className="new-trip__no-vehicle">
+                    <button
+                        type="button"
+                        className="new-trip__no-vehicle"
+                        onClick={onGoToVehicles}
+                        style={{ width: "100%", cursor: onGoToVehicles ? "pointer" : "default", background: "none", border: "none", textAlign: "left" }}
+                    >
                         <MapPin size={20} />
                         <span>
                             No tenés vehículos registrados.{" "}
-                            Agregá uno en la pestaña <strong>Vehículos</strong>.
+                            {onGoToVehicles
+                                ? <strong style={{ color: "var(--color-primary)" }}>Agregá uno acá →</strong>
+                                : <>Agregá uno en la pestaña <strong>Vehículos</strong>.</>
+                            }
                         </span>
-                    </div>
+                    </button>
                 ) : (
                     <div className="rack-s">
                         <label htmlFor="nt-vehiculo" className="trip-search__field">
@@ -292,7 +300,7 @@ export default function NewTrip() {
                             <option value="" disabled>Seleccioná un vehículo</option>
                             {vehiculos.map(v => (
                                 <option key={v.id} value={v.id}>
-                                    {`${v.marca || ""} ${v.modelo || ""}`.trim()}{v.patente ? ` — ${v.patente}` : ""}
+                                    {`${v.brand || ""} ${v.model || ""}`.trim()}{v.plate ? ` — ${v.plate}` : ""}
                                 </option>
                             ))}
                         </select>

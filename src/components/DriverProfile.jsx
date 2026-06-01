@@ -23,6 +23,7 @@ const DEFAULT_TAB = "Perfil"; // fallback estable sin depender de menuItems
 export default function DriverProfile({
   viajes: viajesProp,
   reservas: reservasProp,
+  onGoToVehicles,
 }) {
   // ===== HOOKS Y ESTADO =====
   const { usuario } = useUser();
@@ -231,18 +232,7 @@ export default function DriverProfile({
         );
 
       case "Nuevo Viaje":
-        return (
-          <section >
-            <div >
-              <p >
-                <strong>Publica tu próximo viaje y encuentra pasajeros</strong>
-              </p>
-            </div>
-            <div >
-              <NewTrip />
-            </div>
-          </section>
-        );
+        return <NewTrip onGoToVehicles={onGoToVehicles} />;
 
       default:
         return null;

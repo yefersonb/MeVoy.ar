@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Clock, Users, Package, MapPin } from "react-feather";
+import { CarIcon } from "./common/icons";
 import { auth, db } from "../firebase";
 import { collection, addDoc, doc, getDoc, getDocs } from "firebase/firestore";
 import AutocompleteInput from "./AutocompleteInput";
@@ -274,13 +275,13 @@ export default function NewTrip({ onGoToVehicles }) {
                         type="button"
                         className="new-trip__no-vehicle"
                         onClick={onGoToVehicles}
-                        style={{ width: "100%", cursor: onGoToVehicles ? "pointer" : "default", background: "none", border: "none", textAlign: "left" }}
+                        style={{ width: "100%", cursor: onGoToVehicles ? "pointer" : "default", background: "none", border: "dashed 1px #fff2", display: "flex", alignItems: "center", flexDirection: "column" }}
                     >
-                        <MapPin size={20} />
+                        <CarIcon size={20} />
                         <span>
                             No tenés vehículos registrados.{" "}
                             {onGoToVehicles
-                                ? <strong style={{ color: "var(--color-primary)" }}>Agregá uno acá →</strong>
+                                ? <strong style={{ color: "var(--color-primary)" }}> <br/> agregá uno acá</strong>
                                 : <>Agregá uno en la pestaña <strong>Vehículos</strong>.</>
                             }
                         </span>

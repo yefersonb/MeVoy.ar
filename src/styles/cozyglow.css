@@ -1725,7 +1725,19 @@ p { margin: 0 0 var(--space-3) 0; }
 }
 
 /* Verification card */
-.admin-verf-card { display: flex; flex-direction: column; gap: 14px; }
+.admin-verf-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-left-width: 3px;
+    padding-left: 14px;
+}
+
+.admin-verf-card--pending  { border-left-color: var(--color-warning); }
+.admin-verf-card--verified,
+.admin-verf-card--approved { border-left-color: var(--color-success); }
+.admin-verf-card--rejected,
+.admin-verf-card--incomplete { border-left-color: var(--color-danger); }
 
 .admin-verf-card__header {
     display: flex;

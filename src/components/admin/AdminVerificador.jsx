@@ -25,9 +25,10 @@ const IDENTITY_STATUS = {
 };
 
 const VEHICLE_STATUS = {
-    pending:  { label: "Sin revisar", cls: "booking-status--pending"   },
-    approved: { label: "Aprobado",    cls: "booking-status--confirmed" },
-    rejected: { label: "Rechazado",   cls: "booking-status--rejected"  },
+    pending:    { label: "Sin revisar", cls: "booking-status--pending"   },
+    verified:   { label: "Aprobado",    cls: "booking-status--confirmed" },
+    rejected:   { label: "Rechazado",   cls: "booking-status--rejected"  },
+    incomplete: { label: "Incompleto",  cls: "booking-status--rejected"  },
 };
 
 // ─── Doc image slot ───────────────────────────────────────────────────────────
@@ -109,7 +110,7 @@ function IdentityCard({ item }) {
     const submittedAt = item.submittedAt?.toDate?.();
 
     return (
-        <div className="admin-verf-card card">
+        <div className={`admin-verf-card admin-verf-card--${item.status || "incomplete"} card`}>
             <button className="admin-verf-card__header" onClick={() => setExpanded(e => !e)}>
                 <div className="admin-verf-card__identity">
                     <span className="admin-verf-card__name">
@@ -326,30 +327,34 @@ function IdentitySection() {
 function VehicleCard({ item }) {
     const toast = useToast();
     const [busy, setBusy]         = useState(false);
+    const [note, setNote]         = useState(item.adminNotes || "");
     const [expanded, setExpanded] = useState(true);
 
     const statusInfo = VEHICLE_STATUS[item.adminStatus] || VEHICLE_STATUS.pending;
 
+    // TODO: wire vehicle adminStatus to a real review workflow (notify driver, etc.)
     const setStatus = async (to) => {
         if (busy) return;
         setBusy(true);
         try {
             await updateDoc(doc(db, item._path), {
                 adminStatus: to,
+                adminNotes:  note || null,
                 reviewedAt:  serverTimestamp(),
                 reviewedBy:  auth.currentUser?.uid || null,
             });
-            toast.success(to === "approved" ? "Vehículo aprobado." : "Vehículo rechazado.");
+            const labels = { verified: "aprobado", rejected: "rechazado", incomplete: "marcado como incompleto" };
+            toast.success(`Vehículo ${labels[to] || "actualizado"}.`);
         } catch (e) {
             console.error("[AdminVerificador] vehicle updateDoc error:", e);
-            toast.error("No se pudo actualizar.");
+            toast.error("No se pudo actualizar. Revisá permisos/reglas.");
         } finally {
             setBusy(false);
         }
     };
 
     return (
-        <div className="admin-verf-card card">
+        <div className={`admin-verf-card admin-verf-card--${item.adminStatus || "pending"} card`}>
             <button className="admin-verf-card__header" onClick={() => setExpanded(e => !e)}>
                 <div className="admin-verf-card__identity">
                     <span className="admin-verf-card__name">
@@ -371,12 +376,24 @@ function VehicleCard({ item }) {
                         <DocSlot label="Seguro"            url={item.insuranceUrl} />
                         <DocSlot label="VTV"               url={item.vtvUrl} />
                     </div>
+
+                    <div className="rack-s">
+                        <label className="profile-editor__section-label">Nota interna</label>
+                        <textarea
+                            className="admin-verf-card__note"
+                            value={note}
+                            onChange={e => setNote(e.target.value)}
+                            rows={2}
+                            placeholder="Motivo de rechazo, observaciones…"
+                        />
+                    </div>
+
                     <div className="admin-verf-card__actions">
                         <button
                             className="button"
                             style={{ background: "var(--color-success)" }}
-                            onClick={() => setStatus("approved")}
-                            disabled={busy || item.adminStatus === "approved"}
+                            onClick={() => setStatus("verified")}
+                            disabled={busy || item.adminStatus === "verified"}
                         >
                             <CheckCircle size={15} /> Aprobar
                         </button>
@@ -387,6 +404,13 @@ function VehicleCard({ item }) {
                             disabled={busy || item.adminStatus === "rejected"}
                         >
                             <XCircle size={15} /> Rechazar
+                        </button>
+                        <button
+                            className="button neutral"
+                            onClick={() => setStatus("incomplete")}
+                            disabled={busy || item.adminStatus === "incomplete"}
+                        >
+                            <RotateCcw size={14} /> Pedir corrección
                         </button>
                     </div>
                 </>

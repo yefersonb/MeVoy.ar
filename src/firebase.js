@@ -14,7 +14,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAB4c-_srG-k7qmeBQLD_VTrlNwKgQNolU",
   authDomain: "viajes-compartidos-nativa.firebaseapp.com",
   projectId: "viajes-compartidos-nativa",
-  storageBucket: "viajes-compartidos-nativa.firebasestorage.com",
+  storageBucket: "viajes-compartidos-nativa.firebasestorage.app",
   messagingSenderId: "874173356390",
   appId: "1:874173356390:web:dbce62df5f5d7a3e01d0a7",
 };

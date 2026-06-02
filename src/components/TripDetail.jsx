@@ -252,18 +252,18 @@ export default function TripDetail({
                     <details className="trip-detail-accordion">
                         <summary>
                             <Truck size={14} />
-                            {vehiculo.marca || "Vehículo"} {vehiculo.modelo || ""}
+                            {vehiculo.brand || "Vehículo"} {vehiculo.model || ""}
                         </summary>
                         <div className="trip-detail-accordion__body">
-                            {vehiculo.imagenURL && (
+                            {vehiculo.photoUrl && (
                                 <img
-                                    src={vehiculo.imagenURL}
+                                    src={vehiculo.photoUrl}
                                     alt="Foto del vehículo"
                                     className="trip-detail-vehicle-img"
                                 />
                             )}
-                            <p><strong>Año:</strong> {vehiculo.anio || "-"}</p>
-                            <p><strong>Patente:</strong> {vehiculo.patente || "-"}</p>
+                            <p><strong>Año:</strong> {vehiculo.year || "-"}</p>
+                            <p><strong>Patente:</strong> {vehiculo.plate || "-"}</p>
                         </div>
                     </details>
                 )}

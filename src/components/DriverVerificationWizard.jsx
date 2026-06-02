@@ -227,14 +227,22 @@ export default function DriverVerificationWizard({ onExit }) {
         const url = await getDownloadURL(task.snapshot.ref);
         setUrls((prev) => ({ ...prev, [key]: url }));
         setUploading((u) => ({ ...u, [key]: 100 }));
+        // Map local state keys → Firestore field names the admin page reads
+        const firestoreField = {
+          dniFrente: 'dniFrenteURL',
+          dniDorso:  'dniDorsoURL',
+          licFrente: 'licenciaFrenteURL',
+          licDorso:  'licenciaDorsoURL',
+          selfie:    'selfieURL',
+        }[key] || `${key}URL`;
         try {
           await updateDoc(doc(db, COLL, uid), {
-            [`${key}URL`]: url,
+            [firestoreField]: url,
             updatedAt: serverTimestamp(),
           });
         } catch (e) {
           await setDoc(doc(db, COLL, uid), {
-            [`${key}URL`]: url,
+            [firestoreField]: url,
             updatedAt: serverTimestamp(),
           }, { merge: true });
         }

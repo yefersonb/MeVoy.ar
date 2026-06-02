@@ -232,11 +232,11 @@ const ProfileSection = ({
                                                                 <span>🚗</span>
                                                             </div>
                                                             <div>
-                                                                <div> {vehiculo.modelo || 'Sin modelo especificado'} </div>
+                                                                <div> {vehiculo.model || 'Sin modelo especificado'} </div>
                                                                 {
-                                                                    vehiculo.patente &&
+                                                                    vehiculo.plate &&
                                                                     (
-                                                                        <div> Patente: {vehiculo.patente} </div>
+                                                                        <div> Patente: {vehiculo.plate} </div>
                                                                     )
                                                                 }
                                                             </div>

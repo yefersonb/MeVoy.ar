@@ -117,7 +117,7 @@ export default function VerificacionVehiculosAdmin() {
             <div>
               <h3 className="text-xl font-semibold">{v.nombre}</h3>
               <p>
-                <strong>Vehículo:</strong> {v.modelo}
+                <strong>Vehículo:</strong> {v.model}
               </p>
               <p>
                 <strong>Patente:</strong> {v.vehicleId}

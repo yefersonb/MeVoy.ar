@@ -55,15 +55,11 @@ export default function MyVehicles() {
       <ul style={{ listStyle: "none", paddingLeft: 0 }}>
         {vehiculos.map((v) => (
           <li key={v.id} style={{ marginBottom: "1rem", borderBottom: "1px solid #ccc", paddingBottom: "1rem" }}>
-            <strong>{v.marca} {v.modelo} ({v.año})</strong> <br />
+            <strong>{v.brand} {v.model} ({v.year})</strong> <br />
             Color: {v.color || "-"} <br />
-            Patente: {v.patente || "-"} <br />
-            {v.fotos && v.fotos.length > 0 && (
-              <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
-                {v.fotos.map((url, i) =>
-                  url ? <img key={i} src={url} alt={`Foto ${i+1}`} style={{ width: "100px", height: "60px", objectFit: "cover", borderRadius: "4px" }} /> : null
-                )}
-              </div>
+            Patente: {v.plate || "-"} <br />
+            {v.photoUrl && (
+              <img src={v.photoUrl} alt="Foto del vehículo" style={{ width: "100px", height: "60px", objectFit: "cover", borderRadius: "4px", marginTop: "0.5rem" }} />
             )}
             <button
               onClick={() => eliminarVehiculo(v.id)}

@@ -1620,6 +1620,40 @@ p { margin: 0 0 var(--space-3) 0; }
    ADMIN — verification dashboard
    ============================================= */
 
+/* Admin panel top header (title + exit button) */
+.admin-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-panel-header__title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    flex: 1;
+}
+
+.admin-panel-header__exit {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Paired doc grid (front + back side by side) */
+.admin-doc-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Single-item grid for selfie etc */
+.admin-doc-grid--solo {
+    grid-template-columns: minmax(160px, 280px);
+}
+
 /* Tab bar */
 .admin-tabs {
     display: flex;
@@ -1656,6 +1690,9 @@ p { margin: 0 0 var(--space-3) 0; }
 .admin-search__icon {
     position: absolute;
     left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
     color: var(--color-text-muted);
     pointer-events: none;
     flex-shrink: 0;

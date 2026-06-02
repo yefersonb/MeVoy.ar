@@ -1,25 +1,33 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-    collection, doc, getDoc, getDocs, onSnapshot, orderBy,
+    collection, collectionGroup, doc, getDoc, getDocs, onSnapshot, orderBy,
     query, updateDoc, where, limit, startAfter, serverTimestamp, arrayUnion,
 } from "firebase/firestore";
-import { CheckCircle, XCircle, RotateCcw, Search, FileText } from "react-feather";
+import { ArrowLeft, CheckCircle, XCircle, RotateCcw, Search, FileText, User, Truck } from "react-feather";
+import { CarIcon } from "../common/icons";
 import { db, auth } from "../../firebase";
 import { useToast } from "../../contexts/ToastContext";
+import { useUser } from "../../contexts/UserContext";
 import Spinner from "../common/Spinner";
 
-const TABS = [
+const STATUS_TABS = [
     { key: "pending",  label: "Pendientes" },
     { key: "verified", label: "Verificados" },
     { key: "rejected", label: "Rechazados" },
     { key: "all",      label: "Todos" },
 ];
 
-const STATUS = {
+const IDENTITY_STATUS = {
     pending:    { label: "En revisión", cls: "booking-status--pending"   },
     verified:   { label: "Verificado",  cls: "booking-status--confirmed" },
     rejected:   { label: "Rechazado",   cls: "booking-status--rejected"  },
     incomplete: { label: "Incompleto",  cls: "booking-status--rejected"  },
+};
+
+const VEHICLE_STATUS = {
+    pending:  { label: "Sin revisar", cls: "booking-status--pending"   },
+    approved: { label: "Aprobado",    cls: "booking-status--confirmed" },
+    rejected: { label: "Rechazado",   cls: "booking-status--rejected"  },
 };
 
 // ─── Doc image slot ───────────────────────────────────────────────────────────
@@ -43,15 +51,25 @@ function DocSlot({ label, url }) {
     );
 }
 
-// ─── Verification card ────────────────────────────────────────────────────────
+// Front + back pair in a 2-col row
+function DocPair({ frontLabel, frontUrl, backLabel, backUrl }) {
+    return (
+        <div className="admin-doc-pair">
+            <DocSlot label={frontLabel} url={frontUrl} />
+            <DocSlot label={backLabel}  url={backUrl} />
+        </div>
+    );
+}
 
-function VerifCard({ item }) {
+// ─── Identity card ────────────────────────────────────────────────────────────
+
+function IdentityCard({ item }) {
     const toast = useToast();
-    const [busy, setBusy]   = useState(false);
-    const [note, setNote]   = useState(item.adminNotes || "");
+    const [busy, setBusy]         = useState(false);
+    const [note, setNote]         = useState(item.adminNotes || "");
     const [expanded, setExpanded] = useState(true);
 
-    const statusInfo = STATUS[item.status] || STATUS.incomplete;
+    const statusInfo = IDENTITY_STATUS[item.status] || IDENTITY_STATUS.incomplete;
 
     const setStatus = async (to) => {
         if (busy) return;
@@ -63,11 +81,11 @@ function VerifCard({ item }) {
             const user = auth.currentUser;
 
             await updateDoc(ref, {
-                status:      to,
-                adminNotes:  note || null,
-                reviewedAt:  serverTimestamp(),
-                reviewedBy:  user?.uid || null,
-                updatedAt:   serverTimestamp(),
+                status:     to,
+                adminNotes: note || null,
+                reviewedAt: serverTimestamp(),
+                reviewedBy: user?.uid || null,
+                updatedAt:  serverTimestamp(),
                 history: arrayUnion({
                     by:     user?.uid || null,
                     byName: user?.displayName || user?.email || "admin",
@@ -92,20 +110,15 @@ function VerifCard({ item }) {
 
     return (
         <div className="admin-verf-card card">
-            {/* Header */}
             <button className="admin-verf-card__header" onClick={() => setExpanded(e => !e)}>
                 <div className="admin-verf-card__identity">
                     <span className="admin-verf-card__name">
                         {item.nombreCompleto || "(sin nombre)"}
                     </span>
-                    <span className="admin-verf-card__dni">
-                        DNI {item.dniNumero || "—"}
-                    </span>
+                    <span className="admin-verf-card__dni">DNI {item.dniNumero || "—"}</span>
                 </div>
                 <div className="admin-verf-card__meta">
-                    <span className={`booking-status ${statusInfo.cls}`}>
-                        {statusInfo.label}
-                    </span>
+                    <span className={`booking-status ${statusInfo.cls}`}>{statusInfo.label}</span>
                     {submittedAt && (
                         <span className="admin-verf-card__date">
                             {submittedAt.toLocaleDateString("es-AR", {
@@ -119,20 +132,22 @@ function VerifCard({ item }) {
 
             {expanded && (
                 <>
-                    {/* Document images */}
-                    <div className="admin-doc-grid">
-                        <DocSlot label="DNI Frente"      url={item.dniFrenteURL} />
-                        <DocSlot label="DNI Dorso"       url={item.dniDorsoURL} />
-                        <DocSlot label="Licencia Frente" url={item.licenciaFrenteURL} />
-                        <DocSlot label="Licencia Dorso"  url={item.licenciaDorsoURL} />
-                        <DocSlot label="Selfie"          url={item.selfieURL} />
+                    {/* Paired docs */}
+                    <DocPair
+                        frontLabel="DNI Frente" frontUrl={item.dniFrenteURL}
+                        backLabel="DNI Dorso"   backUrl={item.dniDorsoURL}
+                    />
+                    <DocPair
+                        frontLabel="Licencia Frente" frontUrl={item.licenciaFrenteURL}
+                        backLabel="Licencia Dorso"   backUrl={item.licenciaDorsoURL}
+                    />
+                    <div className="admin-doc-grid admin-doc-grid--solo">
+                        <DocSlot label="Selfie" url={item.selfieURL} />
                     </div>
 
-                    {/* Admin note */}
+                    {/* Internal note */}
                     <div className="rack-s">
-                        <label className="profile-editor__section-label">
-                            Nota interna
-                        </label>
+                        <label className="profile-editor__section-label">Nota interna</label>
                         <textarea
                             className="admin-verf-card__note"
                             value={note}
@@ -142,7 +157,6 @@ function VerifCard({ item }) {
                         />
                     </div>
 
-                    {/* Actions */}
                     <div className="admin-verf-card__actions">
                         <button
                             className="button"
@@ -174,18 +188,18 @@ function VerifCard({ item }) {
     );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Identity section ─────────────────────────────────────────────────────────
 
-export default function AdminVerificador() {
-    const [tab, setTab]       = useState("pending");
-    const [search, setSearch] = useState("");
-    const [items, setItems]   = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [err, setErr]       = useState("");
-    const [hasMore, setHasMore] = useState(false);
+function IdentitySection() {
+    const [tab, setTab]           = useState("pending");
+    const [search, setSearch]     = useState("");
+    const [items, setItems]       = useState([]);
+    const [loading, setLoading]   = useState(true);
+    const [err, setErr]           = useState("");
+    const [hasMore, setHasMore]   = useState(false);
     const [endCursor, setEndCursor] = useState(null);
-
     const unsubRef = useRef(null);
+
     const s = useMemo(() => (search || "").trim().toLowerCase(), [search]);
 
     useEffect(() => {
@@ -257,10 +271,8 @@ export default function AdminVerificador() {
 
     return (
         <div className="rack">
-
-            {/* Tab bar */}
             <div className="admin-tabs">
-                {TABS.map(t => (
+                {STATUS_TABS.map(t => (
                     <button
                         key={t.key}
                         className={`admin-tab${tab === t.key ? " admin-tab--active" : ""}`}
@@ -271,7 +283,6 @@ export default function AdminVerificador() {
                 ))}
             </div>
 
-            {/* Search */}
             <div className="admin-search">
                 <Search size={15} className="admin-search__icon" />
                 <input
@@ -282,31 +293,23 @@ export default function AdminVerificador() {
                 />
             </div>
 
-            {/* Index warning */}
-            {err && (
-                <div className="admin-warning">
-                    {err}
-                </div>
-            )}
+            {err && <div className="admin-warning">{err}</div>}
 
-            {/* Content */}
             {loading ? (
                 <div className="spinner-wrap"><Spinner /></div>
             ) : filtered.length === 0 ? (
                 <div className="bookings-empty">
                     <CheckCircle size={36} />
-                    <p>
-                        {{
-                            pending:  "No hay verificaciones pendientes.",
-                            verified: "No hay verificaciones aprobadas.",
-                            rejected: "No hay verificaciones rechazadas.",
-                            all:      "No hay verificaciones.",
-                        }[tab]}
-                    </p>
+                    <p>{{
+                        pending:  "No hay verificaciones pendientes.",
+                        verified: "No hay verificaciones aprobadas.",
+                        rejected: "No hay verificaciones rechazadas.",
+                        all:      "No hay verificaciones.",
+                    }[tab]}</p>
                 </div>
             ) : (
                 <div className="rack">
-                    {filtered.map(it => <VerifCard key={it.id} item={it} />)}
+                    {filtered.map(it => <IdentityCard key={it.id} item={it} />)}
                     {hasMore && (
                         <button className="button neutral button--fill" onClick={loadMore}>
                             Cargar más
@@ -314,6 +317,192 @@ export default function AdminVerificador() {
                     )}
                 </div>
             )}
+        </div>
+    );
+}
+
+// ─── Vehicle card ─────────────────────────────────────────────────────────────
+
+function VehicleCard({ item }) {
+    const toast = useToast();
+    const [busy, setBusy]         = useState(false);
+    const [expanded, setExpanded] = useState(true);
+
+    const statusInfo = VEHICLE_STATUS[item.adminStatus] || VEHICLE_STATUS.pending;
+
+    const setStatus = async (to) => {
+        if (busy) return;
+        setBusy(true);
+        try {
+            await updateDoc(doc(db, item._path), {
+                adminStatus: to,
+                reviewedAt:  serverTimestamp(),
+                reviewedBy:  auth.currentUser?.uid || null,
+            });
+            toast.success(to === "approved" ? "Vehículo aprobado." : "Vehículo rechazado.");
+        } catch (e) {
+            console.error("[AdminVerificador] vehicle updateDoc error:", e);
+            toast.error("No se pudo actualizar.");
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    return (
+        <div className="admin-verf-card card">
+            <button className="admin-verf-card__header" onClick={() => setExpanded(e => !e)}>
+                <div className="admin-verf-card__identity">
+                    <span className="admin-verf-card__name">
+                        {[item.brand, item.model, item.year].filter(Boolean).join(" ") || "(sin datos)"}
+                    </span>
+                    <span className="admin-verf-card__dni">Patente: {item.plate || "—"}</span>
+                </div>
+                <div className="admin-verf-card__meta">
+                    <span className={`booking-status ${statusInfo.cls}`}>{statusInfo.label}</span>
+                    <span className="admin-verf-card__uid">{item._ownerId}</span>
+                </div>
+            </button>
+
+            {expanded && (
+                <>
+                    <div className="admin-doc-grid">
+                        <DocSlot label="Foto del vehículo" url={item.photoUrl} />
+                        <DocSlot label="Cédula verde"      url={item.cedulaUrl} />
+                        <DocSlot label="Seguro"            url={item.insuranceUrl} />
+                        <DocSlot label="VTV"               url={item.vtvUrl} />
+                    </div>
+                    <div className="admin-verf-card__actions">
+                        <button
+                            className="button"
+                            style={{ background: "var(--color-success)" }}
+                            onClick={() => setStatus("approved")}
+                            disabled={busy || item.adminStatus === "approved"}
+                        >
+                            <CheckCircle size={15} /> Aprobar
+                        </button>
+                        <button
+                            className="button"
+                            style={{ background: "var(--color-danger)" }}
+                            onClick={() => setStatus("rejected")}
+                            disabled={busy || item.adminStatus === "rejected"}
+                        >
+                            <XCircle size={15} /> Rechazar
+                        </button>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
+// ─── Vehicle section ──────────────────────────────────────────────────────────
+
+function VehicleSection() {
+    const [search, setSearch]   = useState("");
+    const [items, setItems]     = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [err, setErr]         = useState("");
+
+    const s = useMemo(() => (search || "").trim().toLowerCase(), [search]);
+
+    useEffect(() => {
+        const q = query(collectionGroup(db, "vehiculos"), limit(100));
+        const unsub = onSnapshot(q,
+            (snap) => {
+                const arr = snap.docs.map(d => {
+                    const ownerId = d.ref.parent.parent?.id || "";
+                    return { id: d.id, _path: d.ref.path, _ownerId: ownerId, ...d.data() };
+                });
+                setItems(arr);
+                setLoading(false);
+            },
+            (error) => {
+                console.error("[AdminVerificador] vehicles snapshot error:", error);
+                setErr(error?.message || "Error leyendo vehículos.");
+                setLoading(false);
+            }
+        );
+        return () => unsub();
+    }, []);
+
+    const filtered = useMemo(() => {
+        if (!s) return items;
+        return items.filter(it =>
+            (it.brand || "").toLowerCase().includes(s) ||
+            (it.model || "").toLowerCase().includes(s) ||
+            (it.plate || "").toLowerCase().includes(s) ||
+            (it._ownerId || "").toLowerCase().includes(s)
+        );
+    }, [items, s]);
+
+    return (
+        <div className="rack">
+            <div className="admin-search">
+                <Search size={15} className="admin-search__icon" />
+                <input
+                    className="admin-search__input"
+                    placeholder="Buscar por marca, modelo o patente…"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                />
+            </div>
+
+            {err && <div className="admin-warning">{err}</div>}
+
+            {loading ? (
+                <div className="spinner-wrap"><Spinner /></div>
+            ) : filtered.length === 0 ? (
+                <div className="bookings-empty">
+                    <CarIcon size={36} />
+                    <p>No hay vehículos registrados.</p>
+                </div>
+            ) : (
+                <div className="rack">
+                    {filtered.map(it => <VehicleCard key={it._path} item={it} />)}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+const SECTIONS = [
+    { key: "identity", label: "Identidad" },
+    { key: "vehicles", label: "Vehículos" },
+];
+
+export default function AdminVerificador() {
+    const { setModoVista } = useUser();
+    const [section, setSection] = useState("identity");
+
+    return (
+        <div className="rack">
+            {/* Header row with exit */}
+            <div className="admin-panel-header">
+                <button
+                    className="button neutral admin-panel-header__exit"
+                    onClick={() => setModoVista(null)}
+                >
+                    <ArrowLeft size={16} /> Salir
+                </button>
+                <h2 className="admin-panel-header__title">Panel de Administración</h2>
+            </div>
+
+            {/* Section switcher */}
+            <div className="admin-tabs">
+                {SECTIONS.map(({ key, label }) => (
+                    <button
+                        key={key}
+                        className={`admin-tab${section === key ? " admin-tab--active" : ""}`}
+                        onClick={() => setSection(key)}
+                    >
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {section === "identity" ? <IdentitySection /> : <VehicleSection />}
         </div>
     );
 }

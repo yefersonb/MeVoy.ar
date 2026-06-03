@@ -1,10 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import logo from "../assets/logo/logo_dark.png";
 import Avatar from "./ui/Avatar";
 
 export default function Header({ isAdmin, onAvatarClick }) {
-    const { setModoVista, perfil } = useUser() || {};
+    const { perfil } = useUser() || {};
     const rol = perfil?.rol || "viajero";
     const rolLabel = rol === "conductor" ? "Conductor" : "Pasajero";
 
@@ -21,14 +22,13 @@ export default function Header({ isAdmin, onAvatarClick }) {
 
                 <div className="module">
                     {isAdmin && (
-                        <button
-                            type="button"
+                        <Link
+                            to="/admin"
                             className="button neutral"
                             style={{ padding: "4px 10px", fontSize: "var(--text-xs)" }}
-                            onClick={() => setModoVista?.("admin")}
                         >
                             Admin
-                        </button>
+                        </Link>
                     )}
                     <button
                         type="button"

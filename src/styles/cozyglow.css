@@ -1620,26 +1620,85 @@ p { margin: 0 0 var(--space-3) 0; }
    ADMIN — verification dashboard
    ============================================= */
 
-/* Admin panel top header (title + exit button) */
-.admin-panel-header {
+/* Admin workspace — full-page standalone shell */
+.admin-workspace {
+    min-height: 100vh;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    background: var(--color-bg);
 }
 
-.admin-panel-header__title {
-    font-size: var(--text-lg);
-    font-weight: 700;
+.admin-workspace__topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    flex-wrap: wrap;
+}
+
+.admin-workspace__brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.admin-workspace__brand-name {
+    font-weight: 800;
+    font-size: var(--text-base);
     color: var(--color-text-primary);
-    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.admin-workspace__brand-badge {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.admin-workspace__nav {
+    display: flex;
+    gap: 6px;
     flex: 1;
 }
 
-.admin-panel-header__exit {
+.admin-workspace__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
+}
+
+.admin-workspace__back {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+}
+
+.admin-workspace__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.admin-workspace__content {
+    flex: 1;
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
 }
 
 /* Paired doc grid (front + back side by side) */
@@ -1972,4 +2031,219 @@ fieldset {
 legend {
     color: var(--color-text-muted);
     padding: 0.5rem 1rem;
+}
+
+/* Tappable driver name inside a booking card */
+.booking-card__driver {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-primary);
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-stack);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.booking-card__driver:hover { opacity: 0.75; }
+
+/* =============================================
+   USER CARD SHEET — bottom-sheet profile viewer
+   ============================================= */
+
+.ucs-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.52);
+    z-index: 900;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+}
+.ucs-backdrop--visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ucs-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    width: 100%;
+    max-width: 560px;
+    max-height: 88vh;
+    background: var(--color-surface);
+    border-radius: 20px 20px 0 0;
+    z-index: 901;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    box-shadow: 0 -6px 40px rgba(0, 0, 0, 0.22);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.ucs-sheet--visible {
+    transform: translate(-50%, 0);
+}
+
+/* Drag handle */
+.ucs-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-border-strong);
+    margin: 12px auto 0;
+    flex-shrink: 0;
+}
+
+/* Close button */
+.ucs-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.ucs-close:hover { background: var(--color-surface-active); color: var(--color-text-primary); }
+
+/* Loading / empty states */
+.ucs-loading, .ucs-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+/* Inner scroll area */
+.ucs-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px 32px;
+}
+
+/* Identity row (avatar + name + role) */
+.ucs-identity {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ucs-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--color-surface-raised);
+    border: 2px solid var(--color-border-strong);
+}
+.ucs-avatar__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.ucs-avatar__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+}
+
+.ucs-identity__info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.ucs-identity__name {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;
+}
+.ucs-verified-badge {
+    color: var(--color-primary);
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Section panel (bio, ratings) */
+.ucs-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--color-surface-raised);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+.ucs-section__label {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--color-text-muted);
+    margin-bottom: 2px;
+}
+
+/* Bio */
+.ucs-bio {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+/* Rating row */
+.ucs-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.ucs-rating-row__label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    flex: 1;
+}
+.ucs-rating-row__widget {
+    width: 68px;
+    height: 11px;
+    flex-shrink: 0;
+}
+.ucs-rating-row__value {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    min-width: 26px;
+    text-align: right;
+}
+
+/* Trip count footer inside section */
+.ucs-trips {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    padding-top: 4px;
+    border-top: 1px solid var(--color-border);
 }

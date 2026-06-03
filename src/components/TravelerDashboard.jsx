@@ -4,6 +4,7 @@ import { Calendar, Clock, Users, MapPin } from "react-feather";
 import { db } from "../firebase";
 import { abbreviateLocation } from "../utils/location";
 import Spinner from "./common/Spinner";
+import { useUserCard } from "../contexts/UserCardContext";
 
 const STATUS_MAP = {
     pendiente:  { label: "Pendiente",  cls: "booking-status--pending"   },
@@ -17,7 +18,13 @@ function statusInfo(status) {
 }
 
 function BookingCard({ reserva, trip }) {
+    const { openCard } = useUserCard();
     const { label, cls } = statusInfo(reserva.estadoReserva);
+
+    // conductor field may be a UID string or a denormalized object { uid, nombre }
+    const conductorUid = typeof trip?.conductor === "string"
+        ? trip.conductor
+        : (trip?.conductor?.uid || trip?.conductorUid || null);
 
     const tripDate = trip?.horario?.toDate?.()
         ?? (trip?.fecha ? new Date(trip.fecha) : null);
@@ -61,10 +68,15 @@ function BookingCard({ reserva, trip }) {
                 )}
             </div>
 
-            {trip?.conductor?.nombre && (
-                <p className="booking-card__driver">
-                    Conductor: {trip.conductor.nombre}
-                </p>
+            {conductorUid && (
+                <button
+                    className="booking-card__driver"
+                    onClick={() => openCard(conductorUid, "conductor")}
+                >
+                    {trip?.conductor?.nombre
+                        ? `Conductor: ${trip.conductor.nombre}`
+                        : "Ver perfil del conductor"}
+                </button>
             )}
         </li>
     );

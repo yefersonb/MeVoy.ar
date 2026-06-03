@@ -3,11 +3,10 @@ import {
     collection, collectionGroup, doc, getDoc, getDocs, onSnapshot, orderBy,
     query, updateDoc, where, limit, startAfter, serverTimestamp, arrayUnion,
 } from "firebase/firestore";
-import { ArrowLeft, CheckCircle, XCircle, RotateCcw, Search, FileText, User, Truck } from "react-feather";
+import { CheckCircle, XCircle, RotateCcw, Search, FileText } from "react-feather";
 import { CarIcon } from "../common/icons";
 import { db, auth } from "../../firebase";
 import { useToast } from "../../contexts/ToastContext";
-import { useUser } from "../../contexts/UserContext";
 import Spinner from "../common/Spinner";
 
 const STATUS_TABS = [
@@ -191,7 +190,7 @@ function IdentityCard({ item }) {
 
 // ─── Identity section ─────────────────────────────────────────────────────────
 
-function IdentitySection() {
+export function IdentitySection() {
     const [tab, setTab]           = useState("pending");
     const [search, setSearch]     = useState("");
     const [items, setItems]       = useState([]);
@@ -421,7 +420,7 @@ function VehicleCard({ item }) {
 
 // ─── Vehicle section ──────────────────────────────────────────────────────────
 
-function VehicleSection() {
+export function VehicleSection() {
     const [search, setSearch]   = useState("");
     const [items, setItems]     = useState([]);
     const [loading, setLoading] = useState(true);
@@ -489,44 +488,3 @@ function VehicleSection() {
     );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
-
-const SECTIONS = [
-    { key: "identity", label: "Identidad" },
-    { key: "vehicles", label: "Vehículos" },
-];
-
-export default function AdminVerificador() {
-    const { setModoVista } = useUser();
-    const [section, setSection] = useState("identity");
-
-    return (
-        <div className="rack">
-            {/* Header row with exit */}
-            <div className="admin-panel-header">
-                <button
-                    className="button neutral admin-panel-header__exit"
-                    onClick={() => setModoVista(null)}
-                >
-                    <ArrowLeft size={16} /> Salir
-                </button>
-                <h2 className="admin-panel-header__title">Panel de Administración</h2>
-            </div>
-
-            {/* Section switcher */}
-            <div className="admin-tabs">
-                {SECTIONS.map(({ key, label }) => (
-                    <button
-                        key={key}
-                        className={`admin-tab${section === key ? " admin-tab--active" : ""}`}
-                        onClick={() => setSection(key)}
-                    >
-                        {label}
-                    </button>
-                ))}
-            </div>
-
-            {section === "identity" ? <IdentitySection /> : <VehicleSection />}
-        </div>
-    );
-}

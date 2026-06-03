@@ -11,8 +11,6 @@ import Avatar from "./components/ui/Avatar";
 import "./styles/classic.css";
 import "./styles/cozyglow.css";
 import "./styles/markdown.css";
-import { ThemeProvider } from "./contexts/ThemeContext";
-
 // Shell
 import Header from "./components/Header";
 import BottomNav from "./components/layout/BottomNav";
@@ -21,9 +19,6 @@ import Copyright from "./components/common/Copyright";
 // Auth screens
 import Login from "./components/Login";
 import Spinner from "./components/common/Spinner";
-
-// Admin
-import AdminVerificador from "./components/admin/AdminVerificador";
 
 // Conductor
 import DriverDashboard from "./components/DriverDashboard";
@@ -47,7 +42,7 @@ const DEFAULT_SECTION = { conductor: "viajes", viajero: "buscar" };
 const CONDUCTOR_HASH = { viajes: "reservas", nuevo: "nuevo-viaje" };
 
 export default function App() {
-    const { usuario, perfil, isAdmin, loading, modoVista } = useUser();
+    const { usuario, perfil, isAdmin, loading } = useUser();
     const toast = useToast();
 
     const rol = useMemo(() => perfil?.rol || "viajero", [perfil?.rol]);
@@ -118,29 +113,19 @@ export default function App() {
 
     if (loading) {
         return (
-            <ThemeProvider>
-                <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Spinner />
-                </div>
-            </ThemeProvider>
+            <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Spinner />
+            </div>
         );
     }
 
-    if (!usuario) {
-        return (
-            <ThemeProvider>
-                <Login />
-            </ThemeProvider>
-        );
-    }
+    if (!usuario) return <Login />;
 
     if (rol === "viajero" && loadingProfile) {
         return (
-            <ThemeProvider>
-                <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Spinner />
-                </div>
-            </ThemeProvider>
+            <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Spinner />
+            </div>
         );
     }
 
@@ -214,7 +199,6 @@ export default function App() {
     // --- Main content per role / section ---
 
     const renderContent = () => {
-        if (isAdmin && modoVista === "admin") return <AdminVerificador />;
         if (activeSection === "perfil")                        return <TravelerProfilePage />;
         if (activeSection === "mas")                           return renderMas();
         if (activeSection === "vehiculos" && rol === "conductor") return <VehiculosConductor />;
@@ -235,7 +219,7 @@ export default function App() {
     };
 
     return (
-        <ThemeProvider>
+        <>
             <Header
                 isAdmin={isAdmin}
                 onAvatarClick={() => handleSectionChange("mas")}
@@ -244,11 +228,11 @@ export default function App() {
                 {renderContent()}
             </div>
             <BottomNav
-                rol={isAdmin && modoVista === "admin" ? null : rol}
+                rol={rol}
                 activeSection={activeSection}
                 onSectionChange={handleSectionChange}
             />
             <Copyright />
-        </ThemeProvider>
+        </>
     );
 }

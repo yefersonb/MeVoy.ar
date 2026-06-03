@@ -1,101 +1,172 @@
-import React, { useEffect } from 'react';
-import Badge from './Badge';
-import IncomingReservations from './IncomingReservations';
-import Spinner from './common/Spinner';
-import ErrorMessage from './common/ErrorMessage';
-import { Trash2 } from 'react-feather';
+import React, { useEffect, useState } from "react";
+import { Calendar, Clock, Users, Trash2 } from "react-feather";
+import IncomingReservations from "./IncomingReservations";
+import Spinner from "./common/Spinner";
+import ErrorMessage from "./common/ErrorMessage";
+import { abbreviateLocation } from "../utils/location";
+import { useToast } from "../contexts/ToastContext";
 
-const TripsSection = ({
-  viajesPublicados,
-  reservasRecibidas,
-  loading,
-  error,
-  onLoadData,
-  onEliminarViaje
-}) => {
-  useEffect(() => {
-    onLoadData();
-  }, [onLoadData]);
+// Inline delete confirmation — no window.confirm needed
+function TripCard({ viaje, reservasCount, onDelete }) {
+    const toast = useToast();
+    const [confirming, setConfirming] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
-  const handleEliminarViaje = async (viajeId) => {
-    const confirmed = window.confirm(
-      "¿Querés eliminar este viaje? Esta acción no se puede deshacer."
-    );
-    if (!confirmed) return;
-    try {
-      await onEliminarViaje(viajeId);
-    } catch (err) {
-      alert(err.message || "Error al eliminar viaje.");
-    }
-  };
-
-  if (loading) return <Spinner />;
-  if (error) return <ErrorMessage error={error} onRetry={onLoadData} />;
-
-  return (
-    <section>
-      <h1>Viajes y Reservas</h1>
-      <div>
-        {
-          viajesPublicados.length === 0 
-            ? (<div>¡Publicá un nuevo viaje!</div>)
-            : (
-              <div style={{borderRadius: 8, border: "1px solid #0001", overflow: "hidden"}}>
-                {
-                  viajesPublicados.map (
-                    (viaje, i) => {
-                      const fechaSalida = viaje.fecha || viaje.fechaSalida || "—";
-                      const asientos = viaje.asientosTotales ?? viaje.asientos;
-                      const asientosDisplay = asientos != null ? asientos : "-";
-                      const estado = viaje.estado || "publicado";
-
-                      const tieneReserva = reservasRecibidas.some( (r) => r.viajeId === viaje.id );
-                      const tieneAceptado = reservasRecibidas.some( (r) => r.viajeId === viaje.id && r.estadoReserva === "aceptado" );
-
-                      return (
-                        <div key={viaje.id} style={{padding: 17, backgroundColor: "white", borderBottom: "1px solid #0001",}}>
-                          <div>
-                            <div style={{fontWeight: 600, fontSize: "1.09rem", marginBottom: 5}}> {viaje.origen} → {viaje.destino} </div>
-                            <div> Salida: {fechaSalida} • Asientos: {asientosDisplay} • Estado: {estado} </div>
-                          </div>
-                          <div style={{marginTop: 10, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 10}}>
-                            {
-                              tieneReserva
-                              ? (<Badge variant="viajes" color="#1eb38134">Reservado</Badge>)
-                              : (<Badge variant="rapido">Disponible</Badge>)
-                            }
-                            {
-                              tieneAceptado
-                              && (<Badge variant="viajes"> Aceptado </Badge>)
-                            }
-                            <button onClick={() => handleEliminarViaje(viaje.id)} style={{padding: 5, border: "none", backgroundColor: "transparent", borderRadius: 5, cursor: "pointer"}} title='Eliminar este viaje'>
-                              <Trash2 color="var(--color-primary)"/>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    }
-                  )
-                }
-              </div>
-            )
+    const handleDelete = async () => {
+        setDeleting(true);
+        try {
+            await onDelete(viaje.id);
+        } catch (err) {
+            toast.error(err.message || "No se pudo eliminar el viaje.");
+        } finally {
+            setDeleting(false);
+            setConfirming(false);
         }
-      </div>
+    };
 
-      <div>
-        <strong>Reservas recibidas</strong>
-        {reservasRecibidas.length === 0 ? (
-          <div>No tenés reservas aún.</div>
-        ) : (
-          <IncomingReservations
-            viajes={viajesPublicados}
-            reservas={reservasRecibidas}
-            pasajeroLabelOverride="Viaje disponible"
-          />
-        )}
-      </div>
-    </section>
-  );
-};
+    const tripDate = viaje.horario?.toDate?.()
+        ?? (viaje.fecha ? new Date(viaje.fecha) : null);
 
-export default TripsSection;
+    const seats = viaje.asientosTotales ?? viaje.asientos;
+    const hasBooking = reservasCount > 0;
+
+    return (
+        <li className="trip-card">
+            <div className="trip-card__route">
+                <span className="trip-card__city">
+                    {abbreviateLocation(viaje.origen ?? "—")}
+                </span>
+                <span className="trip-card__arrow">→</span>
+                <span className="trip-card__city">
+                    {abbreviateLocation(viaje.destino ?? "—")}
+                </span>
+                <span className={`booking-status ${hasBooking
+                    ? "booking-status--confirmed"
+                    : "booking-status--pending"}`}
+                >
+                    {hasBooking
+                        ? `${reservasCount} reserva${reservasCount !== 1 ? "s" : ""}`
+                        : "Disponible"}
+                </span>
+            </div>
+
+            <div className="trip-card__meta">
+                {tripDate && (
+                    <>
+                        <span className="trip-card__meta-item">
+                            <Calendar size={12} />
+                            {tripDate.toLocaleDateString("es-AR", {
+                                weekday: "short", day: "numeric", month: "short",
+                            })}
+                        </span>
+                        <span className="trip-card__meta-item">
+                            <Clock size={12} />
+                            {tripDate.toLocaleTimeString("es-AR", {
+                                hour: "2-digit", minute: "2-digit",
+                            })}
+                        </span>
+                    </>
+                )}
+                {seats != null && (
+                    <span className="trip-card__meta-item">
+                        <Users size={12} />
+                        {seats} asiento{seats !== 1 ? "s" : ""}
+                    </span>
+                )}
+            </div>
+
+            {/* Delete — inline confirm instead of window.confirm */}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                {confirming ? (
+                    <div className="trip-card__delete-confirm">
+                        <span>¿Eliminar este viaje?</span>
+                        <button
+                            className="button"
+                            style={{ background: "var(--color-danger)", padding: "6px 14px", fontSize: "var(--text-sm)" }}
+                            onClick={handleDelete}
+                            disabled={deleting}
+                        >
+                            {deleting ? "…" : "Sí, eliminar"}
+                        </button>
+                        <button
+                            className="button neutral"
+                            style={{ padding: "6px 14px", fontSize: "var(--text-sm)" }}
+                            onClick={() => setConfirming(false)}
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => setConfirming(true)}
+                        className="button neutral"
+                        style={{ padding: "6px 10px" }}
+                        title="Eliminar viaje"
+                    >
+                        <Trash2 size={15} />
+                    </button>
+                )}
+            </div>
+        </li>
+    );
+}
+
+export default function TripsSection({
+    viajesPublicados,
+    reservasRecibidas,
+    loading,
+    error,
+    onLoadData,
+    onEliminarViaje,
+}) {
+    useEffect(() => {
+        onLoadData();
+    }, [onLoadData]);
+
+    if (loading) return <Spinner />;
+    if (error)   return <ErrorMessage error={error} onRetry={onLoadData} />;
+
+    const reservasPorViaje = (viajeId) =>
+        reservasRecibidas.filter((r) => r.viajeId === viajeId).length;
+
+    return (
+        <div className="rack-l">
+            <section className="rack-s">
+                <h2 className="section-title">Mis viajes</h2>
+                {viajesPublicados.length === 0 ? (
+                    <div className="bookings-empty">
+                        <p>No publicaste ningún viaje todavía.</p>
+                        <p className="bookings-empty__hint">
+                            Usá <strong>Nuevo</strong> para publicar tu primer viaje.
+                        </p>
+                    </div>
+                ) : (
+                    <ul className="rack" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                        {viajesPublicados.map((viaje) => (
+                            <TripCard
+                                key={viaje.id}
+                                viaje={viaje}
+                                reservasCount={reservasPorViaje(viaje.id)}
+                                onDelete={onEliminarViaje}
+                            />
+                        ))}
+                    </ul>
+                )}
+            </section>
+
+            <section className="rack-s">
+                <h2 className="section-title">Reservas recibidas</h2>
+                {reservasRecibidas.length === 0 ? (
+                    <div className="bookings-empty">
+                        <p>Todavía no recibiste reservas.</p>
+                    </div>
+                ) : (
+                    <IncomingReservations
+                        viajes={viajesPublicados}
+                        reservas={reservasRecibidas}
+                    />
+                )}
+            </section>
+        </div>
+    );
+}

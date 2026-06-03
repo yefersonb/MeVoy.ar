@@ -2033,6 +2033,95 @@ legend {
     padding: 0.5rem 1rem;
 }
 
+/* =============================================
+   PASSENGER RESERVATION CARD (driver's incoming view)
+   ============================================= */
+
+.passenger-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.passenger-card__who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Avatar wrapper — acts as a tap target */
+.passenger-card__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.passenger-card__avatar:hover { opacity: 0.78; }
+.passenger-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.passenger-card__avatar--initial {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+}
+
+.passenger-card__info { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+
+.passenger-card__name {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-stack);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    line-height: 1.2;
+}
+.passenger-card__name:hover { opacity: 0.75; }
+
+.passenger-card__sub {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.passenger-card__trip {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.passenger-card__actions {
+    display: flex;
+    gap: 8px;
+}
+.passenger-card__actions .button {
+    flex: 1;
+    padding: 10px;
+    font-size: var(--text-sm);
+}
+
+/* Inline delete confirmation (replaces window.confirm) */
+.trip-card__delete-confirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: var(--color-danger);
+}
+
 /* Tappable driver name inside a booking card */
 .booking-card__driver {
     background: none;

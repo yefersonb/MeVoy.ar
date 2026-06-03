@@ -1,339 +1,242 @@
-﻿import React, { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { db } from "../firebase";
-import { doc, getDoc, deleteDoc } from "firebase/firestore";
-import PassengerDetail from "./PassengerDetail";
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { MapPin, Trash2 } from "react-feather";
 import { abbreviateLocation } from "../utils/location";
+import { useUserCard } from "../contexts/UserCardContext";
+import { useToast } from "../contexts/ToastContext";
 
-// Normaliza reservas
-const normalizarReservas = (viajes = [], reservasRaw) => {
-  if (Array.isArray(reservasRaw)) {
-    return reservasRaw.map((r, idx) => {
-      const viaje = viajes.find((v) => v.id === r.viajeId);
-      return {
-        ...r,
-        key: `${r.viajeId || "unknown"}-${r.id || idx}`,
-        viaje,
-      };
-    });
-  } else if (reservasRaw && typeof reservasRaw === "object") {
-    return Object.entries(reservasRaw).flatMap(([idViaje, arr]) => {
-      if (!Array.isArray(arr)) return [];
-      return arr.map((r, idx) => ({
-        ...r,
-        key: `${idViaje}-${idx}`,
-        viaje: viajes.find((v) => v.id === idViaje),
-        viajeId: idViaje,
-      }));
-    });
-  }
-  return [];
-};
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-// Extrae UID fiable del viajante
-const extraerUidViajante = (res) => {
-  return (
+const passengerUid = (res) =>
     res.uidPasajero ||
     res.pasajeroUid ||
     res.viajanteUid ||
-    (res.pasajero && (res.pasajero.uid || res.pasajero.userId)) ||
-    null
-  );
+    res.pasajero?.uid ||
+    res.pasajero?.userId ||
+    null;
+
+const STATUS_MAP = {
+    pendiente:  { label: "Pendiente",  cls: "booking-status--pending"   },
+    confirmado: { label: "Confirmada", cls: "booking-status--confirmed"  },
+    aceptado:   { label: "Confirmada", cls: "booking-status--confirmed"  },
+    rechazado:  { label: "Rechazada",  cls: "booking-status--rejected"   },
+    cancelado:  { label: "Cancelada",  cls: "booking-status--rejected"   },
 };
 
-// Silueta SVG simple para avatar neutro
-const Silueta = () => (
-  <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-    <circle cx="22" cy="22" r="22" fill="#e2e8f0" />
-    <ellipse cx="22" cy="18" rx="8" ry="8" fill="#cbd5e1" />
-    <ellipse cx="22" cy="34" rx="13" ry="7" fill="#cbd5e1" />
-  </svg>
-);
-
-function ReservaItem({
-  res,
-  pasajeroLabelOverride,
-  onVerPerfil,
-  onEliminar,
-  perfilPasajero,
-  loadingPerfil,
-}) {
-  // nombre con prioridad
-  const displayName =
-    perfilPasajero?.nombre ||
-    pasajeroLabelOverride ||
-    (res.pasajero && res.pasajero.nombre) ||
-    res.pasajeroNombre ||
-    "Sin nombre";
-
-  // Show UID or reservation info if available
-  const quienReservo =
-    perfilPasajero?.nombre ||
-    res.pasajeroNombre ||
-    (res.pasajero && res.pasajero.nombre) ||
-    perfilPasajero?.whatsapp ||
-    res.pasajeroWhatsapp ||
-    (res.pasajero && res.pasajero.whatsapp) ||
-    perfilPasajero?.uid ||
-    res.uidPasajero ||
-    res.pasajeroUid ||
-    res.viajanteUid ||
-    (res.pasajero && (res.pasajero.uid || res.pasajero.userId)) ||
-    "Sin datos";
-
-  return (
-    <div
-      className="bg-white border border-gray-200 rounded-lg p-5 mb-12 shadow-sm"
-      style={{ display: "flex", flexDirection: "column", gap: 8 }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        {/* Foto */}
-        <div
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: "50%",
-            overflow: "hidden",
-            background: "#e2e8f0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {loadingPerfil ? (
-            <span style={{ fontSize: 18, color: "#888" }}>...</span>
-          ) : perfilPasajero?.fotoPerfil ? (
-            <img
-              src={perfilPasajero.fotoPerfil}
-              alt="Foto viajante"
-              style={{
-                width: 44,
-                height: 44,
-                objectFit: "cover",
-                borderRadius: "50%",
-              }}
-            />
-          ) : (
-            <Silueta />
-          )}
-        </div>
-        <div style={{ flex: 1, minWidth: 120 }}>
-          {/* Name as accessible button */}
-          <div>
-            {perfilPasajero ? (
-              <button
-                onClick={onVerPerfil}
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  margin: 0,
-                  color: "var(--color-primary-700)",
-                  textDecoration: "underline",
-                  fontWeight: 500,
-                  fontSize: "1.05rem",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                }}
-                aria-label={`Ver perfil de ${displayName}`}
-              >
-                {displayName}
-              </button>
-            ) : (
-              <span style={{ color: "#888" }}>{displayName}</span>
-            )}
-          </div>
-          {/* Info de viaje */}
-          <div style={{ fontSize: "0.97rem", color: "#444", marginTop: 2 }}>
-            <span style={{ fontWeight: 500 }}>
-              {abbreviateLocation(res.viaje?.origen)} â†’ {abbreviateLocation(res.viaje?.destino)}
-            </span>
-          </div>
-          <div style={{ fontSize: "0.89rem", color: "#888" }}>
-            {res.viaje?.horario
-              ? new Date(res.viaje.horario).toLocaleString()
-              : res.fechaReserva
-              ? new Date(
-                  res.fechaReserva.seconds
-                    ? res.fechaReserva.toDate()
-                    : res.fechaReserva
-                ).toLocaleString()
-              : ""}
-          </div>
-          {/* Show who made the reservation */}
-          <div style={{ fontSize: "0.89rem", color: "var(--color-primary-700)", marginTop: 2 }}>
-            <span style={{ fontWeight: 400 }}>
-              Reservado por: {quienReservo}
-            </span>
-          </div>
-        </div>
-        {/* Eliminar link */}
-        {onEliminar && (
-          <div style={{ marginLeft: 8 }}>
-            <button
-              onClick={onEliminar}
-              className="underline"
-              style={{
-                color: "#c0392b",
-                background: "none",
-                border: "none",
-                fontSize: "0.97rem",
-                cursor: "pointer",
-                fontWeight: 400,
-                padding: 0,
-                textDecoration: "underline",
-                fontFamily: "inherit",
-                transition: "color 0.15s",
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.color = "#a93226")}
-              onMouseOut={(e) => (e.currentTarget.style.color = "#c0392b")}
-            >
-              Eliminar
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+function statusChip(estado) {
+    const s = STATUS_MAP[estado] ?? { label: estado ?? "—", cls: "" };
+    return <span className={`booking-status ${s.cls}`}>{s.label}</span>;
 }
 
-export default function IncomingReservations({
-  viajes,
-  reservas,
-  pasajeroLabelOverride = null,
-}) {
-  const [mostrarViajanteUid, setMostrarViajanteUid] = useState(null);
-  const [viajeSeleccionadoId, setViajeSeleccionadoId] = useState(null);
-  const [perfilPasajeros, setPerfilPasajeros] = useState({});
-  const [loadingPerfiles, setLoadingPerfiles] = useState({});
-  const todasLasReservas = useMemo(
-    () => normalizarReservas(viajes || [], reservas || []),
-    [viajes, reservas]
-  );
-  const [refreshToggle, setRefreshToggle] = useState(false);
-
-  // Debug de datos entrantes
-  useEffect(() => {
-    console.log("DEBUG ReservasRecibidas - viajes:", viajes);
-    console.log("DEBUG ReservasRecibidas - reservas:", reservas);
-  }, [viajes, reservas]);
-
-  // Cargar perfiles de todos los viajantes de las reservas
-  useEffect(() => {
-    let mounted = true;
-    const fetchPerfiles = async () => {
-      const nuevos = {};
-      const loading = {};
-      await Promise.all(
-        todasLasReservas.map(async (res) => {
-          const uid = extraerUidViajante(res);
-          if (!uid) return;
-          loading[res.key] = true;
-          try {
-            const snap = await getDoc(doc(db, "usuarios", uid));
-            if (snap.exists()) {
-              nuevos[res.key] = snap.data();
-            }
-          } catch (e) {
-            // ignore
-          } finally {
-            loading[res.key] = false;
-          }
-        })
-      );
-      if (mounted) {
-        setPerfilPasajeros(nuevos);
-        setLoadingPerfiles(loading);
-      }
-    };
-    fetchPerfiles();
-    return () => {
-      mounted = false;
-    };
-    // eslint-disable-next-line
-  }, [todasLasReservas, refreshToggle]);
-
-  // Eliminar reserva
-  const handleEliminarReserva = async (res) => {
-    if (!window.confirm("¿Eliminar esta reserva?")) return;
-    try {
-      if (res.viajeId && res.id) {
-        await deleteDoc(doc(db, "viajes", res.viajeId, "reservas", res.id));
-        setRefreshToggle((f) => !f);
-      } else {
-        alert("No se pudo eliminar la reserva (faltan datos).");
-      }
-    } catch (e) {
-      alert("Error al eliminar la reserva.");
-      console.error(e);
+function normalize(viajes = [], reservasRaw) {
+    if (Array.isArray(reservasRaw)) {
+        return reservasRaw.map((r, i) => ({
+            ...r,
+            key: `${r.viajeId ?? "x"}-${r.id ?? i}`,
+            viaje: viajes.find((v) => v.id === r.viajeId),
+        }));
     }
-  };
-
-  const handleVerPerfil = (uid, key, viajeId) => {
-    setMostrarViajanteUid(uid);
-    setViajeSeleccionadoId(viajeId);
-  };
-
-  const onDecisionSobreReserva = (estado, reserva) => {
-    setRefreshToggle((f) => !f);
-  };
-
-  return (
-    <div className="max-w-xl mx-auto p-6">
-      {(!viajes || (Array.isArray(viajes) && viajes.length === 0)) &&
-        (!reservas || (Array.isArray(reservas) && reservas.length === 0)) && (
-          <div className="p-4 bg-yellow-50 rounded-md mb-4">
-            <p className="text-sm text-yellow-800">
-              No se cargaron viajes ni reservas todavía. Asegurate de que el hook que
-              provee esos datos (useTripsData) haya corrido y que le pasás los props correctos.
-            </p>
-          </div>
-      )}
-
-      {todasLasReservas.length === 0 ? (
-        <p className="text-gray-600">No hay reservas por el momento.</p>
-      ) : (
-        todasLasReservas.map((res) => {
-          const viajanteUid = extraerUidViajante(res);
-          return (
-            <ReservaItem
-              key={res.key}
-              res={res}
-              pasajeroLabelOverride={pasajeroLabelOverride}
-              perfilPasajero={perfilPasajeros[res.key]}
-              loadingPerfil={loadingPerfiles[res.key]}
-              onVerPerfil={
-                viajanteUid
-                  ? () =>
-                      handleVerPerfil(
-                        viajanteUid,
-                        res.key,
-                        res.viajeId || res.viaje?.id
-                      )
-                  : undefined
-              }
-              onEliminar={() => handleEliminarReserva(res)}
-            />
-          );
-        })
-      )}
-      {mostrarViajanteUid && (
-        <PassengerDetail
-          viajanteUid={mostrarViajanteUid}
-          viajeId={viajeSeleccionadoId}
-          esConductorQueDecide={true}
-          onClose={() => {
-            setMostrarViajanteUid(null);
-            setViajeSeleccionadoId(null);
-          }}
-          onDecision={(estado) => {
-            const reserva = todasLasReservas.find(
-              (r) => (r.viajeId || r.viaje?.id) === viajeSeleccionadoId
-            );
-            onDecisionSobreReserva(estado, reserva);
-          }}
-        />
-      )}
-    </div>
-  );
+    if (reservasRaw && typeof reservasRaw === "object") {
+        return Object.entries(reservasRaw).flatMap(([viajeId, arr]) => {
+            if (!Array.isArray(arr)) return [];
+            return arr.map((r, i) => ({
+                ...r,
+                key: `${viajeId}-${i}`,
+                viajeId,
+                viaje: viajes.find((v) => v.id === viajeId),
+            }));
+        });
+    }
+    return [];
 }
 
+// ─── Single reservation card ──────────────────────────────────────────────────
+
+function ReservationCard({ res }) {
+    const { openCard } = useUserCard();
+    const toast = useToast();
+
+    const [profile, setProfile]     = useState(null);
+    const [busy, setBusy]           = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
+
+    const uid = passengerUid(res);
+
+    useEffect(() => {
+        if (!uid) return;
+        getDoc(doc(db, "usuarios", uid))
+            .then((snap) => snap.exists() && setProfile(snap.data()))
+            .catch(() => {});
+    }, [uid]);
+
+    const handleDecision = async (to) => {
+        if (!res.viajeId || !res.id) {
+            toast.error("Faltan datos para actualizar la reserva.");
+            return;
+        }
+        setBusy(true);
+        try {
+            await updateDoc(
+                doc(db, "viajes", res.viajeId, "reservas", res.id),
+                { estadoReserva: to }
+            );
+            toast.success(to === "confirmado" ? "Reserva confirmada." : "Reserva rechazada.");
+        } catch (e) {
+            console.error("[IncomingReservations] updateDoc error:", e);
+            toast.error("No se pudo actualizar la reserva.");
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!res.viajeId || !res.id) return;
+        setBusy(true);
+        try {
+            await deleteDoc(doc(db, "viajes", res.viajeId, "reservas", res.id));
+            toast.success("Reserva eliminada.");
+        } catch (e) {
+            console.error("[IncomingReservations] deleteDoc error:", e);
+            toast.error("No se pudo eliminar la reserva.");
+        } finally {
+            setBusy(false);
+            setConfirmDelete(false);
+        }
+    };
+
+    const name    = profile?.nombre || res.pasajeroNombre || res.pasajero?.nombre || "Pasajero";
+    const avatar  = profile?.fotoURL || profile?.fotoPerfil || null;
+    const estado  = res.estadoReserva || "pendiente";
+    const tripDate = res.viaje?.horario?.toDate?.()
+        ?? (res.fechaReserva?.toDate?.() ?? null);
+
+    const isPending = estado === "pendiente";
+
+    return (
+        <div className="passenger-card card">
+            {/* Who */}
+            <div className="passenger-card__who">
+                <button
+                    className="passenger-card__avatar"
+                    onClick={() => uid && openCard(uid, "viajero")}
+                    aria-label={`Ver perfil de ${name}`}
+                    disabled={!uid}
+                >
+                    {avatar
+                        ? <img src={avatar} alt={name} />
+                        : <span className="passenger-card__avatar--initial">{name[0]?.toUpperCase()}</span>
+                    }
+                </button>
+
+                <div className="passenger-card__info">
+                    <button
+                        className="passenger-card__name"
+                        onClick={() => uid && openCard(uid, "viajero")}
+                        disabled={!uid}
+                    >
+                        {name}
+                    </button>
+                    <span className="passenger-card__sub">
+                        {res.cantidadPasajeros
+                            ? `${res.cantidadPasajeros} pasajero${res.cantidadPasajeros !== 1 ? "s" : ""}`
+                            : "1 pasajero"}
+                        {tripDate && (
+                            <> · {tripDate.toLocaleDateString("es-AR", {
+                                day: "numeric", month: "short",
+                            })}</>
+                        )}
+                    </span>
+                </div>
+
+                {statusChip(estado)}
+            </div>
+
+            {/* Trip route */}
+            {res.viaje && (
+                <div className="passenger-card__trip">
+                    <MapPin size={12} />
+                    {abbreviateLocation(res.viaje.origen)} → {abbreviateLocation(res.viaje.destino)}
+                </div>
+            )}
+
+            {/* Actions */}
+            {isPending && (
+                <div className="passenger-card__actions">
+                    <button
+                        className="button"
+                        style={{ background: "var(--color-success)" }}
+                        onClick={() => handleDecision("confirmado")}
+                        disabled={busy}
+                    >
+                        Confirmar
+                    </button>
+                    <button
+                        className="button"
+                        style={{ background: "var(--color-danger)" }}
+                        onClick={() => handleDecision("rechazado")}
+                        disabled={busy}
+                    >
+                        Rechazar
+                    </button>
+                </div>
+            )}
+
+            {/* Delete (non-pending reservations) */}
+            {!isPending && (
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    {confirmDelete ? (
+                        <div className="trip-card__delete-confirm">
+                            <span>¿Eliminar?</span>
+                            <button
+                                className="button"
+                                style={{ background: "var(--color-danger)", padding: "6px 12px", fontSize: "var(--text-sm)" }}
+                                onClick={handleDelete}
+                                disabled={busy}
+                            >
+                                Sí
+                            </button>
+                            <button
+                                className="button neutral"
+                                style={{ padding: "6px 12px", fontSize: "var(--text-sm)" }}
+                                onClick={() => setConfirmDelete(false)}
+                            >
+                                No
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            className="button neutral"
+                            style={{ padding: "6px 10px" }}
+                            onClick={() => setConfirmDelete(true)}
+                            title="Eliminar reserva"
+                        >
+                            <Trash2 size={14} />
+                        </button>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── List ─────────────────────────────────────────────────────────────────────
+
+export default function IncomingReservations({ viajes, reservas }) {
+    const list = useMemo(
+        () => normalize(viajes ?? [], reservas ?? []),
+        [viajes, reservas]
+    );
+
+    if (list.length === 0) return null;
+
+    return (
+        <ul className="rack" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {list.map((res) => (
+                <li key={res.key}>
+                    <ReservationCard res={res} />
+                </li>
+            ))}
+        </ul>
+    );
+}

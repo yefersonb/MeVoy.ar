@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { X, Phone, Shield } from "react-feather";
+import { X, Shield } from "react-feather";
 import { db } from "../firebase";
 import StarRating from "./ui/StarRating";
 import Spinner from "./common/Spinner";
@@ -170,18 +170,8 @@ export default function UserCardSheet({ uid, contextRole, onClose }) {
                             </div>
                         )}
 
-                        {/* Contact */}
-                        {whatsapp && (
-                            <a
-                                href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="button button--fill"
-                                style={{ textDecoration: "none", textAlign: "center" }}
-                            >
-                                <Phone size={15} /> Contactar por WhatsApp
-                            </a>
-                        )}
+                        {/* WhatsApp intentionally not shown here — contact happens
+                            through the booking/reservation flow, not public profiles */}
                     </div>
                 )}
             </div>

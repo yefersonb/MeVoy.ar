@@ -156,19 +156,19 @@ export default function UserCardSheet({ uid, contextRole, onClose }) {
                             </div>
                         </div>
 
-                        {/* Bio */}
+                        {/* Role-specific ratings */}
+                        {isDriver
+                            ? <DriverRatings  profile={profile} />
+                            : <PassengerRatings profile={profile} />
+                        }
+
+                        {/* Bio — after ratings, height-capped so long bios don't dominate */}
                         {bio && bioVisible && (
                             <div className="ucs-section">
                                 <span className="ucs-section__label">Acerca de</span>
                                 <p className="ucs-bio">{bio}</p>
                             </div>
                         )}
-
-                        {/* Role-specific ratings */}
-                        {isDriver
-                            ? <DriverRatings  profile={profile} />
-                            : <PassengerRatings profile={profile} />
-                        }
 
                         {/* Contact */}
                         {whatsapp && (

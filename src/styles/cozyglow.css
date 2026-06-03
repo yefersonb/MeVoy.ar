@@ -2306,6 +2306,11 @@ legend {
     line-height: 1.6;
     margin: 0;
     white-space: pre-wrap;
+    max-height: 120px;
+    overflow-y: auto;
+    /* subtle fade at the bottom so it's obvious there's more */
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
 /* Rating row */

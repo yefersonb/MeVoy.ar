@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { X, Shield } from "react-feather";
+import { Shield } from "react-feather";
 import { db } from "../firebase";
 import StarRating from "./ui/StarRating";
 import Spinner from "./common/Spinner";
@@ -64,19 +64,12 @@ function PassengerRatings({ profile }) {
     );
 }
 
-// ─── Sheet ────────────────────────────────────────────────────────────────────
+// ─── Profile content (no sheet chrome — that lives in BottomSheet) ────────────
 
-export default function UserCardSheet({ uid, contextRole, onClose }) {
+export default function UserCardContent({ uid, contextRole }) {
     const [profile, setProfile]   = useState(null);
     const [verified, setVerified] = useState(false);
     const [loading, setLoading]   = useState(true);
-    const [visible, setVisible]   = useState(false);
-
-    // Defer visible to true by one frame so the CSS transition fires on mount
-    useEffect(() => {
-        const id = requestAnimationFrame(() => setVisible(true));
-        return () => cancelAnimationFrame(id);
-    }, []);
 
     useEffect(() => {
         if (!uid) return;
@@ -90,91 +83,61 @@ export default function UserCardSheet({ uid, contextRole, onClose }) {
         }).catch(console.error).finally(() => setLoading(false));
     }, [uid]);
 
-    const handleClose = () => {
-        setVisible(false);
-        setTimeout(onClose, 300); // let slide-down animation finish
-    };
+    if (loading) return <div className="ucs-loading"><Spinner /></div>;
+    if (!profile) return <div className="ucs-empty">Perfil no disponible.</div>;
 
-    const role = contextRole || profile?.rol || "viajero";
+    const role     = contextRole || profile?.rol || "viajero";
     const isDriver = role === "conductor";
 
     const avatarUrl  = profile?.fotoURL || profile?.fotoPerfil || null;
     const name       = profile?.nombre || "Usuario";
     const bio        = profile?.descripcion;
     const bioVisible = profile?.perfilVisible !== false;
-    const whatsapp   = profile?.whatsapp;
 
     return (
-        <>
-            <div
-                className={`ucs-backdrop${visible ? " ucs-backdrop--visible" : ""}`}
-                onClick={handleClose}
-            />
-
-            <div
-                className={`ucs-sheet${visible ? " ucs-sheet--visible" : ""}`}
-                role="dialog"
-                aria-modal="true"
-                aria-label={`Perfil de ${name}`}
-            >
-                <div className="ucs-handle" />
-
-                <button className="ucs-close" onClick={handleClose} aria-label="Cerrar">
-                    <X size={17} />
-                </button>
-
-                {loading ? (
-                    <div className="ucs-loading"><Spinner /></div>
-                ) : !profile ? (
-                    <div className="ucs-empty">Perfil no disponible.</div>
-                ) : (
-                    <div className="ucs-content">
-
-                        {/* Avatar + name + role */}
-                        <div className="ucs-identity">
-                            <div className="ucs-avatar">
-                                {avatarUrl
-                                    ? <img src={avatarUrl} alt={name} className="ucs-avatar__img" />
-                                    : <div className="ucs-avatar__placeholder">{name[0]?.toUpperCase()}</div>
-                                }
-                            </div>
-                            <div className="ucs-identity__info">
-                                <div className="ucs-identity__name">
-                                    {name}
-                                    {verified && (
-                                        <span className="ucs-verified-badge" title="Identidad verificada">
-                                            <Shield size={13} />
-                                        </span>
-                                    )}
-                                </div>
-                                <span className={`booking-status ${isDriver
-                                    ? "booking-status--confirmed"
-                                    : "booking-status--pending"}`}
-                                >
-                                    {isDriver ? "Conductor" : "Pasajero"}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Role-specific ratings */}
-                        {isDriver
-                            ? <DriverRatings  profile={profile} />
-                            : <PassengerRatings profile={profile} />
-                        }
-
-                        {/* Bio — after ratings, height-capped so long bios don't dominate */}
-                        {bio && bioVisible && (
-                            <div className="ucs-section">
-                                <span className="ucs-section__label">Acerca de</span>
-                                <p className="ucs-bio">{bio}</p>
-                            </div>
+        <div className="ucs-content">
+            {/* Avatar + name + role */}
+            <div className="ucs-identity">
+                <div className="ucs-avatar">
+                    {avatarUrl
+                        ? <img src={avatarUrl} alt={name} className="ucs-avatar__img" />
+                        : <div className="ucs-avatar__placeholder">{name[0]?.toUpperCase()}</div>
+                    }
+                </div>
+                <div className="ucs-identity__info">
+                    <div className="ucs-identity__name">
+                        {name}
+                        {verified && (
+                            <span className="ucs-verified-badge" title="Identidad verificada">
+                                <Shield size={13} />
+                            </span>
                         )}
-
-                        {/* WhatsApp intentionally not shown here — contact happens
-                            through the booking/reservation flow, not public profiles */}
                     </div>
-                )}
+                    <span className={`booking-status ${isDriver
+                        ? "booking-status--confirmed"
+                        : "booking-status--pending"}`}
+                    >
+                        {isDriver ? "Conductor" : "Pasajero"}
+                    </span>
+                </div>
             </div>
-        </>
+
+            {/* Role-specific ratings */}
+            {isDriver
+                ? <DriverRatings  profile={profile} />
+                : <PassengerRatings profile={profile} />
+            }
+
+            {/* Bio — after ratings, height-capped so long bios don't dominate */}
+            {bio && bioVisible && (
+                <div className="ucs-section">
+                    <span className="ucs-section__label">Acerca de</span>
+                    <p className="ucs-bio">{bio}</p>
+                </div>
+            )}
+
+            {/* WhatsApp intentionally not shown here — contact happens
+                through the booking/reservation flow, not public profiles */}
+        </div>
     );
 }

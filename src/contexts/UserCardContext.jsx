@@ -1,35 +1,52 @@
-import { createContext, useCallback, useContext, useState } from "react";
-import UserCardSheet from "../components/UserCardSheet";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import BottomSheet from "../components/common/BottomSheet";
+import UserCardContent from "../components/UserCardSheet";
 
-const UserCardContext = createContext(null);
+const DrawerContext = createContext(null);
 
 export function UserCardProvider({ children }) {
-    const [card, setCard] = useState(null); // { uid, contextRole? }
+    const [drawer, setDrawer] = useState(null); // { content: ReactNode, label: string }
 
-    // contextRole: "conductor" | "viajero" — overrides the profile's own rol
-    // so you can view someone as their role in a specific trip/booking context
-    const openCard = useCallback((uid, contextRole) => {
-        setCard({ uid, contextRole: contextRole || null });
+    const closeDrawer = useCallback(() => setDrawer(null), []);
+
+    // Generic entry point — pass any JSX and an optional sheet label
+    const openDrawer = useCallback((content, label = "Panel") => {
+        setDrawer({ content, label });
     }, []);
 
-    const closeCard = useCallback(() => setCard(null), []);
+    // Convenience wrapper that opens a user profile card
+    const openCard = useCallback((uid, contextRole) => {
+        openDrawer(
+            <UserCardContent uid={uid} contextRole={contextRole} />,
+            "Perfil de usuario"
+        );
+    }, [openDrawer]);
+
+    const value = useMemo(
+        () => ({ openDrawer, openCard, closeDrawer }),
+        [openDrawer, openCard, closeDrawer]
+    );
 
     return (
-        <UserCardContext.Provider value={{ openCard }}>
+        <DrawerContext.Provider value={value}>
             {children}
-            {card && (
-                <UserCardSheet
-                    uid={card.uid}
-                    contextRole={card.contextRole}
-                    onClose={closeCard}
-                />
+            {drawer && (
+                <BottomSheet onClose={closeDrawer} label={drawer.label}>
+                    {drawer.content}
+                </BottomSheet>
             )}
-        </UserCardContext.Provider>
+        </DrawerContext.Provider>
     );
 }
 
-export function useUserCard() {
-    const ctx = useContext(UserCardContext);
-    if (!ctx) throw new Error("useUserCard must be used inside UserCardProvider");
+// Primary hook — use this for new code
+export function useDrawer() {
+    const ctx = useContext(DrawerContext);
+    if (!ctx) throw new Error("useDrawer must be used inside UserCardProvider");
     return ctx;
+}
+
+// Backwards-compatible alias — existing callers using useUserCard() keep working
+export function useUserCard() {
+    return useDrawer();
 }

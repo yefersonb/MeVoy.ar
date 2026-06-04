@@ -23,12 +23,12 @@ function DestinationPin() {
 }
 import TripDetail from "./TripDetail";
 import AutocompleteInput from "./AutocompleteInput";
+import { useDrawer } from "../contexts/UserCardContext";
 import useTripsSearch from "../hooks/useTripsSearch";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebase";
 
 export default function TripSearch({ user, onBook }) {
-    const { results, loading: loadingHook, filters, setFilters, clear } = useTripsSearch();
+    const { results, loading, filters, setFilters, clear } = useTripsSearch();
+    const { openDrawer } = useDrawer();
 
     const [origen, setOrigen] = useState("");
     const [destino, setDestino] = useState("");
@@ -38,10 +38,6 @@ export default function TripSearch({ user, onBook }) {
     const [soloPaquetes, setSoloPaquetes] = useState(false);
     const [pesoReq, setPesoReq] = useState("");
     const [volumenReq, setVolumenReq] = useState("");
-    const [detalle, setDetalle] = useState(null);
-    const [loadingAction, setLoadingAction] = useState(false);
-
-    const loading = loadingHook || loadingAction;
 
     const parseNumber = (v) => (v === "" || v == null ? null : Number(v));
 
@@ -95,44 +91,8 @@ export default function TripSearch({ user, onBook }) {
         clear();
     };
 
-    const confirmarReserva = async (viajeId) => {
-        if (!user) { alert("Iniciá sesión para reservar"); return; }
-        if (!viajeId) { alert("Error interno: viaje desconocido."); return; }
-        setLoadingAction(true);
-        try {
-            if (typeof onBook === "function") {
-                await onBook(viajeId);
-            } else {
-                await addDoc(collection(db, "viajes", viajeId, "reservas"), {
-                    viajanteUid: user.uid,
-                    fechaReserva: serverTimestamp(),
-                    cantidadPasajeros: 1,
-                    estadoReserva: "pendiente",
-                    creadoPor: user.uid,
-                });
-                alert("¡Reserva creada! Esperando aprobación del conductor.");
-            }
-            setDetalle(null);
-            buscar();
-        } catch (err) {
-            console.error("Error creando reserva:", err);
-            alert("Hubo un problema al reservar.");
-        } finally {
-            setLoadingAction(false);
-        }
-    };
-
-    if (detalle) {
-        return (
-            <TripDetail
-                viaje={detalle}
-                pasajeros={pasajeros}
-                onClose={() => setDetalle(null)}
-                onReservar={() => confirmarReserva(detalle.id)}
-                loading={loading}
-            />
-        );
-    }
+    const openTrip = (viaje) =>
+        openDrawer(<TripDetail viaje={viaje} pasajeros={pasajeros} />, "Detalle de viaje");
 
     return (
         <section className="trip-search">
@@ -294,15 +254,8 @@ export default function TripSearch({ user, onBook }) {
                                 )}
 
                                 <div className="trip-card__actions">
-                                    <button className="button button--outline" onClick={() => setDetalle(v)}>
+                                    <button className="button" onClick={() => openTrip(v)}>
                                         Ver detalles
-                                    </button>
-                                    <button
-                                        className="button"
-                                        onClick={() => confirmarReserva(v.id)}
-                                        disabled={loading}
-                                    >
-                                        Reservar
                                     </button>
                                 </div>
                             </li>

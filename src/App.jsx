@@ -5,6 +5,9 @@ import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "f
 import { signOut } from "firebase/auth";
 import { db, auth } from "./firebase";
 import { useToast } from "./contexts/ToastContext";
+import { useDrawer } from "./contexts/UserCardContext";
+import TripRatingSheet from "./components/TripRatingSheet";
+import { Star } from "react-feather";
 import Avatar from "./components/ui/Avatar";
 
 // Styles — tokens → base → markdown
@@ -44,6 +47,7 @@ const CONDUCTOR_HASH = { viajes: "reservas", nuevo: "nuevo-viaje" };
 export default function App() {
     const { usuario, perfil, isAdmin, loading } = useUser();
     const toast = useToast();
+    const { openDrawer } = useDrawer();
 
     const rol = useMemo(() => perfil?.rol || "viajero", [perfil?.rol]);
 
@@ -177,6 +181,19 @@ export default function App() {
                         </button>
                     </>
                 )}
+                {/* TODO: remove — test button for the rating drawer */}
+                <button
+                    className="action-list__item"
+                    onClick={() => openDrawer(
+                        <TripRatingSheet
+                            trip={{ origen: "Córdoba", destino: "Buenos Aires" }}
+                            onSubmit={async (data) => console.log("Rating submitted:", data)}
+                        />,
+                        "Calificar viaje"
+                    )}
+                >
+                    <Star size={16} /> [Test] Calificar viaje
+                </button>
                 <button className="action-list__item">
                     <CreditCard size={16} /> Medios de Pago
                 </button>

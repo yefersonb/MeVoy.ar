@@ -19,6 +19,7 @@
 //  - Storage: "verificaciones/{uid}/{docKey}/file"
 
 import React, { useEffect, useMemo, useState, useRef } from 'react';
+import DocCamera, { ID_CARD_RATIO } from './common/DocCamera';
 import { auth, db, storage } from '../firebase';
 import {
   doc,
@@ -618,8 +619,7 @@ function StatusTag({ status }) {
 
 function DocTile({ label, url, onSelect, progress, hint }) {
   const fileRef = useRef(null);
-
-  const openPicker = () => fileRef.current?.click();
+  const [cameraOpen, setCameraOpen] = useState(false);
 
   const handleChange = (e) => {
     const file = e.target.files?.[0];
@@ -627,64 +627,74 @@ function DocTile({ label, url, onSelect, progress, hint }) {
     e.target.value = '';
   };
 
-  // Optional drag & drop
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file) onSelect(file);
   };
-  const handleDragOver = (e) => e.preventDefault();
 
-  // Fixed small height so previews don't dominate (always applied)
-  const previewBoxStyle = { height: 160, background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' };
-  const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
+  const previewBoxStyle = {
+    height: 160,
+    background: 'var(--color-bg)',
+    border: '1px solid #E5E7EB',
+    borderRadius: 12,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  };
 
   return (
-    <div >
-      <div >
-        <div>
-          <div >{label}</div>
-          {hint && <div  style={{color:'var(--color-text-muted)'}}>{hint}</div>}
-        </div>
-        {url && <a  href={url} target="_blank" rel="noreferrer">Ver</a>}
+    <div>
+      <div>
+        <div>{label}</div>
+        {hint && <div style={{ color: 'var(--color-text-muted)' }}>{hint}</div>}
+        {url && <a href={url} target="_blank" rel="noreferrer">Ver</a>}
       </div>
 
       <div
         style={previewBoxStyle}
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
+        onDragOver={(e) => e.preventDefault()}
       >
         {url ? (
-          <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
-            <img src={url} alt={label} style={imgStyle} />
+          <a href={url} target="_blank" rel="noreferrer" style={{ display:'block', width:'100%', height:'100%' }}>
+            <img src={url} alt={label} style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' }} />
           </a>
         ) : (
-          <span  style={{color:'#9CA3AF'}}>Soltá una imagen acá o usá <b>Subir foto</b></span>
+          <span style={{ color: '#9CA3AF' }}>Sin foto</span>
         )}
       </div>
 
-      {/* Hidden file input — style used instead of Tailwind */}
       <input
         ref={fileRef}
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={handleChange}
-        style={{ display:'none' }}
+        style={{ display: 'none' }}
       />
 
-      <div >
-        <button
-          type="button"          
-          onClick={openPicker}
-          className='button'
-          >
-          Subir foto
+      <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
+        <button type="button" className="button neutral" onClick={() => setCameraOpen(true)}>
+          Cámara
         </button>
-        {typeof progress === 'number' && (
-          <span  style={{color:'var(--color-text-muted)'}}>{progress}%</span>
+        <button type="button" className="button neutral" onClick={() => fileRef.current?.click()}>
+          Galería
+        </button>
+        {typeof progress === 'number' && progress < 100 && (
+          <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85em' }}>{progress}%</span>
         )}
       </div>
+
+      {/* DocCamera is position:fixed so it covers the screen from anywhere in the tree */}
+      {cameraOpen && (
+        <DocCamera
+          aspectRatio={ID_CARD_RATIO}
+          label={`Encuadrá el ${label} dentro del marco`}
+          onCapture={(file) => { setCameraOpen(false); onSelect(file); }}
+          onCancel={() => setCameraOpen(false)}
+        />
+      )}
     </div>
   );
 }

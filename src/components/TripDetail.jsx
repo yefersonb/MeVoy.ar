@@ -5,7 +5,7 @@ import {
     DirectionsRenderer,
     useJsApiLoader,
 } from "@react-google-maps/api";
-import { Package, User, Truck, X, MapPin } from "react-feather";
+import { Package, Truck, MapPin, ChevronRight } from "react-feather";
 import { MAP_LOADER_OPTIONS } from "../googleMapsConfig";
 import {
     doc,
@@ -18,6 +18,7 @@ import {
 import { db } from "../firebase";
 import { useUser } from "../contexts/UserContext";
 import { useToast } from "../contexts/ToastContext";
+import { useDrawer, useUserCard } from "../contexts/UserCardContext";
 import { useTravelerProfileComplete } from "../hooks/useTravelerProfileComplete";
 import { abbreviateLocation } from "../utils/location";
 import RequestShipment from "./RequestShipment";
@@ -49,16 +50,12 @@ function StarRating({ value, count }) {
     );
 }
 
-export default function TripDetail({
-    viaje,
-    pasajeros,
-    onClose,
-    onReservar,
-    loading: parentLoading,
-}) {
+export default function TripDetail({ viaje, pasajeros }) {
     const { isLoaded } = useJsApiLoader(MAP_LOADER_OPTIONS);
     const { usuario } = useUser();
     const toast = useToast();
+    const { closeDrawer } = useDrawer();
+    const { openCard } = useUserCard();
     const { loading: loadingProfile, canReserve } = useTravelerProfileComplete(usuario?.uid);
 
     const [directions, setDirections]           = useState(null);
@@ -153,7 +150,7 @@ export default function TripDetail({
                 creadoPor:          usuario.uid,
             });
             toast.success("¡Reserva creada! El conductor confirmará pronto.");
-            onClose?.();
+            closeDrawer();
         } catch (e) {
             toast.error(
                 e.code === "permission-denied"
@@ -166,14 +163,7 @@ export default function TripDetail({
     };
 
     return (
-        <div className="trip-detail-overlay" onClick={onClose}>
-            <div className="trip-detail-modal" onClick={(e) => e.stopPropagation()}>
-
-                <button className="trip-detail-close" onClick={onClose} aria-label="Cerrar">
-                    <X size={18} />
-                </button>
-
-                <h2>Detalle de viaje</h2>
+        <div className="ucs-content trip-detail-content">
 
                 {isLoaded ? (
                     <GoogleMap
@@ -220,66 +210,53 @@ export default function TripDetail({
 
                 {(datosConductor || vehiculo) && <hr className="trip-detail-divider" />}
 
-                {datosConductor && (
-                    <details className="trip-detail-accordion">
-                        <summary>
-                            <User size={14} />
-                            {datosConductor.nombre || "Conductor"}
-                        </summary>
-                        <div className="trip-detail-accordion__body">
-                            {datosConductor.fotoPerfil && (
-                                <img
-                                    src={datosConductor.fotoPerfil}
-                                    alt="Foto del conductor"
-                                    className="trip-detail-avatar"
-                                />
-                            )}
-                            {datosConductor.whatsapp && (
-                                <p><strong>WhatsApp:</strong> {datosConductor.whatsapp}</p>
-                            )}
-                            <p>
-                                <strong>Reputación: </strong>
-                                {reputacion !== null
-                                    ? <StarRating value={reputacion} count={totalOpiniones} />
-                                    : "Sin calificaciones aún"
-                                }
-                            </p>
+                {/* Driver row — taps open their profile card in the same sheet */}
+                {datosConductor && viaje.conductor?.uid && (
+                    <button
+                        className="trip-detail-driver-row"
+                        onClick={() => openCard(viaje.conductor.uid, "conductor")}
+                    >
+                        <div className="trip-detail-driver-row__avatar">
+                            {(datosConductor.fotoURL || datosConductor.fotoPerfil)
+                                ? <img src={datosConductor.fotoURL || datosConductor.fotoPerfil} alt={datosConductor.nombre} />
+                                : <span>{(datosConductor.nombre || "C")[0].toUpperCase()}</span>
+                            }
                         </div>
-                    </details>
+                        <div className="trip-detail-driver-row__info">
+                            <span className="trip-detail-driver-row__name">
+                                {datosConductor.nombre || "Conductor"}
+                            </span>
+                            {reputacion !== null
+                                ? <StarRating value={reputacion} count={totalOpiniones} />
+                                : <span className="trip-detail-driver-row__no-rating">Sin calificaciones aún</span>
+                            }
+                        </div>
+                        <ChevronRight size={16} className="trip-detail-driver-row__chevron" />
+                    </button>
                 )}
 
+                {/* Vehicle accordion — year in title, photo full-bleed, no plate */}
                 {vehiculo && (
                     <details className="trip-detail-accordion">
                         <summary>
                             <Truck size={14} />
-                            {vehiculo.brand || "Vehículo"} {vehiculo.model || ""}
+                            {[vehiculo.brand, vehiculo.model].filter(Boolean).join(" ") || "Vehículo"}
+                            {vehiculo.year && <span className="trip-detail-vehicle-year"> — {vehiculo.year}</span>}
                         </summary>
-                        <div className="trip-detail-accordion__body">
-                            {vehiculo.photoUrl && (
-                                <img
-                                    src={vehiculo.photoUrl}
-                                    alt="Foto del vehículo"
-                                    className="trip-detail-vehicle-img"
-                                />
-                            )}
-                            <p><strong>Año:</strong> {vehiculo.year || "-"}</p>
-                            <p><strong>Patente:</strong> {vehiculo.plate || "-"}</p>
-                        </div>
+                        {vehiculo.photoUrl
+                            ? <img src={vehiculo.photoUrl} alt="Foto del vehículo" className="trip-detail-vehicle-img" />
+                            : <div className="trip-detail-accordion__body">
+                                <span style={{ color: "var(--color-text-muted)", fontSize: "var(--text-sm)" }}>Sin foto</span>
+                              </div>
+                        }
                     </details>
                 )}
 
                 <div className="trip-detail-actions">
                     <button
-                        className="button neutral"
-                        onClick={onClose}
-                        disabled={parentLoading || reservando}
-                    >
-                        Volver
-                    </button>
-                    <button
                         className="button"
                         onClick={handleConfirmarReserva}
-                        disabled={parentLoading || reservando || viaje.asientos < 1}
+                        disabled={reservando || viaje.asientos < 1}
                     >
                         {reservando ? "Reservando…" : viaje.asientos > 0 ? "Confirmar reserva" : "Sin asientos"}
                     </button>
@@ -289,14 +266,12 @@ export default function TripDetail({
                             className="button"
                             style={{ backgroundColor: "var(--color-info)" }}
                             onClick={() => setAbrirEnvio(true)}
-                            disabled={parentLoading}
                         >
                             <Package size={14} />
                             Solicitar envío
                         </button>
                     )}
                 </div>
-            </div>
 
             {abrirEnvio && (
                 <RequestShipment

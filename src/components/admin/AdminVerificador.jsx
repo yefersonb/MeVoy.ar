@@ -51,12 +51,15 @@ function DocSlot({ label, url }) {
     );
 }
 
-// Front + back pair in a 2-col row
-function DocPair({ frontLabel, frontUrl, backLabel, backUrl }) {
+// Titled section with front + back in a wrapping 2-col row
+function DocGroup({ title, frontUrl, backUrl }) {
     return (
-        <div className="admin-doc-pair">
-            <DocSlot label={frontLabel} url={frontUrl} />
-            <DocSlot label={backLabel}  url={backUrl} />
+        <div className="admin-doc-group">
+            <span className="admin-doc-group__title">{title}</span>
+            <div className="admin-doc-pair">
+                <DocSlot label="Frente" url={frontUrl} />
+                <DocSlot label="Dorso"  url={backUrl} />
+            </div>
         </div>
     );
 }
@@ -132,18 +135,16 @@ function IdentityCard({ item }) {
 
             {expanded && (
                 <>
-                    {/* Paired docs */}
-                    <DocPair
-                        frontLabel="DNI Frente" frontUrl={item.dniFrenteURL}
-                        backLabel="DNI Dorso"   backUrl={item.dniDorsoURL}
-                    />
-                    <DocPair
-                        frontLabel="Licencia Frente" frontUrl={item.licenciaFrenteURL}
-                        backLabel="Licencia Dorso"   backUrl={item.licenciaDorsoURL}
-                    />
-                    <div className="admin-doc-grid admin-doc-grid--solo">
-                        <DocSlot label="Selfie" url={item.selfieURL} />
-                    </div>
+                    <DocGroup title="DNI"      frontUrl={item.dniFrenteURL}      backUrl={item.dniDorsoURL}      />
+                    <DocGroup title="Licencia" frontUrl={item.licenciaFrenteURL} backUrl={item.licenciaDorsoURL} />
+                    {item.selfieURL && (
+                        <div className="admin-doc-group">
+                            <span className="admin-doc-group__title">Selfie</span>
+                            <div className="admin-doc-grid admin-doc-grid--solo">
+                                <DocSlot label="" url={item.selfieURL} />
+                            </div>
+                        </div>
+                    )}
 
                     {/* Internal note */}
                     <div className="rack-s">

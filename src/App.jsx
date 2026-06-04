@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { User, CreditCard, List, LogOut, ChevronRight } from "react-feather";
+import { User, CreditCard, List, LogOut, ChevronRight, Shield } from "react-feather";
 import { CarIcon } from "./components/common/icons";
 import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
@@ -26,6 +26,7 @@ import Spinner from "./components/common/Spinner";
 // Conductor
 import DriverDashboard from "./components/DriverDashboard";
 import VehiculosConductor from "./components/VehiculosConductor";
+import DriverVerificationWizard from "./components/DriverVerificationWizard";
 
 // Viajero
 import TravelerDashboard from "./components/TravelerDashboard";
@@ -179,6 +180,9 @@ export default function App() {
                         <button className="action-list__item" onClick={() => handleSectionChange("vehiculos")}>
                             <CarIcon size={16} /> Mis vehículos
                         </button>
+                        <button className="action-list__item" onClick={() => handleSectionChange("verificacion")}>
+                            <Shield size={16} /> Verificación de identidad
+                        </button>
                     </>
                 )}
                 {/* TODO: remove — test button for the rating drawer */}
@@ -216,9 +220,12 @@ export default function App() {
     // --- Main content per role / section ---
 
     const renderContent = () => {
-        if (activeSection === "perfil")                        return <TravelerProfilePage />;
-        if (activeSection === "mas")                           return renderMas();
-        if (activeSection === "vehiculos" && rol === "conductor") return <VehiculosConductor />;
+        if (activeSection === "perfil")      return <TravelerProfilePage />;
+        if (activeSection === "mas")         return renderMas();
+        if (activeSection === "vehiculos"    && rol === "conductor") return <VehiculosConductor />;
+        if (activeSection === "verificacion" && rol === "conductor") return (
+            <DriverVerificationWizard onExit={() => handleSectionChange("mas")} />
+        );
 
         if (rol === "conductor") {
             return <DriverDashboard

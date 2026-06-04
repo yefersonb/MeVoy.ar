@@ -1,701 +1,494 @@
-﻿// src/components/DriverVerificationWizard.jsx
-// ------------------------------------------------------------
-// Step-by-step wizard for the DRIVER to upload and verify:
-// 1) Basic info (name, DNI)
-// 2) ID document (front/back)
-// 3) Driver's license (front/back)
-// 4) Verification selfie (optional but recommended)
-// 5) Review and submit for verification (status = "pending")
-//
-// • Auto-saves progress to Firestore
-// • Uploads files to Firebase Storage with progress bar
-// • Shows overall progress bar and per-step status
-// • Allows resuming where the driver left off
-// • Simple design (works with or without Tailwind)
-//
-// Requirements:
-//  - Firebase configured in src/firebase.js exporting { auth, db, storage }
-//  - Firestore collection: "verificaciones" doc per uid
-//  - Storage: "verificaciones/{uid}/{docKey}/file"
-
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import DocCamera, { ID_CARD_RATIO } from './common/DocCamera';
-import { auth, db, storage } from '../firebase';
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import { CheckCircle, Clock, AlertCircle, Camera, Image, ChevronRight, Check, ArrowRight } from "react-feather";
+import DocCamera, { ID_CARD_RATIO } from "./common/DocCamera";
+import { auth, db, storage } from "../firebase";
 import {
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  serverTimestamp,
-} from 'firebase/firestore';
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    serverTimestamp,
+} from "firebase/firestore";
 import {
-  ref as storageRef,
-  uploadBytesResumable,
-  getDownloadURL,
-} from 'firebase/storage';
-import ProgressBar from './ui/ProgressBar/Basic/Basic';
-import Spinner from './common/Spinner';
-import SelfieUploaderMobile from "./verification/SelfieUploaderMobile";
+    ref as storageRef,
+    uploadBytesResumable,
+    getDownloadURL,
+} from "firebase/storage";
+import InputField from "./ui/InputField";
+import Spinner from "./common/Spinner";
 
+const COLL         = "verificaciones";
+const STORAGE_ROOT = "verificaciones";
+
+const STEPS = [
+    { key: "datos",    label: "Tus datos" },
+    { key: "dni",      label: "DNI" },
+    { key: "licencia", label: "Licencia" },
+    { key: "resumen",  label: "Confirmar" },
+];
+
+const STATUS_CONFIG = {
+    incomplete: { label: "Incompleto",   cls: "verif-status--incomplete", Icon: null },
+    pending:    { label: "En revisión",  cls: "verif-status--pending",    Icon: Clock },
+    verified:   { label: "Verificado",   cls: "verif-status--verified",   Icon: CheckCircle },
+    rejected:   { label: "Rechazado",    cls: "verif-status--rejected",   Icon: AlertCircle },
+};
 
 export default function DriverVerificationWizard({ onExit }) {
-  const COLL = 'verificaciones';
-  const STORAGE_ROOT = 'verificaciones';
+    const user = auth.currentUser;
+    const uid  = user?.uid;
 
-  const user = auth.currentUser;
-  const uid = user?.uid;
+    const [loading,   setLoading]   = useState(true);
+    const [saving,    setSaving]    = useState(false);
+    const [step,      setStep]      = useState(0);
+    const [status,    setStatus]    = useState("incomplete");
+    const [error,     setError]     = useState("");
+    const [datos,     setDatos]     = useState({ nombreCompleto: "", dniNumero: "" });
+    const [urls,      setUrls]      = useState({ dniFrente: "", dniDorso: "", licFrente: "", licDorso: "" });
+    const [uploading, setUploading] = useState({});
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [step, setStep] = useState(0);
-  const [status, setStatus] = useState('incomplete'); // incomplete|pending|verified|rejected
-  const [error, setError] = useState('');
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                if (!uid) { setLoading(false); return; }
+                const ref  = doc(db, COLL, uid);
+                const snap = await getDoc(ref);
+                if (snap.exists()) {
+                    const d = snap.data();
+                    setDatos({ nombreCompleto: d.nombreCompleto || "", dniNumero: d.dniNumero || "" });
+                    setUrls({
+                        dniFrente: d.dniFrenteURL       || "",
+                        dniDorso:  d.dniDorsoURL        || "",
+                        licFrente: d.licenciaFrenteURL  || "",
+                        licDorso:  d.licenciaDorsoURL   || "",
+                    });
+                    setStatus(d.status || "incomplete");
+                    if (typeof d.step === "number") setStep(d.step);
+                } else {
+                    await setDoc(ref, { status: "incomplete", createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                }
+            } catch (e) {
+                console.error(e);
+                setError("No se pudo cargar tu verificación.");
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
+        return () => { mounted = false; };
+    }, [uid]);
 
-  // Form data and file URLs
-  const [datos, setDatos] = useState({ nombreCompleto: '', dniNumero: '' });
-  const [urls, setUrls] = useState({
-    dniFrente: '',
-    dniDorso: '',
-    licFrente: '',
-    licDorso: '',
-    selfie: '',
-  });
-  const [uploading, setUploading] = useState({}); // progreso por clave 0..100
+    const pasoCompletado = (idx) => {
+        if (idx === 0) return !!(datos.nombreCompleto && datos.dniNumero);
+        if (idx === 1) return !!(urls.dniFrente && urls.dniDorso);
+        if (idx === 2) return !!(urls.licFrente && urls.licDorso);
+        return false;
+    };
 
-  // Load existing progress if any
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        if (!uid) {
-          setError('Necesitás iniciar sesión para verificar tu identidad.');
-          setLoading(false);
-          return;
-        }
-        const ref = doc(db, COLL, uid);
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
-          const d = snap.data();
-          setDatos({
-            nombreCompleto: d.nombreCompleto || '',
-            dniNumero: d.dniNumero || '',
-          });
-          setUrls({
-            dniFrente: d.dniFrenteURL || '',
-            dniDorso: d.dniDorsoURL || '',
-            licFrente: d.licenciaFrenteURL || '',
-            licDorso: d.licenciaDorsoURL || '',
-            selfie: d.selfieURL || '',
-          });
-          setStatus(d.status || 'incomplete');
-          if (typeof d.step === 'number') setStep(d.step);
-        } else {
-          await setDoc(ref, {
-            status: 'incomplete',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-          });
-        }
-      } catch (e) {
-        console.error(e);
-        setError('No se pudo cargar tu verificación.');
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => { mounted = false; };
-  }, [uid]);
-
-  const steps = useMemo(() => ([
-    { key: 'datos', label: 'Tus datos' },
-    { key: 'dni', label: 'DNI' },
-    { key: 'licencia', label: 'Licencia' },
-    { key: 'selfie', label: 'Selfie' },
-    { key: 'resumen', label: 'Confirmar' },
-  ]), []);
-
-  const totalSteps = steps.length;
-  const progress = Math.round((step) / (totalSteps - 1) * 100);
-
-  const completarPasoActual = async () => {
-    setSaving(true);
-    setError('');
-    try {
-      const ref = doc(db, COLL, uid);
-      await updateDoc(ref, {
-        nombreCompleto: datos.nombreCompleto,
-        dniNumero: datos.dniNumero,
-        dniFrenteURL: urls.dniFrente,
-        dniDorsoURL: urls.dniDorso,
-        licenciaFrenteURL: urls.licFrente,
-        licenciaDorsoURL: urls.licDorso,
-        selfieURL: urls.selfie,
-        step,
-        status,
-        updatedAt: serverTimestamp(),
-      });
-    } catch (e) {
-      console.error(e);
-      setError('No se pudo guardar. Revisá tu conexión.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const goNext = async () => {
-    if (step === 0) {
-      if (!datos.nombreCompleto || !datos.dniNumero) {
-        setError('Completá tu nombre y DNI para continuar.');
-        return;
-      }
-    }
-    if (step === 1) {
-      if (!urls.dniFrente || !urls.dniDorso) {
-        setError('Subí frente y dorso del DNI.');
-        return;
-      }
-    }
-    if (step === 2) {
-      if (!urls.licFrente || !urls.licDorso) {
-        setError('Subí frente y dorso de la licencia.');
-        return;
-      }
-    }
-
-    await completarPasoActual();
-    setError('');
-    setStep((s) => Math.min(s + 1, totalSteps - 1));
-  };
-
-  const goBack = async () => {
-    await completarPasoActual();
-    setStep((s) => Math.max(s - 1, 0));
-  };
-
-  const onSubmit = async () => {
-    setSaving(true);
-    setError('');
-    try {
-      const ref = doc(db, COLL, uid);
-      await updateDoc(ref, {
-        nombreCompleto: datos.nombreCompleto,
-        dniNumero: datos.dniNumero,
-        dniFrenteURL: urls.dniFrente,
-        dniDorsoURL: urls.dniDorso,
-        licenciaFrenteURL: urls.licFrente,
-        licenciaDorsoURL: urls.licDorso,
-        selfieURL: urls.selfie,
-        status: 'pending',
-        submittedAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-      setStatus('pending');
-    } catch (e) {
-      console.error(e);
-      setError('No se pudo enviar a verificación.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleFile = async (key, file) => {
-    if (!file || !uid) return;
-    const maxMB = 8;
-    if (file.size > maxMB * 1024 * 1024) {
-      alert(`El archivo supera ${maxMB} MB.`);
-      return;
-    }
-    const allowed = ['image/jpeg','image/png','image/webp','image/heic','image/heif'];
-    if (!allowed.includes(file.type)) {
-      alert('Formato no soportado. Subí JPG/PNG/WebP/HEIC.');
-      return;
-    }
-
-    const path = `${STORAGE_ROOT}/${uid}/${key}/${Date.now()}-${file.name}`;
-    const ref = storageRef(storage, path);
-    const task = uploadBytesResumable(ref, file, { contentType: file.type });
-
-    return new Promise((resolve, reject) => {
-      setUploading((u) => ({ ...u, [key]: 0 }));
-      task.on('state_changed', (snap) => {
-        const p = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-        setUploading((u) => ({ ...u, [key]: p }));
-      }, (err) => {
-        console.error(err);
-        setUploading((u) => ({ ...u, [key]: undefined }));
-        reject(err);
-      }, async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        setUrls((prev) => ({ ...prev, [key]: url }));
-        setUploading((u) => ({ ...u, [key]: 100 }));
-        // Map local state keys → Firestore field names the admin page reads
-        const firestoreField = {
-          dniFrente: 'dniFrenteURL',
-          dniDorso:  'dniDorsoURL',
-          licFrente: 'licenciaFrenteURL',
-          licDorso:  'licenciaDorsoURL',
-          selfie:    'selfieURL',
-        }[key] || `${key}URL`;
+    const saveProgress = async () => {
+        if (!uid) return;
+        setSaving(true);
         try {
-          await updateDoc(doc(db, COLL, uid), {
-            [firestoreField]: url,
-            updatedAt: serverTimestamp(),
-          });
+            await updateDoc(doc(db, COLL, uid), {
+                nombreCompleto:   datos.nombreCompleto,
+                dniNumero:        datos.dniNumero,
+                dniFrenteURL:     urls.dniFrente,
+                dniDorsoURL:      urls.dniDorso,
+                licenciaFrenteURL: urls.licFrente,
+                licenciaDorsoURL: urls.licDorso,
+                step,
+                status,
+                updatedAt: serverTimestamp(),
+            });
         } catch (e) {
-          await setDoc(doc(db, COLL, uid), {
-            [firestoreField]: url,
-            updatedAt: serverTimestamp(),
-          }, { merge: true });
+            console.error(e);
+            setError("No se pudo guardar. Revisá tu conexión.");
+        } finally {
+            setSaving(false);
         }
-        resolve(url);
-      });
-    });
-  };
+    };
 
-  const pasoCompletado = (idx) => {
-    if (idx === 0) return !!(datos.nombreCompleto && datos.dniNumero);
-    if (idx === 1) return !!(urls.dniFrente && urls.dniDorso);
-    if (idx === 2) return !!(urls.licFrente && urls.licDorso);
-    if (idx === 3) return !!urls.selfie; // optional
-    return false;
-  };
+    const goNext = async () => {
+        if (step === 0 && (!datos.nombreCompleto || !datos.dniNumero)) {
+            setError("Completá tu nombre y número de DNI para continuar.");
+            return;
+        }
+        if (step === 1 && (!urls.dniFrente || !urls.dniDorso)) {
+            setError("Subí el frente y el dorso del DNI.");
+            return;
+        }
+        if (step === 2 && (!urls.licFrente || !urls.licDorso)) {
+            setError("Subí el frente y el dorso de la licencia.");
+            return;
+        }
+        setError("");
+        await saveProgress();
+        setStep(s => Math.min(s + 1, STEPS.length - 1));
+    };
 
-  if (loading) return <Spinner />;
-  if (!uid) return (
-    <EmptyCard title="Iniciá sesión">
-      <p>Tenés que iniciar sesión para verificar tu identidad.</p>
-    </EmptyCard>
-  );
+    const goBack = async () => {
+        setError("");
+        await saveProgress();
+        setStep(s => Math.max(s - 1, 0));
+    };
 
-  return (
-    <div>
-      <StatusTag status={status} />
-      <Stepper steps={steps} current={step} isDone={pasoCompletado} progress={progress} />
+    const onSubmit = async () => {
+        setSaving(true);
+        setError("");
+        try {
+            await updateDoc(doc(db, COLL, uid), {
+                nombreCompleto:    datos.nombreCompleto,
+                dniNumero:         datos.dniNumero,
+                dniFrenteURL:      urls.dniFrente,
+                dniDorsoURL:       urls.dniDorso,
+                licenciaFrenteURL: urls.licFrente,
+                licenciaDorsoURL:  urls.licDorso,
+                status:            "pending",
+                submittedAt:       serverTimestamp(),
+                updatedAt:         serverTimestamp(),
+            });
+            setStatus("pending");
+        } catch (e) {
+            console.error(e);
+            setError("No se pudo enviar a verificación. Intentá de nuevo.");
+        } finally {
+            setSaving(false);
+        }
+    };
 
-      {error && (
-        <div style={{ background:'#FEF2F2', border:'1px solid #FEE2E2', borderRadius:12, color:'#991B1B' }}>
-          <span style={{fontSize:12}}>{error}</span>
+    const handleFile = async (key, file) => {
+        if (!file || !uid) return;
+        const maxMB = 8;
+        if (file.size > maxMB * 1024 * 1024) { setError(`El archivo supera ${maxMB} MB.`); return; }
+        const allowed = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+        if (!allowed.includes(file.type)) { setError("Formato no soportado. Usá JPG, PNG, WebP o HEIC."); return; }
+
+        const path = `${STORAGE_ROOT}/${uid}/${key}/${Date.now()}-${file.name}`;
+        const task = uploadBytesResumable(storageRef(storage, path), file, { contentType: file.type });
+
+        return new Promise((resolve, reject) => {
+            setUploading(u => ({ ...u, [key]: 0 }));
+            task.on("state_changed",
+                snap => {
+                    setUploading(u => ({ ...u, [key]: Math.round((snap.bytesTransferred / snap.totalBytes) * 100) }));
+                },
+                err => {
+                    console.error(err);
+                    setUploading(u => { const n = { ...u }; delete n[key]; return n; });
+                    reject(err);
+                },
+                async () => {
+                    const url = await getDownloadURL(task.snapshot.ref);
+                    setUrls(prev => ({ ...prev, [key]: url }));
+                    setUploading(u => ({ ...u, [key]: 100 }));
+                    const fieldMap = {
+                        dniFrente: "dniFrenteURL",
+                        dniDorso:  "dniDorsoURL",
+                        licFrente: "licenciaFrenteURL",
+                        licDorso:  "licenciaDorsoURL",
+                    };
+                    try {
+                        await updateDoc(doc(db, COLL, uid), { [fieldMap[key]]: url, updatedAt: serverTimestamp() });
+                    } catch {
+                        await setDoc(doc(db, COLL, uid), { [fieldMap[key]]: url, updatedAt: serverTimestamp() }, { merge: true });
+                    }
+                    resolve(url);
+                }
+            );
+        });
+    };
+
+    if (loading) return (
+        <div className="verif-wizard verif-wizard--loading">
+            <Spinner />
         </div>
-      )}
+    );
 
-      <div>
-        {step === 0 && (
-          <PasoDatos datos={datos} setDatos={setDatos} />
-        )}
-        {step === 1 && (
-          <PasoDocumentos
-            title="DNI"
-            frenteKey="dniFrente"
-            dorsoKey="dniDorso"
-            urls={urls}
-            uploading={uploading}
-            onFile={handleFile}
-          />
-        )}
-        {step === 2 && (
-          <PasoDocumentos
-            title="Licencia de conducir"
-            frenteKey="licFrente"
-            dorsoKey="licDorso"
-            urls={urls}
-            uploading={uploading}
-            onFile={handleFile}
-          />
-        )}
-{step === 3 && (
-  <PasoSelfie
-    url={urls.selfie}
-    onUploaded={({ url }) => {
-      // update local state immediately for instant preview
-      setUrls(prev => ({ ...prev, selfie: url }));
-      // Firestore save happens inside SelfieUploaderMobile
-    }}
-  />
-)}
-        {step === 4 && (
-          <PasoResumen datos={datos} urls={urls} status={status} />
-        )}
-      </div>
-
-      <div >
-        <button className='button' onClick={goBack} disabled={step===0}>Atrás</button>
-        <div >
-          <button  onClick={completarPasoActual} disabled={saving}>{saving? 'Guardando...' : 'Guardar'}</button>
-          {step < totalSteps - 1 ? (
-            <button  style={{background:'#000', color:'var(--color-surface)'}} onClick={goNext}>Siguiente</button>
-          ) : (
-            <button  style={{background:'#000', color:'var(--color-surface)'}} onClick={onSubmit} disabled={status==='pending'}>
-              {status==='pending' ? 'En revisión' : 'Enviar a revisión'}
-            </button>
-          )}
+    if (!uid) return (
+        <div className="verif-wizard">
+            <p className="verif-error">Tenés que iniciar sesión para verificar tu identidad.</p>
         </div>
-      </div>
-          
-        {onExit && (
-          <button onClick={onExit}>Volver</button>
-        )}
-      <p  style={{color:'var(--color-text-muted)', marginTop:16}}>Tus datos y documentos se guardan de forma segura. Solo los verá el equipo de verificación.</p>
+    );
 
-    </div>
-  );
-}
+    const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.incomplete;
 
-// ----------------- Subcomponentes -----------------
-function Splash({ text }) {
-  return (
-    <div style={{height:256}} >
-      <div  style={{color:'#4b5563'}}>{text || 'Cargando...'}</div>
-    </div>
-  );
-}
+    return (
+        <div className="verif-wizard">
 
-function EmptyCard({ title, children }) {
-  return (
-    <div >
-      <h3 >{title}</h3>
-      <div  style={{color:'#374151'}}>{children}</div>
-    </div>
-  );
-}
+            {/* Status banner */}
+            {status !== "incomplete" && (
+                <div className={`verif-status-banner ${cfg.cls}`}>
+                    {cfg.Icon && <cfg.Icon size={16} />}
+                    <span>{cfg.label}</span>
+                    {status === "rejected" && (
+                        <span className="verif-status-banner__hint"> — revisá y volvé a enviar</span>
+                    )}
+                </div>
+            )}
 
-function Progress({
-  value = 0,
-  height = 10,                 // alto de la barra
-  trackColor = '#E5E7EB',      // color del fondo (gris claro)
-  barColor = '#9CA3AF',        // color de la barra (gris medio)
-  showLabel = true             // mostrar % centrado
-}) {
-  const pct = Math.min(100, Math.max(0, Math.round(value)));
-  const textColor = pct >= 50 ? 'var(--color-surface)' : '#111827'; // blanco si hay bastante relleno
-  return (
-    <ProgressBar color="var(--color-primary)"/>
-  );
+            {/* Step progress */}
+            <div className="verif-stepper">
+                {STEPS.map((s, i) => {
+                    const done   = pasoCompletado(i);
+                    const active = i === step;
+                    return (
+                        <div
+                            key={s.key}
+                            className={[
+                                "verif-step",
+                                active ? "verif-step--active" : "",
+                                done   ? "verif-step--done"   : "",
+                            ].filter(Boolean).join(" ")}
+                        >
+                            <div className="verif-step__icon">
+                                {done
+                                    ? <Check size={13} strokeWidth={3} />
+                                    : <span>{i + 1}</span>
+                                }
+                            </div>
+                            <span className="verif-step__label">{s.label}</span>
+                            {i < STEPS.length - 1 && <div className="verif-step__connector" />}
+                        </div>
+                    );
+                })}
+            </div>
 
-  return (
-    <div
-      role="progressbar"
-      aria-valuenow={pct}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height,
-        background: trackColor,
-        borderRadius: 9999,
-        overflow: 'hidden'
-      }}
-      >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: `${pct}%`,
-          background: barColor,
-          transition: 'width 240ms ease',
-        }}
-      />
-      {showLabel && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12,
-            fontWeight: 600,
-            color: textColor,
-            // subtle shadow for readability on both fill levels
-            textShadow: '0 1px 2px rgba(0,0,0,0.25)',
-            userSelect: 'none'
-          }}
-        >
-          {pct}%
+            {/* Error */}
+            {error && <p className="verif-error">{error}</p>}
+
+            {/* Step body */}
+            <div className="verif-body">
+                {step === 0 && <PasoDatos datos={datos} setDatos={setDatos} />}
+                {step === 1 && (
+                    <PasoDocumentos
+                        title="DNI"
+                        frenteKey="dniFrente"
+                        dorsoKey="dniDorso"
+                        urls={urls}
+                        uploading={uploading}
+                        onFile={handleFile}
+                    />
+                )}
+                {step === 2 && (
+                    <PasoDocumentos
+                        title="Licencia de conducir"
+                        frenteKey="licFrente"
+                        dorsoKey="licDorso"
+                        urls={urls}
+                        uploading={uploading}
+                        onFile={handleFile}
+                    />
+                )}
+                {step === 3 && (
+                    <PasoResumen datos={datos} urls={urls} status={status} />
+                )}
+            </div>
+
+            {/* Navigation */}
+            <div className="verif-actions">
+                {step > 0 && (
+                    <button className="button neutral" onClick={goBack} disabled={saving}>
+                        Atrás
+                    </button>
+                )}
+                <div className="verif-actions__right">
+                    {step < STEPS.length - 1 ? (
+                        <button className="button" onClick={goNext} disabled={saving}>
+                            {saving ? "Guardando…" : "Siguiente"}
+                            <ArrowRight size={15} />
+                        </button>
+                    ) : (
+                        <button
+                            className="button"
+                            onClick={onSubmit}
+                            disabled={saving || status === "pending" || status === "verified"}
+                        >
+                            {saving           ? "Enviando…"     :
+                             status === "pending"   ? "En revisión"  :
+                             status === "verified"  ? "Verificado ✓" :
+                             "Enviar a revisión"}
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {onExit && (
+                <button className="button neutral button--fill verif-exit-btn" onClick={onExit}>
+                    Volver
+                </button>
+            )}
+
+            <p className="verif-privacy-note">
+                Tus datos y documentos se guardan de forma segura y solo los verá el equipo de verificación.
+            </p>
         </div>
-      )}
-    </div>
-  );
+    );
 }
 
-function ChecklistItem({done = false, active = false, label = ""}){
-  return(
-    <div style={{padding: "0.2rem", display: "flex", justifyContent: "flex-start", alignItems: "center", fontWeight: 600, transition: "0.5s", opacity: `${active ? 1 : 0.3}`}}>
-      <div style={{position: "relative", width: 24, height: 24}}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={"#000"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-          style={{transition: "transform .6s ease, opacity .6s ease", transformOrigin: "center", position: 'absolute',
-              transform: `${(active && (!done)) ? "rotateX(0deg)" : "rotateX(-180deg)"}`,
-              opacity: `${(active && (!done)) ? "1" : "0"}`
-            }}
-          >
-          <path d="M15 17l5-5-5-5 5 5 -12 0" />
-        </svg>
-
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={"#094"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-          style={{transition: "transform .3s ease, opacity .15s ease", transformOrigin: "center", position: 'absolute',
-              transform: `${done ? "translateY(0px)" : "translateY(100%)"}`,
-              opacity: `${done ? "1" : "0"}`
-            }}
-          >
-          <path d="M7 9.5l5 5 10-10" />
-        </svg>
-      </div>
-      
-      <div style={{padding: "0.2rem 1rem"}}> {label} </div>
-    </div>
-  );
-}
-
-function Stepper({ steps, current, isDone, progress = 0 }) {
-  return (
-    <div style={{marginTop: "2rem"}}>
-      {
-        steps.map(
-          (s, i) => {
-            const done = isDone(i);
-            const active = i === current;
-            const base = { display:'inline-flex', alignItems:'center', justifyContent:'center', width:24, height:24, borderRadius:'9999px', border:'1px solid #D1D5DB' };
-            return (<ChecklistItem key={s.key} active={active} done={done} label={s.label}/>);
-          }
-        )
-      }
-    </div>
-  );
-}
+// ── Step components ──────────────────────────────────────────────────────────
 
 function PasoDatos({ datos, setDatos }) {
-  return (
-    <div style={{marginTop: "1rem"}}>
-      <div>
-        <label >Nombre completo</label>
-        <input  value={datos.nombreCompleto}
-               onChange={(e)=>setDatos(v=>({...v, nombreCompleto:e.target.value}))} placeholder="Tal como figura en tu DNI" />
-      </div>
-      <div>
-        <label >Número de DNI</label>
-        <input  value={datos.dniNumero}
-               onChange={(e)=>setDatos(v=>({...v, dniNumero:e.target.value.replace(/\D/g,'')}))} inputMode="numeric" placeholder="Ej. 30123456" />
-        <p  style={{color:'var(--color-text-muted)', marginTop:4}}>Usamos estos datos solo para verificar tu identidad.</p>
-      </div>
-    </div>
-  );
+    return (
+        <div className="verif-paso verif-paso--datos">
+            <p className="verif-paso__hint">
+                Ingresá los datos tal como figuran en tu documento de identidad.
+            </p>
+            <InputField
+                label="Nombre completo"
+                value={datos.nombreCompleto}
+                onChange={e => setDatos(v => ({ ...v, nombreCompleto: e.target.value }))}
+                placeholder="Tal como figura en tu DNI"
+            />
+            <InputField
+                label="Número de DNI"
+                value={datos.dniNumero}
+                onChange={e => setDatos(v => ({ ...v, dniNumero: e.target.value.replace(/\D/g, "") }))}
+                placeholder="Ej. 30123456"
+                inputMode="numeric"
+            />
+        </div>
+    );
 }
 
 function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile }) {
-  return (
-    <div >
-      <DocTile
-        label={`${title} - Frente`}
-        url={urls[frenteKey]}
-        progress={uploading[frenteKey]}
-        onSelect={(file)=>onFile(frenteKey, file)}
-      />
-      <DocTile
-        label={`${title} - Dorso`}
-        url={urls[dorsoKey]}
-        progress={uploading[dorsoKey]}
-        onSelect={(file)=>onFile(dorsoKey, file)}
-      />
-    </div>
-  );
-}
-
-function PasoSelfie({ url, onUploaded }) {
-  return (
-    <div >
-      {/* Modular uploader (opens front camera on mobile, compresses, uploads, saves to Firestore) */}
-      <SelfieUploaderMobile onUploaded={onUploaded} />
-
-      {/* Preview existing selfie if one is saved */}
-      {url && (
-        <div style={{ marginTop: 12 }}>
-          <div style={{color:'var(--color-text-muted)', marginBottom:8}}>Selfie existente</div>
-          <div style={{ height: 160, background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
-            <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
-              <img src={url} alt="Selfie" style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' }} />
-            </a>
-          </div>
+    return (
+        <div className="verif-paso">
+            <p className="verif-paso__hint">
+                Fotografiá el frente y el dorso de tu {title.toLowerCase()}. Asegurate de que los datos se lean con claridad.
+            </p>
+            <div className="verif-doc-pair">
+                <DocTile
+                    label="Frente"
+                    url={urls[frenteKey]}
+                    progress={uploading[frenteKey]}
+                    onSelect={file => onFile(frenteKey, file)}
+                />
+                <DocTile
+                    label="Dorso"
+                    url={urls[dorsoKey]}
+                    progress={uploading[dorsoKey]}
+                    onSelect={file => onFile(dorsoKey, file)}
+                />
+            </div>
         </div>
-      )}
-
-      <div >
-        <h4 >Consejos</h4>
-        <ul  style={{color:'#374151', marginTop:8}}>
-          <li>Buena luz, sin reflejos.</li>
-          <li>Foto nítida y completa, que se lean los datos.</li>
-          <li>Formatos admitidos: JPG, PNG, WebP, HEIC. Máx 8MB.</li>
-        </ul>
-      </div>
-    </div>
-  );
+    );
 }
 
 function PasoResumen({ datos, urls, status }) {
-  return (
-    <div >
-      <div >
-        <KeyVal k="Nombre" v={datos.nombreCompleto || 'â€”'} />
-        <KeyVal k="DNI" v={datos.dniNumero || 'â€”'} />
-      </div>
-      <div >
-        <Thumb label="DNI Frente" url={urls.dniFrente} />
-        <Thumb label="DNI Dorso" url={urls.dniDorso} />
-        <Thumb label="Licencia Frente" url={urls.licFrente} />
-        <Thumb label="Licencia Dorso" url={urls.licDorso} />
-        <Thumb label="Selfie" url={urls.selfie} />
-      </div>
-      <div  style={{ background:'var(--color-bg)', border:'1px solid #E5E7EB', borderRadius:12, color:'#4B5563', fontSize:14 }}>
-        Estado actual: <StatusTag status={status} /> â€” Al enviar, quedará <strong>En revisión</strong> por un admin.
-      </div>
-    </div>
-  );
+    const allDocs = [
+        { label: "DNI — Frente",      url: urls.dniFrente },
+        { label: "DNI — Dorso",       url: urls.dniDorso  },
+        { label: "Licencia — Frente", url: urls.licFrente },
+        { label: "Licencia — Dorso",  url: urls.licDorso  },
+    ];
+    const allUploaded = allDocs.every(d => d.url);
+
+    return (
+        <div className="verif-paso verif-paso--resumen">
+            <div className="verif-summary-info">
+                <div className="verif-kv">
+                    <span className="verif-kv__key">Nombre</span>
+                    <span className="verif-kv__val">{datos.nombreCompleto || "—"}</span>
+                </div>
+                <div className="verif-kv">
+                    <span className="verif-kv__key">DNI</span>
+                    <span className="verif-kv__val">{datos.dniNumero || "—"}</span>
+                </div>
+            </div>
+
+            <div className="verif-thumb-grid">
+                {allDocs.map(({ label, url }) => (
+                    <div key={label} className="verif-thumb">
+                        <span className="verif-thumb__label">{label}</span>
+                        {url
+                            ? <a href={url} target="_blank" rel="noreferrer">
+                                <img src={url} alt={label} className="verif-thumb__img" />
+                              </a>
+                            : <div className="verif-thumb__empty">Sin foto</div>
+                        }
+                    </div>
+                ))}
+            </div>
+
+            {!allUploaded && (
+                <p className="verif-error">Faltan documentos. Volvé y subí todas las fotos.</p>
+            )}
+        </div>
+    );
 }
 
-function KeyVal({ k, v }) {
-  return (
-    <div >
-      <div  style={{textTransform:'uppercase', color:'var(--color-text-muted)'}}>{k}</div>
-      <div >{v}</div>
-    </div>
-  );
+// ── DocTile ──────────────────────────────────────────────────────────────────
+
+function DocTile({ label, url, progress, onSelect }) {
+    const fileRef     = useRef(null);
+    const [cam, setCam] = useState(false);
+
+    const handleChange = e => {
+        const file = e.target.files?.[0];
+        if (file) onSelect(file);
+        e.target.value = "";
+    };
+
+    const isUploading = typeof progress === "number" && progress < 100;
+
+    return (
+        <div className="verif-doc-tile">
+            <span className="verif-doc-tile__label">{label}</span>
+
+            {/* Preview area */}
+            <div className={`verif-doc-tile__preview${url ? " verif-doc-tile__preview--filled" : ""}`}>
+                {isUploading ? (
+                    <div className="verif-doc-tile__uploading">
+                        <div className="verif-doc-tile__progress-bar">
+                            <div className="verif-doc-tile__progress-fill" style={{ width: `${progress}%` }} />
+                        </div>
+                        <span>{progress}%</span>
+                    </div>
+                ) : url ? (
+                    <img src={url} alt={label} className="verif-doc-tile__img" />
+                ) : (
+                    <span className="verif-doc-tile__placeholder">Sin foto</span>
+                )}
+            </div>
+
+            {/* Action buttons */}
+            <div className="verif-doc-tile__actions">
+                <button
+                    type="button"
+                    className="button neutral verif-doc-tile__btn"
+                    onClick={() => setCam(true)}
+                    disabled={isUploading}
+                >
+                    <Camera size={14} />
+                    Cámara
+                </button>
+                <button
+                    type="button"
+                    className="button neutral verif-doc-tile__btn"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={isUploading}
+                >
+                    <Image size={14} />
+                    Galería
+                </button>
+            </div>
+
+            <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                onChange={handleChange}
+                style={{ display: "none" }}
+            />
+
+            {cam && (
+                <DocCamera
+                    aspectRatio={ID_CARD_RATIO}
+                    label={`Encuadrá el ${label} dentro del marco`}
+                    onCapture={file => { setCam(false); onSelect(file); }}
+                    onCancel={() => setCam(false)}
+                />
+            )}
+        </div>
+    );
 }
-
-function Thumb({ label, url }) {
-  // Small fixed height for summary thumbnails
-  const boxStyle = { height: 96, display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', borderRadius: 12, border:'1px solid #E5E7EB' };
-  const imgStyle = { maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' };
-
-  return (
-    <div >
-      <div  style={{color:'var(--color-text-muted)', marginBottom:8}}>{label}</div>
-      <div style={boxStyle}>
-        {url ? (
-          <a href={url} target="_blank" rel="noreferrer" style={{display:'block', width:'100%', height:'100%'}}>
-            <img src={url} alt={label} style={imgStyle} />
-          </a>
-        ) : (
-          <div style={{color:'#9CA3AF'}}>Sin archivo</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* TODO: Apply rendering logic for these status labels */
-function StatusTag({ status }) {
-  const map = {
-    incomplete: { text: 'Incompleto', bg:'#E5E7EB', fg:'var(--color-text)' },
-    pending:    { text: 'En revisión', bg:'#FEF3C7', fg:'#92400E' },
-    verified:   { text: 'Verificado', bg:'#BBF7D0', fg:'#065F46' },
-    rejected:   { text: 'Rechazado',  bg:'#FECACA', fg:'#7F1D1D' },
-  };
-  const s = map[status] || map.incomplete;
-  return (
-    <div>
-      <div style={{width: "100%", padding: "0.5rem 1rem", fontSize: "1.5rem", fontWeight: "600", display: "flex", justifyContent: "center", borderRadius: "5px", borderBottom: "5px solid var(--color-warning)"}}>
-        Seguí de completando tu documentación      
-      </div>
-
-      <div style={{width: "100%", padding: "0.5rem 1rem", fontWeight: "600", borderRadius: "5px", borderLeft: "5px solid #0003"}}>
-        Estamos validando tus datos...
-      </div>
-
-      <div style={{width: "100%", padding: "0.5rem 1rem", fontWeight: "600", borderRadius: "5px", borderLeft: "5px solid rgba(59, 253, 0, 0.59)"}}>
-        Verificado
-      </div>
-
-      <div style={{width: "100%", padding: "0.5rem 1rem", borderRadius: "5px", borderLeft: "5px solid rgba(253, 0, 0, 0.59)", backgroundColor: "rgba(253, 0, 0, 0.11)"}}>
-        <b>Rechazado</b> — No pudimos verificar tu identidad
-      </div>
-    </div>
-    /*
-      <span style={{ padding:'2px 8px', borderRadius:999, fontSize:12, background:s.bg, color:s.fg }}>
-        {s.text}
-      </span>
-    
-    */
-  );
-}
-
-function DocTile({ label, url, onSelect, progress, hint }) {
-  const fileRef = useRef(null);
-  const [cameraOpen, setCameraOpen] = useState(false);
-
-  const handleChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) onSelect(file);
-    e.target.value = '';
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (file) onSelect(file);
-  };
-
-  const previewBoxStyle = {
-    height: 160,
-    background: 'var(--color-bg)',
-    border: '1px solid #E5E7EB',
-    borderRadius: 12,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  };
-
-  return (
-    <div>
-      <div>
-        <div>{label}</div>
-        {hint && <div style={{ color: 'var(--color-text-muted)' }}>{hint}</div>}
-        {url && <a href={url} target="_blank" rel="noreferrer">Ver</a>}
-      </div>
-
-      <div
-        style={previewBoxStyle}
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-      >
-        {url ? (
-          <a href={url} target="_blank" rel="noreferrer" style={{ display:'block', width:'100%', height:'100%' }}>
-            <img src={url} alt={label} style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain', display:'block' }} />
-          </a>
-        ) : (
-          <span style={{ color: '#9CA3AF' }}>Sin foto</span>
-        )}
-      </div>
-
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        onChange={handleChange}
-        style={{ display: 'none' }}
-      />
-
-      <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
-        <button type="button" className="button neutral" onClick={() => setCameraOpen(true)}>
-          Cámara
-        </button>
-        <button type="button" className="button neutral" onClick={() => fileRef.current?.click()}>
-          Galería
-        </button>
-        {typeof progress === 'number' && progress < 100 && (
-          <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85em' }}>{progress}%</span>
-        )}
-      </div>
-
-      {/* DocCamera is position:fixed so it covers the screen from anywhere in the tree */}
-      {cameraOpen && (
-        <DocCamera
-          aspectRatio={ID_CARD_RATIO}
-          label={`Encuadrá el ${label} dentro del marco`}
-          onCapture={(file) => { setCameraOpen(false); onSelect(file); }}
-          onCancel={() => setCameraOpen(false)}
-        />
-      )}
-    </div>
-  );
-}
-

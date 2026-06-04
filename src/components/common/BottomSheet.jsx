@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { X } from "react-feather";
 
-export default function BottomSheet({ onClose, label = "Panel", children }) {
+// depth 0 = top sheet (fully visible, backdrop active)
+// depth 1+ = sheet below — scaled back, dimmed, non-interactive
+export default function BottomSheet({ onClose, label = "Panel", depth = 0, children }) {
     const [visible, setVisible] = useState(false);
 
-    // Defer visible by one frame so the CSS transition fires on mount
     useEffect(() => {
         const id = requestAnimationFrame(() => setVisible(true));
         return () => cancelAnimationFrame(id);
@@ -12,25 +13,37 @@ export default function BottomSheet({ onClose, label = "Panel", children }) {
 
     const handleClose = () => {
         setVisible(false);
-        setTimeout(onClose, 300); // let slide-down finish before unmounting
+        setTimeout(onClose, 300);
     };
+
+    const isTop    = depth === 0;
+    const sheetCls = [
+        "ucs-sheet",
+        visible && (isTop ? "ucs-sheet--visible" : "ucs-sheet--pushed"),
+    ].filter(Boolean).join(" ");
 
     return (
         <>
+            {/* Only the top sheet gets a visible, clickable backdrop */}
             <div
-                className={`ucs-backdrop${visible ? " ucs-backdrop--visible" : ""}`}
-                onClick={handleClose}
+                className={`ucs-backdrop${isTop && visible ? " ucs-backdrop--visible" : ""}`}
+                onClick={isTop ? handleClose : undefined}
+                style={!isTop ? { pointerEvents: "none" } : undefined}
             />
+
             <div
-                className={`ucs-sheet${visible ? " ucs-sheet--visible" : ""}`}
+                className={sheetCls}
+                style={!isTop ? { pointerEvents: "none" } : undefined}
                 role="dialog"
                 aria-modal="true"
                 aria-label={label}
             >
                 <div className="ucs-handle" />
-                <button className="ucs-close" onClick={handleClose} aria-label="Cerrar">
-                    <X size={17} />
-                </button>
+                {isTop && (
+                    <button className="ucs-close" onClick={handleClose} aria-label="Cerrar">
+                        <X size={17} />
+                    </button>
+                )}
                 {children}
             </div>
         </>

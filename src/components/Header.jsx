@@ -1,12 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Bell } from "react-feather";
 import { useUser } from "../contexts/UserContext";
-import logo from "../assets/logo/logo_dark.png";
+import { useNotifications } from "../contexts/NotificationContext";
 import Avatar from "./ui/Avatar";
+import logo from "../assets/logo/logo_dark.png";
 
 export default function Header({ isAdmin, onAvatarClick }) {
     const { perfil } = useUser() || {};
-    const rol = perfil?.rol || "viajero";
+    const { unreadCount } = useNotifications();
+    const navigate = useNavigate();
+
+    const rol      = perfil?.rol || "viajero";
     const rolLabel = rol === "conductor" ? "Conductor" : "Pasajero";
 
     return (
@@ -30,13 +35,28 @@ export default function Header({ isAdmin, onAvatarClick }) {
                             Admin
                         </Link>
                     )}
+
+                    {/* Role chip */}
+                    <span className="header-role-chip">{rolLabel}</span>
+
+                    {/* Notification bell */}
+                    <button
+                        type="button"
+                        className="header-bell"
+                        onClick={() => navigate("/notifications")}
+                        aria-label={unreadCount > 0 ? `${unreadCount} notificaciones` : "Notificaciones"}
+                    >
+                        <Bell size={20} />
+                        {unreadCount > 0 && <span className="header-bell__dot" />}
+                    </button>
+
+                    {/* Profile button — always goes to Más */}
                     <button
                         type="button"
                         onClick={onAvatarClick ?? (() => { window.location.hash = "perfil"; })}
                         aria-label="Mi perfil"
                         className="header-profile-btn"
                     >
-                        <span className="header-role-label">{rolLabel}</span>
                         <div className="header-avatar">
                             <Avatar />
                         </div>

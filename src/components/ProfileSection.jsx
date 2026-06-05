@@ -40,8 +40,7 @@ const ProfileSection = ({
     onSave,
     onCancel,
     onPerfilChange,
-    onPhotoSelected,
-    preview,
+    onCroppedFile,
     uploading,
 }) => {
     const [vehiculos, setVehiculos] = useState([]);
@@ -60,7 +59,7 @@ const ProfileSection = ({
 
     // TODO: Remove if profile percentage display is unwanted (sums: photo, bio, WhatsApp, DOB, vehicle, and doc verification %)
     const { percent: _verDocPct } = useDriverVerification(usuario?.uid);
-    const hasFoto = !!(preview || perfil.fotoURL || usuario?.photoURL);
+    const hasFoto = !!(perfil.fotoURL || usuario?.photoURL);
     const perfilPercent = (() => {
         let p = 0;
         if (hasFoto) p += 15;                       // foto
@@ -104,8 +103,6 @@ const ProfileSection = ({
     if (loading) return <Spinner />;
     if (error) return <ErrorMessage error={error} />;
 
-    const avatarSrc = preview || perfil.fotoURL || usuario?.photoURL || null;
-
     return (
         <div>
             {/* NUEVA TARJETA DE PERFIL */}
@@ -118,10 +115,16 @@ const ProfileSection = ({
             <div style={{ width: "100%", padding: "0.5rem", display: "flex", gap: "1rem", alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap" }}>
                 {/* Foto de perfil */}
                 <div style={{ flex: "1 1 12rem", maxWidth: "20%", minWidth: "180px", flexShrink: 0, marginTop: "0.5rem", position: "relative" }}>
-                    <Avatar />
-                    <div style={{ position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#0d690d80", border: "1px solid #00ff1560", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
-                        <License size="80%" />
-                    </div>
+                    <Avatar
+                        editable={editMode}
+                        onCroppedFile={onCroppedFile}
+                        uploading={uploading}
+                    />
+                    {!editMode && (
+                        <div style={{ position: "absolute", bottom: "7%", right: "7%", width: "3rem", height: "3rem", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "1.5rem", backgroundColor: "#0d690d80", border: "1px solid #00ff1560", boxShadow: "0 4px 4px #00000020", color: "#fff", fontSize: "1.5rem" }}>
+                            <License size="80%" />
+                        </div>
+                    )}
                 </div>
 
                 <div style={{ flex: "1 1 30rem", minWidth: "20rem" }}>

@@ -10,6 +10,8 @@ import { UserProvider } from "./contexts/UserContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { UserCardProvider } from "./contexts/UserCardContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
+import NotificationsPage from "./components/NotificationsPage";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,12 +19,15 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <UserProvider>
         <ToastProvider>
           <ThemeProvider>
-            <UserCardProvider>
-              <Routes>
-                <Route path="/admin/*" element={<AdminGuard><AdminWorkspace /></AdminGuard>} />
-                <Route path="/*" element={<App />} />
-              </Routes>
-            </UserCardProvider>
+            <NotificationProvider>
+              <UserCardProvider>
+                <Routes>
+                  <Route path="/admin/*" element={<AdminGuard><AdminWorkspace /></AdminGuard>} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
+                  <Route path="/*" element={<App />} />
+                </Routes>
+              </UserCardProvider>
+            </NotificationProvider>
           </ThemeProvider>
         </ToastProvider>
       </UserProvider>

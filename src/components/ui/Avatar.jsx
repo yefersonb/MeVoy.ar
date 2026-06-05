@@ -1,27 +1,67 @@
-﻿import React from "react";
+import React, { useState } from "react";
+import { Camera } from "react-feather";
 import { useUser } from "../../contexts/UserContext";
-import { AlignJustify } from "react-feather";
+import AvatarCropper from "./AvatarCropper/AvatarCropper";
+import "./Avatar.css";
 
-export default function Avatar({editable = false }) {
-  const { avatarUrl, loading, uploading, setPreview } = useUser();
+export default function Avatar({ editable = false, onCroppedFile, uploading = false }) {
+  const { avatarUrl, loading, setPreview } = useUser();
+  const [cropperOpen, setCropperOpen] = useState(false);
 
-  if (loading) return <div style={{  maxWidth: "100%", maxHeight: "100%", height: "100%", width: "100%", aspectRatio: "1 / 1", borderRadius: "50%", backgroundColor: "#0001" }} />;
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => setPreview(reader.result);
-    reader.readAsDataURL(file);
+  const handleCroppedFile = async (file) => {
+    setCropperOpen(false);
+    // Optimistic: show the cropped image immediately while upload runs
+    const localUrl = URL.createObjectURL(file);
+    setPreview(localUrl);
+    if (onCroppedFile) await onCroppedFile(file);
   };
 
-  if (avatarUrl) {
-    return (<img src={avatarUrl} style={{ maxWidth: "100%", maxHeight: "100%", height: "100%", width: "100%", aspectRatio: "1 / 1", borderRadius: "50%", objectFit: "cover", objectPosition: "center", backgroundColor: "#0001"}}/>)
-  }
+  const sharedStyle = {
+    maxWidth: "100%",
+    maxHeight: "100%",
+    height: "100%",
+    width: "100%",
+    aspectRatio: "1 / 1",
+    borderRadius: "50%",
+    backgroundColor: "var(--color-surface-alt)",
+    display: "block",
+  };
+
+  if (loading) return <div style={sharedStyle} />;
 
   return (
-    <div style={{  maxWidth: "100%", maxHeight: "100%", height: "100%", width: "100%", aspectRatio: "1 / 1", backgroundColor: "#0001" }}></div>    
+    <>
+      <div className={`avatar-wrapper${editable ? " avatar-wrapper--editable" : ""}`}>
+        {avatarUrl
+          ? <img src={avatarUrl} style={{ ...sharedStyle, objectFit: "cover", objectPosition: "center" }} alt="Foto de perfil" />
+          : <div style={sharedStyle} />
+        }
+
+        {editable && (
+          <button
+            className="avatar-edit-btn"
+            onClick={() => setCropperOpen(true)}
+            disabled={uploading}
+            aria-label="Cambiar foto de perfil"
+            type="button"
+          >
+            <span className="avatar-edit-badge">
+              {uploading
+                ? <span className="avatar-edit-spinner" />
+                : <Camera size="55%" strokeWidth={2.5} />
+              }
+            </span>
+          </button>
+        )}
+      </div>
+
+      {cropperOpen && (
+        <AvatarCropper
+          onCroppedFile={handleCroppedFile}
+          onClose={() => setCropperOpen(false)}
+          uploading={uploading}
+        />
+      )}
+    </>
   );
 }
-

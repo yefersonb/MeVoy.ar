@@ -33,7 +33,7 @@ export default function TravelerProfilePage() {
     const [saving, setSaving]     = useState(false);
     const [saved, setSaved]       = useState(false);
 
-    const { uploading, handlePhotoSelected } = usePhotoUpload(usuario?.uid || "");
+    const { uploading, uploadCroppedFile } = usePhotoUpload(usuario?.uid || "");
 
     const completionPercent = useMemo(() => calcCompletion(profile), [profile]);
     const isDriver = profile?.role === "conductor";
@@ -59,11 +59,13 @@ export default function TravelerProfilePage() {
         }
     };
 
-    const handlePhoto = async (e) => {
-        const url = await handlePhotoSelected(e);
+    const handlePhoto = async (file) => {
+        const url = await uploadCroppedFile(file);
         if (url) {
             try { await save({ photoUrl: url }); }
             catch { toast.error("No se pudo guardar la foto."); }
+        } else {
+            toast.error("No se pudo subir la foto. Intentá de nuevo.");
         }
     };
 
@@ -78,13 +80,11 @@ export default function TravelerProfilePage() {
             {/* Profile card */}
             <div className="profile-card">
                 <div className="profile-card__photo">
-                    <Avatar />
-                    {editMode && (
-                        <label className="profile-card__photo-edit" aria-label="Cambiar foto">
-                            <Edit2 size={16} />
-                            <input type="file" accept="image/*" onChange={handlePhoto} disabled={uploading} />
-                        </label>
-                    )}
+                    <Avatar
+                        editable={editMode}
+                        onCroppedFile={handlePhoto}
+                        uploading={uploading}
+                    />
                 </div>
 
                 <div className="profile-card__info">

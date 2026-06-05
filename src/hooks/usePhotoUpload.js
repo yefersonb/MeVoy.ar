@@ -1,39 +1,27 @@
 // hooks/usePhotoUpload.js
 import { useState } from "react";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase";
 
-/**
- * Hook para subir y previsualizar foto de perfil.
- * @param {string} userId
- * @returns {{ preview: string, uploading: boolean, handlePhotoSelected: function }}
- */
 export default function usePhotoUpload(userId) {
-  const [preview, setPreview] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const handlePhotoSelected = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return null;
-
-    // preview local inmediato
-    const localUrl = URL.createObjectURL(file);
-    setPreview(localUrl);
+  const uploadCroppedFile = async (file) => {
+    if (!file || !userId) return null;
 
     setUploading(true);
     try {
-      const storage = getStorage();
-      const storageRef = ref(storage, `perfil-fotos/${userId}`);
+      const storageRef = ref(storage, `usuarios/${userId}/perfil-foto`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      setPreview(url);
-      return url; // quien lo llame debe guardar esto en Firestore
+      return url;
     } catch (err) {
-      console.error("Error subiendo foto:", err);
+      console.error("Photo upload failed:", err.code, err.message);
       return null;
     } finally {
       setUploading(false);
     }
   };
 
-  return { preview, uploading, handlePhotoSelected };
+  return { uploading, uploadCroppedFile };
 }

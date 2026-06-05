@@ -1,0 +1,65 @@
+.avatar-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Always-visible camera badge in the corner when editable */
+.avatar-edit-badge {
+  position: absolute;
+  bottom: 4%;
+  right: 4%;
+  width: 28%;
+  max-width: 2.5rem;
+  min-width: 1.5rem;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 2px solid var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: background var(--transition-fast);
+}
+
+.avatar-wrapper--editable {
+  cursor: pointer;
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-edit-btn:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.avatar-edit-btn:active .avatar-edit-badge {
+  background: var(--color-primary-hover);
+}
+
+/* Spinner for uploading state */
+.avatar-edit-spinner {
+  width: 55%;
+  height: 55%;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: var(--color-on-primary);
+  border-radius: var(--radius-full);
+  animation: avatar-spin 0.7s linear infinite;
+}
+
+@keyframes avatar-spin {
+  to { transform: rotate(360deg); }
+}

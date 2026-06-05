@@ -21,10 +21,10 @@ const COLL         = "verificaciones";
 const STORAGE_ROOT = "verificaciones";
 
 const STEPS = [
-    { key: "datos",    label: "Tus datos" },
-    { key: "dni",      label: "DNI" },
-    { key: "licencia", label: "Licencia" },
-    { key: "resumen",  label: "Confirmar" },
+    { key: "info",    label: "Tus datos" },
+    { key: "dni",     label: "DNI" },
+    { key: "license", label: "Licencia" },
+    { key: "review",  label: "Confirmar" },
 ];
 
 const STATUS_CONFIG = {
@@ -43,7 +43,7 @@ export default function DriverVerificationWizard({ onExit }) {
     const [step,      setStep]      = useState(0);
     const [status,    setStatus]    = useState("incomplete");
     const [error,     setError]     = useState("");
-    const [datos,     setDatos]     = useState({ nombreCompleto: "", dniNumero: "" });
+    const [formData,  setFormData]  = useState({ nombreCompleto: "", dniNumero: "" });
     const [urls,      setUrls]      = useState({ dniFrente: "", dniDorso: "", licFrente: "", licDorso: "" });
     const [uploading, setUploading] = useState({});
 
@@ -56,7 +56,7 @@ export default function DriverVerificationWizard({ onExit }) {
                 const snap = await getDoc(ref);
                 if (snap.exists()) {
                     const d = snap.data();
-                    setDatos({ nombreCompleto: d.nombreCompleto || "", dniNumero: d.dniNumero || "" });
+                    setFormData({ nombreCompleto: d.nombreCompleto || "", dniNumero: d.dniNumero || "" });
                     setUrls({
                         dniFrente: d.dniFrenteURL       || "",
                         dniDorso:  d.dniDorsoURL        || "",
@@ -78,8 +78,8 @@ export default function DriverVerificationWizard({ onExit }) {
         return () => { mounted = false; };
     }, [uid]);
 
-    const pasoCompletado = (idx) => {
-        if (idx === 0) return !!(datos.nombreCompleto && datos.dniNumero);
+    const isStepComplete = (idx) => {
+        if (idx === 0) return !!(formData.nombreCompleto && formData.dniNumero);
         if (idx === 1) return !!(urls.dniFrente && urls.dniDorso);
         if (idx === 2) return !!(urls.licFrente && urls.licDorso);
         return false;
@@ -90,8 +90,8 @@ export default function DriverVerificationWizard({ onExit }) {
         setSaving(true);
         try {
             await updateDoc(doc(db, COLL, uid), {
-                nombreCompleto:   datos.nombreCompleto,
-                dniNumero:        datos.dniNumero,
+                nombreCompleto:   formData.nombreCompleto,
+                dniNumero:        formData.dniNumero,
                 dniFrenteURL:     urls.dniFrente,
                 dniDorsoURL:      urls.dniDorso,
                 licenciaFrenteURL: urls.licFrente,
@@ -109,7 +109,7 @@ export default function DriverVerificationWizard({ onExit }) {
     };
 
     const goNext = async () => {
-        if (step === 0 && (!datos.nombreCompleto || !datos.dniNumero)) {
+        if (step === 0 && (!formData.nombreCompleto || !formData.dniNumero)) {
             setError("Completá tu nombre y número de DNI para continuar.");
             return;
         }
@@ -137,8 +137,8 @@ export default function DriverVerificationWizard({ onExit }) {
         setError("");
         try {
             await updateDoc(doc(db, COLL, uid), {
-                nombreCompleto:    datos.nombreCompleto,
-                dniNumero:         datos.dniNumero,
+                nombreCompleto:    formData.nombreCompleto,
+                dniNumero:         formData.dniNumero,
                 dniFrenteURL:      urls.dniFrente,
                 dniDorsoURL:       urls.dniDorso,
                 licenciaFrenteURL: urls.licFrente,
@@ -229,7 +229,7 @@ export default function DriverVerificationWizard({ onExit }) {
             {/* Step progress */}
             <div className="verif-stepper">
                 {STEPS.map((s, i) => {
-                    const done   = pasoCompletado(i);
+                    const done   = isStepComplete(i);
                     const active = i === step;
                     return (
                         <div
@@ -258,29 +258,29 @@ export default function DriverVerificationWizard({ onExit }) {
 
             {/* Step body */}
             <div className="verif-body">
-                {step === 0 && <PasoDatos datos={datos} setDatos={setDatos} />}
+                {step === 0 && <InfoStep formData={formData} setFormData={setFormData} />}
                 {step === 1 && (
-                    <PasoDocumentos
+                    <DocsStep
                         title="DNI"
-                        frenteKey="dniFrente"
-                        dorsoKey="dniDorso"
+                        frontKey="dniFrente"
+                        backKey="dniDorso"
                         urls={urls}
                         uploading={uploading}
                         onFile={handleFile}
                     />
                 )}
                 {step === 2 && (
-                    <PasoDocumentos
+                    <DocsStep
                         title="Licencia de conducir"
-                        frenteKey="licFrente"
-                        dorsoKey="licDorso"
+                        frontKey="licFrente"
+                        backKey="licDorso"
                         urls={urls}
                         uploading={uploading}
                         onFile={handleFile}
                     />
                 )}
                 {step === 3 && (
-                    <PasoResumen datos={datos} urls={urls} status={status} />
+                    <ReviewStep formData={formData} urls={urls} status={status} />
                 )}
             </div>
 
@@ -327,22 +327,22 @@ export default function DriverVerificationWizard({ onExit }) {
 
 // ── Step components ──────────────────────────────────────────────────────────
 
-function PasoDatos({ datos, setDatos }) {
+function InfoStep({ formData, setFormData }) {
     return (
-        <div className="verif-paso verif-paso--datos">
+        <div className="verif-paso">
             <p className="verif-paso__hint">
                 Ingresá los datos tal como figuran en tu documento de identidad.
             </p>
             <InputField
                 label="Nombre completo"
-                value={datos.nombreCompleto}
-                onChange={e => setDatos(v => ({ ...v, nombreCompleto: e.target.value }))}
+                value={formData.nombreCompleto}
+                onChange={e => setFormData(v => ({ ...v, nombreCompleto: e.target.value }))}
                 placeholder="Tal como figura en tu DNI"
             />
             <InputField
                 label="Número de DNI"
-                value={datos.dniNumero}
-                onChange={e => setDatos(v => ({ ...v, dniNumero: e.target.value.replace(/\D/g, "") }))}
+                value={formData.dniNumero}
+                onChange={e => setFormData(v => ({ ...v, dniNumero: e.target.value.replace(/\D/g, "") }))}
                 placeholder="Ej. 30123456"
                 inputMode="numeric"
             />
@@ -350,7 +350,7 @@ function PasoDatos({ datos, setDatos }) {
     );
 }
 
-function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile }) {
+function DocsStep({ title, frontKey, backKey, urls, uploading, onFile }) {
     return (
         <div className="verif-paso">
             <p className="verif-paso__hint">
@@ -359,22 +359,22 @@ function PasoDocumentos({ title, frenteKey, dorsoKey, urls, uploading, onFile })
             <div className="verif-doc-pair">
                 <DocTile
                     label="Frente"
-                    url={urls[frenteKey]}
-                    progress={uploading[frenteKey]}
-                    onSelect={file => onFile(frenteKey, file)}
+                    url={urls[frontKey]}
+                    progress={uploading[frontKey]}
+                    onSelect={file => onFile(frontKey, file)}
                 />
                 <DocTile
                     label="Dorso"
-                    url={urls[dorsoKey]}
-                    progress={uploading[dorsoKey]}
-                    onSelect={file => onFile(dorsoKey, file)}
+                    url={urls[backKey]}
+                    progress={uploading[backKey]}
+                    onSelect={file => onFile(backKey, file)}
                 />
             </div>
         </div>
     );
 }
 
-function PasoResumen({ datos, urls, status }) {
+function ReviewStep({ formData, urls, status }) {
     const allDocs = [
         { label: "DNI — Frente",      url: urls.dniFrente },
         { label: "DNI — Dorso",       url: urls.dniDorso  },
@@ -384,15 +384,15 @@ function PasoResumen({ datos, urls, status }) {
     const allUploaded = allDocs.every(d => d.url);
 
     return (
-        <div className="verif-paso verif-paso--resumen">
+        <div className="verif-paso">
             <div className="verif-summary-info">
                 <div className="verif-kv">
                     <span className="verif-kv__key">Nombre</span>
-                    <span className="verif-kv__val">{datos.nombreCompleto || "—"}</span>
+                    <span className="verif-kv__val">{formData.nombreCompleto || "—"}</span>
                 </div>
                 <div className="verif-kv">
                     <span className="verif-kv__key">DNI</span>
-                    <span className="verif-kv__val">{datos.dniNumero || "—"}</span>
+                    <span className="verif-kv__val">{formData.dniNumero || "—"}</span>
                 </div>
             </div>
 

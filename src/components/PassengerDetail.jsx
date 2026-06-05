@@ -49,10 +49,7 @@ export default function PassengerDetail({
         const ref = doc(db, "usuarios", viajanteUid);
         const snap = await getDoc(ref);
         if (snap.exists()) {
-          const data = snap.data();
-          console.log("Datos del perfil:", data); // Debug para ver los datos
-          console.log("Profile photo URL:", data.fotoPerfil);
-          setPerfil(data);
+          setPerfil(snap.data());
         }
 
         const califRef = collection(db, "usuarios", viajanteUid, "calificaciones");
@@ -94,10 +91,7 @@ export default function PassengerDetail({
     }
   };
 
-  const handleImagenError = () => {
-    console.log("Error cargando imagen:", perfil?.fotoPerfil);
-    setImagenError(true);
-  };
+  const handleImagenError = () => setImagenError(true);
 
   if (cargando) {
     return (
@@ -235,9 +229,9 @@ export default function PassengerDetail({
               border: '3px solid #f1f5f9'
             }}
           >
-            {perfil.fotoPerfil && !imagenError ? (
+            {(perfil.fotoURL || perfil.fotoPerfil) && !imagenError ? (
               <img
-                src={perfil.fotoPerfil}
+                src={perfil.fotoURL || perfil.fotoPerfil}
                 alt="Foto viajante"
                 style={{
                   width: 80,
@@ -246,7 +240,6 @@ export default function PassengerDetail({
                   borderRadius: "50%",
                 }}
                 onError={handleImagenError}
-                onLoad={() => console.log("Imagen cargada exitosamente")}
               />
             ) : (
               <Silueta size={80} />
@@ -299,21 +292,6 @@ export default function PassengerDetail({
               )}
             </div>
 
-            {/* Debug info - can be removed later */}
-            {perfil.fotoPerfil && (
-              <div style={{ 
-                padding: '8px', 
-                backgroundColor: 'var(--color-bg)', 
-                borderRadius: '4px', 
-                marginTop: '12px',
-                fontSize: '12px',
-                color: 'var(--color-text-muted)'
-              }}>
-                <strong>Debug URL:</strong> {perfil.fotoPerfil.substring(0, 60)}...
-                <br />
-                <strong>Error de imagen:</strong> {imagenError ? 'Sí' : 'No'}
-              </div>
-            )}
           </div>
         </div>
 

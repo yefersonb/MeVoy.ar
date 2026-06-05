@@ -1,6 +1,7 @@
 // src/components/DriverProfile.jsx
 import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext";
+import { useToast } from "../contexts/ToastContext";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { usePerfilData } from "../hooks/usePerfilData";
@@ -26,7 +27,8 @@ export default function DriverProfile({
   onGoToVehicles,
 }) {
   // ===== HOOKS Y ESTADO =====
-  const { usuario } = useUser();
+  const { usuario, setPreview } = useUser();
+  const toast = useToast();
   const { isMobile } = useResponsive();
 
   // Hash ↔ tab mapping (mirrors Header links)
@@ -91,7 +93,7 @@ export default function DriverProfile({
   }, [usuario]);
 
   // Hook para subida de fotos
-  const { preview, uploading, handlePhotoSelected } = usePhotoUpload(
+  const { uploading, uploadCroppedFile } = usePhotoUpload(
     usuario?.uid || ""
   );
 
@@ -118,11 +120,14 @@ export default function DriverProfile({
     setEditMode(false);
   };
 
-  const onPhotoSelected = async (e) => {
-    const url = await handlePhotoSelected(e);
+  const onCroppedFile = async (file) => {
+    const url = await uploadCroppedFile(file);
     if (url && usuario) {
+      setPreview(url); // swap blob preview for the permanent Firebase URL
       await setDoc(doc(db, "usuarios", usuario.uid), { fotoURL: url }, { merge: true });
-      // UserContext onSnapshot picks this up automatically — no stale closure issue
+    } else {
+      setPreview(null);
+      toast.error("No se pudo subir la foto. Intentá de nuevo.");
     }
   };
 
@@ -142,8 +147,7 @@ export default function DriverProfile({
             onSave={handleSave}
             onCancel={handleCancel}
             onPerfilChange={updatePerfil}
-            onPhotoSelected={onPhotoSelected}
-            preview={preview}
+            onCroppedFile={onCroppedFile}
             uploading={uploading}
           />
         );

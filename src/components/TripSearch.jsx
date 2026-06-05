@@ -25,6 +25,7 @@ import TripDetail from "./TripDetail";
 import AutocompleteInput from "./AutocompleteInput";
 import { useDrawer } from "../contexts/UserCardContext";
 import useTripsSearch from "../hooks/useTripsSearch";
+import { availableSeats } from "../utils/tripUtils";
 
 export default function TripSearch({ user, onBook }) {
     const { results, loading, filters, setFilters, clear } = useTripsSearch();
@@ -53,7 +54,7 @@ export default function TripSearch({ user, onBook }) {
         const reqVol = parseNumber(volumenReq);
 
         return (lista || []).filter((v) => {
-            if ((v.asientos ?? 0) < pasajeros) return false;
+            if (availableSeats(v) < pasajeros) return false;
 
             if (momento) {
                 const hora = getFechaHora(v)?.getHours() ?? null;
@@ -237,7 +238,7 @@ export default function TripSearch({ user, onBook }) {
                                     )}
                                     <span className="trip-card__meta-item">
                                         <Users size={12} />
-                                        {v.asientos ?? "?"} asiento{v.asientos !== 1 ? "s" : ""}
+                                        {availableSeats(v)} asiento{availableSeats(v) !== 1 ? "s" : ""} libre{availableSeats(v) !== 1 ? "s" : ""}
                                     </span>
                                 </div>
 

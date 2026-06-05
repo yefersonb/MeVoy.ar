@@ -157,6 +157,7 @@ export default function NewTrip({ onGoToVehicles }) {
                 fecha,
                 horario: `${fecha}T${hora}`,
                 asientos,
+                occupiedSeats: 0,
                 creado: new Date(),
                 conductor: {
                     uid:      auth.currentUser.uid,

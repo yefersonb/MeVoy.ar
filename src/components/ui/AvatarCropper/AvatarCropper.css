@@ -1,0 +1,248 @@
+/* AvatarCropper — tokens from classic.css */
+
+.avc-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: var(--z-modal);
+}
+
+@media (min-width: 600px) {
+  .avc-overlay {
+    align-items: center;
+  }
+}
+
+/* ── Bottom sheet ── */
+.avc-sheet {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-4) var(--space-4) var(--space-8);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (min-width: 600px) {
+  .avc-sheet {
+    border-radius: var(--radius-xl);
+    max-width: 400px;
+    padding-bottom: var(--space-6);
+  }
+}
+
+.avc-sheet--crop {
+  max-width: 520px;
+  max-height: 95dvh;
+  overflow: hidden;
+}
+
+/* ── Header row ── */
+.avc-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.avc-sheet__title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.avc-sheet__hint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.avc-icon-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.avc-icon-btn:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface-hover);
+}
+
+/* ── Source buttons ── */
+.avc-source-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.avc-source-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-alt);
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.avc-source-btn:hover,
+.avc-source-btn:focus-visible {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.avc-source-btn:active {
+  background: var(--color-surface-raised);
+}
+
+.avc-source-btn__icon {
+  color: var(--color-primary);
+  display: flex;
+}
+
+.avc-source-btn__label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* ── Crop canvas ── */
+.avc-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 55dvh;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #000;
+}
+
+.avc-cropper-container {
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+.avc-cropper-media {
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+/* ── Zoom slider ── */
+.avc-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avc-zoom-icon {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.avc-zoom-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--color-border-strong);
+  outline: none;
+  cursor: pointer;
+}
+
+.avc-zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.avc-zoom-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  cursor: pointer;
+}
+
+/* ── Action buttons ── */
+.avc-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.avc-btn {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+}
+
+.avc-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.avc-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.avc-btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.avc-btn--secondary {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+  flex: 0 0 auto;
+}
+
+.avc-btn--secondary:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+
+/* ── Upload spinner inside confirm button ── */
+.avc-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: var(--color-on-primary);
+  border-radius: var(--radius-full);
+  animation: avc-spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes avc-spin {
+  to { transform: rotate(360deg); }
+}

@@ -9,6 +9,7 @@ import { Package, Truck, MapPin, ChevronRight } from "react-feather";
 import { MAP_LOADER_OPTIONS } from "../googleMapsConfig";
 import {
     doc,
+    setDoc,
     getDoc,
     collection,
     getDocs,
@@ -21,6 +22,8 @@ import { useToast } from "../contexts/ToastContext";
 import { useDrawer, useUserCard } from "../contexts/UserCardContext";
 import { useTravelerProfileComplete } from "../hooks/useTravelerProfileComplete";
 import { abbreviateLocation } from "../utils/location";
+import { availableSeats } from "../utils/tripUtils";
+import { sendNotification, NOTIF_TYPES } from "../utils/notifications";
 import RequestShipment from "./RequestShipment";
 import StarRatingWidget from "./ui/StarRating";
 
@@ -136,19 +139,35 @@ export default function TripDetail({ viaje, pasajeros }) {
 
     const handleConfirmarReserva = async () => {
         if (!usuario?.uid) { toast.error("Iniciá sesión para reservar."); return; }
+        if (usuario.uid === viaje.conductor?.uid) { toast.error("No podés reservar en tu propio viaje."); return; }
         if (loadingProfile)  { toast.info("Esperá un momento, cargando tu perfil…"); return; }
         if (!canReserve)     { toast.error("Completá tu perfil antes de reservar."); return; }
         if (!viaje.id)       { toast.error("Error interno: viaje sin ID."); return; }
 
         setReservando(true);
         try {
-            await addDoc(collection(db, "viajes", viaje.id, "reservas"), {
+            const reservaRef = await addDoc(collection(db, "viajes", viaje.id, "reservas"), {
                 viajanteUid:        usuario.uid,
+                conductorUid:       viaje.conductor?.uid ?? null,
                 fechaReserva:       serverTimestamp(),
                 cantidadPasajeros:  pasajeros || 1,
-                estadoReserva:      "pendiente",
+                estadoReserva:      "requested",
                 creadoPor:          usuario.uid,
             });
+            // Non-fatal reference write — lets TravelerDashboard query without a collection-group index
+            setDoc(doc(db, "usuarios", usuario.uid, "reservas", reservaRef.id), {
+                viajeId:   viaje.id,
+                createdAt: serverTimestamp(),
+            }).catch(e => console.warn("[TripDetail] reservation reference write failed:", e));
+            if (viaje.conductor?.uid) {
+                const passengerName = usuario.displayName || "Un pasajero";
+                await sendNotification(viaje.conductor.uid, {
+                    type:    NOTIF_TYPES.NEW_RESERVATION,
+                    message: `${passengerName} solicitó una reserva en tu viaje a ${abbreviateLocation(viaje.destino)}.`,
+                    fromUid: usuario.uid,
+                    tripId:  viaje.id,
+                });
+            }
             toast.success("¡Reserva creada! El conductor confirmará pronto.");
             closeDrawer();
         } catch (e) {
@@ -194,6 +213,7 @@ export default function TripDetail({ viaje, pasajeros }) {
                     <p><strong>Asientos:</strong> {viaje.asientos}</p>
                     {distanciaKm && <p><strong>Distancia:</strong> {distanciaKm} km</p>}
                     {precio      && <p><strong>Precio estimado:</strong> ${precio.toLocaleString("es-AR")}</p>}
+                    <p><strong>Asientos disponibles:</strong> {availableSeats(viaje)}</p>
 
                     {viaje.aceptaPaquetes && (
                         <div className="trip-detail-packages">
@@ -256,9 +276,9 @@ export default function TripDetail({ viaje, pasajeros }) {
                     <button
                         className="button"
                         onClick={handleConfirmarReserva}
-                        disabled={reservando || viaje.asientos < 1}
+                        disabled={reservando || availableSeats(viaje) < 1}
                     >
-                        {reservando ? "Reservando…" : viaje.asientos > 0 ? "Confirmar reserva" : "Sin asientos"}
+                        {reservando ? "Reservando…" : availableSeats(viaje) > 0 ? "Solicitar reserva" : "Sin asientos disponibles"}
                     </button>
 
                     {viaje.aceptaPaquetes && (

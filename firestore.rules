@@ -2,101 +2,105 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /* Helpers */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    // Admin “real” vía custom claim (recomendado)
     function isAdmin() {
       return isSignedIn() && (
-        request.auth.token.admin == true ||                 // futuro (claims)
-        request.auth.uid in ["KadtSZ3NJwcJCA8wpR9gt1PvrjT2"]  // 👈 whitelist temporal
+        request.auth.token.admin == true ||
+        request.auth.uid in ["KadtSZ3NJwcJCA8wpR9gt1PvrjT2"]
       );
     }
 
-    /* =====================  VERIFICACIONES  ===================== 
-       - Dueño puede crear/editar sus datos y ENVIAR A 'pending'
-       - NO puede tocar status -> verified/rejected/incomplete ni campos de admin
-       - Admin puede leer todas y cambiar status + notas + historial
-    */
+    // True if the current user is the conductor of a given trip
+    function isConductorOf(viajeId) {
+      return get(/databases/$(database)/documents/viajes/$(viajeId)).data.conductor.uid == request.auth.uid;
+    }
+
+    /* =====================  VERIFICACIONES  ===================== */
     match /verificaciones/{uid} {
-
-      // Leer: dueño o admin
-      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
-
-      // Crear: dueño
+      // Any signed-in user can read (needed for profile cards / verification badges).
+      // Photo URLs are protected separately by Storage rules.
+      allow read: if isSignedIn();
       allow create: if isSignedIn() && request.auth.uid == uid;
-
-      // Actualizar por DUEÑO (con restricciones)
       allow update: if isSignedIn() && request.auth.uid == uid
-        // no puede escribir campos exclusivos de admin
         && !("adminNotes" in request.resource.data.keys())
         && !("history" in request.resource.data.keys())
         && !("reviewedAt" in request.resource.data.keys())
         && !("reviewedBy" in request.resource.data.keys())
-        // status: o no cambia, o lo cambia a 'pending' (enviar a revisión)
         && (
-          !( "status" in request.resource.data.diff(resource.data).changedKeys() )
+          !("status" in request.resource.data.diff(resource.data).changedKeys())
           || (request.resource.data.status == "pending")
         );
-
-      // Actualizar por ADMIN (puede todo en este doc)
       allow update: if isAdmin();
     }
 
-    /* =====================  USUARIOS  ===================== 
-       - Dueño puede leer/crear/actualizar su doc, pero NO puede cambiar 'rol'
-       - Admin puede actualizar (incluye 'rol')
-    */
+    /* =====================  USUARIOS  ===================== */
     match /usuarios/{uid} {
-      // Leer: cualquier logueado (o si preferís, solo dueño)
       allow read: if isSignedIn();
-
-      // Crear: dueño
-      allow create: if isSignedIn() && request.auth.uid == uid;
-
-      // Actualizar: dueño (sin tocar 'rol')
-      allow update: if isSignedIn() && request.auth.uid == uid
-        && !("rol" in request.resource.data.diff(resource.data).changedKeys());
-
-      // Admin puede actualizar cualquier campo (incluye 'rol')
+      allow create, update: if isSignedIn() && request.auth.uid == uid;
       allow update: if isAdmin();
 
-      /* Subcolecciones habituales */
-
-      // /usuarios/{uid}/vehiculos/{vehiculoId}
       match /vehiculos/{vehiculoId} {
         allow read: if isSignedIn();
         allow create, update, delete: if isSignedIn() && request.auth.uid == uid;
       }
 
-      // /usuarios/{uid}/documentos/{docId}  (si la usás)
       match /documentos/{docId} {
         allow read: if isSignedIn();
         allow create, update, delete: if isSignedIn() && request.auth.uid == uid;
+      }
+
+      // Reservation references — written when passenger books
+      match /reservas/{reservaId} {
+        allow read, create, delete: if isSignedIn() && request.auth.uid == uid;
+      }
+
+      // Ratings — readable by everyone, writable by any signed-in user (anyone can rate)
+      match /calificaciones/{calId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update, delete: if isSignedIn() && request.auth.uid == uid;
+      }
+
+      // Any other subcollections (future-proof)
+      match /{subcol}/{docId} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn() && request.auth.uid == uid;
       }
     }
 
     /* =====================  VIAJES  ===================== */
     match /viajes/{viajeId} {
       allow read: if isSignedIn();
-      allow create, update, delete: if false; // lo mantenés cerrado según tu comentario
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        resource.data.conductor.uid == request.auth.uid
+        || request.resource.data.diff(resource.data).changedKeys().hasOnly(["occupiedSeats"])
+      );
+      allow delete: if isSignedIn() && resource.data.conductor.uid == request.auth.uid;
+
+      /* ─── Reservas ─── */
+      match /reservas/{reservaId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        // Passenger or conductor (via denormalized field OR get() fallback for legacy docs)
+        allow update, delete: if isSignedIn() && (
+          resource.data.viajanteUid == request.auth.uid ||
+          resource.data.conductorUid == request.auth.uid ||
+          isConductorOf(viajeId)
+        );
+      }
     }
 
-    /* =====================  SUBCOLECCIONES DE VIAJES  ===================== */
-    match /viajes/{viajeId}/{document=**} {
-      allow read: if isSignedIn();
-      allow write: if false;
+    /* =====================  NOTIFICATIONS  ===================== */
+    match /notifications/{notifId} {
+      allow create: if isSignedIn();
+      allow read, update: if isSignedIn() && resource.data.toUid == request.auth.uid;
     }
 
-    /* =====================  RESERVAS  ===================== */
-    match /reservas/{reservaId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if false;
-    }
-
-    /* Bloqueo por defecto */
+    /* Default deny */
     match /{document=**} { allow read, write: if false; }
   }
 }

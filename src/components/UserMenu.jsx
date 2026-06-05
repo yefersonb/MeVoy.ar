@@ -3,8 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import { useUser } from "../contexts/UserContext";
 
 export default function UserMenu({ usuario }) {
+  const { avatarUrl } = useUser();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -44,8 +46,8 @@ export default function UserMenu({ usuario }) {
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
-        {usuario?.photoURL ? (
-          <img src={usuario.photoURL} alt="Usuario" />
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="Usuario" />
         ) : (
           <span className="avatar-fallback">{avatarText}</span>
         )}

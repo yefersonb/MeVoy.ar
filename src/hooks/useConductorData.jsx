@@ -1,14 +1,14 @@
-//src/hooks/useConductorData.js
+// TODO: rename file to useDriverData.jsx when doing the Spanish identifier sweep
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, onSnapshot, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
-export default function useConductorData(usuario, isConductor) {
+export default function useDriverData(usuario, isDriver) {
   const [viajes, setViajes] = useState([]);
   const [reservas, setReservas] = useState({});
 
   useEffect(() => {
-    if (!usuario || !isConductor) return;
+    if (!usuario || !isDriver) return;
 
     const q = query(collection(db, "viajes"), orderBy("horario", "asc"));
     const unsub = onSnapshot(q, async (snap) => {

@@ -34,7 +34,7 @@ import TravelerProfilePage from "./components/TravelerProfilePage";
 import TripSearch from "./components/TripSearch";
 
 // Hooks
-import useConductorData from "./hooks/useConductorData";
+import useDriverData from "./hooks/useConductorData";
 import useTravelerProfileMinimal from "./hooks/useTravelerProfileMinimal";
 
 // Context
@@ -56,7 +56,7 @@ export default function App() {
     const [activeSection, setActiveSection] = useState(DEFAULT_SECTION.viajero);
 
     const { profileComplete, loadingProfile } = useTravelerProfileMinimal(usuario, rol === "viajero");
-    const { viajes, reservas } = useConductorData(usuario, rol === "conductor");
+    const { viajes, reservas } = useDriverData(usuario, rol === "conductor");
 
     // Reset active section whenever role resolves / changes
     useEffect(() => {
@@ -91,7 +91,7 @@ export default function App() {
         }
     };
 
-    const reservarViaje = async (id) => {
+    const bookTrip = async (id) => {
         if (!usuario) return;
         try {
             const data = {
@@ -99,7 +99,7 @@ export default function App() {
                 nombre:            usuario.displayName || usuario.email,
                 whatsapp:          usuario.phoneNumber || "",
                 fechaReserva:      new Date(),
-                estadoReserva:     "pendiente",
+                estadoReserva:     "requested",
                 cantidadPasajeros: 1,
                 creadoPor:         usuario.uid,
             };
@@ -236,9 +236,9 @@ export default function App() {
         }
 
         switch (activeSection) {
-            case "buscar":  return <TripSearch user={usuario} onBook={reservarViaje} />;
+            case "buscar":  return <TripSearch user={usuario} onBook={bookTrip} />;
             case "viajes":  return <TravelerDashboard usuario={usuario} />;
-            default:        return <TripSearch user={usuario} onBook={reservarViaje} />;
+            default:        return <TripSearch user={usuario} onBook={bookTrip} />;
         }
     };
 

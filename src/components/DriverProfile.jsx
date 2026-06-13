@@ -170,12 +170,12 @@ export default function DriverProfile({
       case "Reservas":
         return (
           <TripsSection
-            viajesPublicados={publishedTrips}
-            reservasRecibidas={incomingReservations}
+            publishedTrips={publishedTrips}
+            incomingReservations={incomingReservations}
             loading={loadingTrips}
             error={errorTrips}
             onLoadData={loadTripsAndReservations}
-            onEliminarViaje={deleteTrip}
+            onDeleteTrip={deleteTrip}
           />
         );
 

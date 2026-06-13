@@ -1,0 +1,169 @@
+/* ─── MP Payment Simulator ──────────────────────────────────────────────────── */
+
+.sim-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    padding: 1rem;
+    backdrop-filter: blur(3px);
+}
+
+.sim-modal {
+    background: var(--color-surface, #fff);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+    animation: sim-pop 0.18s ease;
+}
+
+@keyframes sim-pop {
+    from { opacity: 0; transform: scale(0.93) translateY(8px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0);   }
+}
+
+/* Header */
+
+.sim-modal__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    background: var(--color-primary, #009ee3);
+    color: #fff;
+    font-size: var(--text-sm, 0.8rem);
+    font-weight: 600;
+}
+
+.sim-modal__header-icon { opacity: 0.9; }
+
+.sim-modal__header-title { flex: 1; }
+
+.sim-modal__close {
+    background: none;
+    border: none;
+    color: #fff;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+}
+.sim-modal__close:hover { opacity: 1; }
+
+/* Body */
+
+.sim-modal__body {
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.sim-modal__route {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-sm, 0.8rem);
+    color: var(--color-text-muted, #888);
+}
+
+.sim-modal__route-arrow {
+    opacity: 0.5;
+    font-size: 0.7rem;
+}
+
+/* Amount */
+
+.sim-modal__amount-block {
+    text-align: center;
+    border: 1px solid var(--color-border, #eee);
+    border-radius: 10px;
+    padding: 14px 12px 10px;
+}
+
+.sim-modal__amount-label {
+    display: block;
+    font-size: var(--text-xs, 0.72rem);
+    color: var(--color-text-muted, #888);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.sim-modal__amount-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text, #111);
+    line-height: 1.1;
+}
+
+.sim-modal__seats {
+    display: block;
+    font-size: var(--text-xs, 0.72rem);
+    color: var(--color-text-muted, #888);
+    margin-top: 4px;
+}
+
+/* Actions */
+
+.sim-modal__actions {
+    display: flex;
+    gap: 10px;
+}
+
+.sim-modal__btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: var(--text-sm, 0.82rem);
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    color: #fff;
+}
+.sim-modal__btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.sim-modal__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.sim-modal__btn--approve { background: var(--color-success, #00c851); }
+.sim-modal__btn--reject  { background: var(--color-danger,  #e53935); }
+
+/* Result */
+
+.sim-modal__result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 14px;
+    border-radius: 10px;
+    animation: sim-pop 0.2s ease;
+}
+
+.sim-modal__result--ok   { background: #e8f5e9; color: #2e7d32; }
+.sim-modal__result--fail { background: #fdecea; color: #c62828; }
+
+/* Disclaimer */
+
+.sim-modal__disclaimer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.67rem;
+    color: var(--color-text-muted, #aaa);
+    justify-content: center;
+    margin-top: -4px;
+}

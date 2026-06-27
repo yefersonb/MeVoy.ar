@@ -33,7 +33,7 @@ export default function Avatar({ editable = false, onCroppedFile, uploading = fa
     <>
       <div className={`avatar-wrapper${editable ? " avatar-wrapper--editable" : ""}`}>
         {avatarUrl
-          ? <img src={avatarUrl} style={{ ...sharedStyle, objectFit: "cover", objectPosition: "center" }} alt="Foto de perfil" />
+          ? <img src={avatarUrl} style={{ ...sharedStyle, objectFit: "cover", objectPosition: "center" }} alt="Foto de perfil" referrerPolicy="no-referrer" />
           : <div style={sharedStyle} />
         }
 

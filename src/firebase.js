@@ -82,6 +82,7 @@ export const appCheckReady = new Promise((resolve) => {
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 export const storage = getStorage(app);
 
 // Helpers debug

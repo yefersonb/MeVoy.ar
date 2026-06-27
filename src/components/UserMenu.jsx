@@ -47,7 +47,7 @@ export default function UserMenu({ usuario }) {
         onClick={() => setOpen((v) => !v)}
       >
         {avatarUrl ? (
-          <img src={avatarUrl} alt="Usuario" />
+          <img src={avatarUrl} alt="Usuario" referrerPolicy="no-referrer" />
         ) : (
           <span className="avatar-fallback">{avatarText}</span>
         )}

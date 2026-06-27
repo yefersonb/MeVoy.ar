@@ -112,7 +112,7 @@ export default function Login() {
           nombre: userTemp.displayName || "",
           email: userTemp.email || "",
           whatsapp: tel,
-          fotoURL: userTemp.photoURL || "",
+          fotoURL: "",
           updatedAt: serverTimestamp(),
           createdAt: serverTimestamp(),
         },

@@ -62,28 +62,9 @@ export const useTripsData = (user) => {
 
       setPublishedTrips(trips);
 
-      // Load reservations (root collection + subcollections) with deduplication
+      // Load reservations from subcollections with deduplication
       const reservationsMap = new Map();
       if (trips.length > 0) {
-        const tripIds = trips.map((v) => v.id).filter(Boolean);
-        const chunkSize = 10;
-
-        // Root-level reservations
-        const reservationsRef = collection(db, 'reservas');
-        for (let i = 0; i < tripIds.length; i += chunkSize) {
-          const chunk = tripIds.slice(i, i + chunkSize);
-          try {
-            const q = query(reservationsRef, where('viajeId', 'in', chunk));
-            const snap = await getDocs(q);
-            snap.docs.forEach((d) => {
-              const r = { id: d.id, ...d.data() };
-              reservationsMap.set(r.id, r);
-            });
-          } catch (e) {
-            console.warn('Error loading root reservations chunk:', e.message);
-          }
-        }
-
         // Subcollection reservations per trip
         for (const trip of trips) {
           try {

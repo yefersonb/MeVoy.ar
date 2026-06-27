@@ -26,7 +26,7 @@ export default function useDriverData(usuario, isDriver) {
     });
 
     return () => unsub();
-  }, [usuario, isConductor]);
+  }, [usuario, isDriver]);
 
   return { viajes, reservas };
 }

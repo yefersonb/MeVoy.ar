@@ -100,7 +100,7 @@ export default function UserCardContent({ uid, contextRole }) {
             <div className="ucs-identity">
                 <div className="ucs-avatar">
                     {avatarUrl
-                        ? <img src={avatarUrl} alt={name} className="ucs-avatar__img" />
+                        ? <img src={avatarUrl} alt={name} className="ucs-avatar__img" referrerPolicy="no-referrer" />
                         : <div className="ucs-avatar__placeholder">{name[0]?.toUpperCase()}</div>
                     }
                 </div>

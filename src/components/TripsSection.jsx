@@ -19,25 +19,24 @@ import TripRatingSheet from "./TripRatingSheet";
 
 const STATUS_CONFIG = {
     // legacy Spanish values — backward compat with old Firestore docs
-    pendiente:      { label: "Pendiente",          cls: "booking-status--pending"    },
-    confirmado:     { label: "Aceptada",           cls: "booking-status--confirmed"  },
-    aceptado:       { label: "Aceptada",           cls: "booking-status--confirmed"  },
-    rechazado:      { label: "Rechazada",          cls: "booking-status--rejected"   },
-    cancelado:      { label: "Cancelada",          cls: "booking-status--rejected"   },
+    pendiente:      { label: "Pendiente",          accent: "pending"    },
+    confirmado:     { label: "Aceptada",           accent: "confirmed"  },
+    aceptado:       { label: "Aceptada",           accent: "confirmed"  },
+    rechazado:      { label: "Rechazada",          accent: "rejected"   },
+    cancelado:      { label: "Cancelada",          accent: "rejected"   },
     // current English values
-    requested:      { label: "Solicitud recibida", cls: "booking-status--pending"    },
-    accepted:       { label: "Aceptada",           cls: "booking-status--confirmed"  },
-    confirmed:      { label: "Pago confirmado",    cls: "booking-status--confirmed"  },
-    in_transit:     { label: "En viaje",           cls: "booking-status--in-transit" },
-    completed:      { label: "Finalizado",         cls: "booking-status--done"       },
-    rejected:       { label: "Rechazada",          cls: "booking-status--rejected"   },
-    cancelled:      { label: "Cancelada",          cls: "booking-status--rejected"   },
-    payment_failed: { label: "Pago rechazado",     cls: "booking-status--rejected"   },
+    requested:      { label: "Solicitud recibida", accent: "pending"    },
+    accepted:       { label: "Aceptada",           accent: "confirmed"  },
+    confirmed:      { label: "Pago confirmado",    accent: "confirmed"  },
+    in_transit:     { label: "En viaje",           accent: "in-transit" },
+    completed:      { label: "Finalizado",         accent: "done"       },
+    rejected:       { label: "Rechazada",          accent: "rejected"   },
+    cancelled:      { label: "Cancelada",          accent: "rejected"   },
+    payment_failed: { label: "Pago rechazado",     accent: "rejected"   },
 };
 
-function statusChip(status) {
-    const s = STATUS_CONFIG[status] ?? { label: status ?? "—", cls: "" };
-    return <span className={`booking-status ${s.cls}`}>{s.label}</span>;
+function statusOf(status) {
+    return STATUS_CONFIG[status] ?? { label: status ?? "—", accent: "done" };
 }
 
 const passengerUid = (res) =>
@@ -184,10 +183,11 @@ function ReservationRow({ res, trip }) {
     const isCompleted  = status === "completed";
     const isTerminal   = isCompleted || status === "rejected" || status === "rechazado" ||
                          status === "cancelled" || status === "cancelado" || status === "payment_failed";
+    const { label: statusLabel, accent } = statusOf(status);
 
     return (
         <>
-            <div className="passenger-card card">
+            <div className={`passenger-card card passenger-card--${accent}`}>
                 {/* Who */}
                 <div className="passenger-card__who">
                     <button
@@ -203,21 +203,24 @@ function ReservationRow({ res, trip }) {
                     </button>
 
                     <div className="passenger-card__info">
-                        <button
-                            className="passenger-card__name"
-                            onClick={() => uid && openCard(uid, "viajero")}
-                            disabled={!uid}
-                        >
-                            {name}
-                        </button>
+                        <div className="passenger-card__line1">
+                            <button
+                                className="passenger-card__name"
+                                onClick={() => uid && openCard(uid, "viajero")}
+                                disabled={!uid}
+                            >
+                                {name}
+                            </button>
+                            <span className={`passenger-card__status passenger-card__status--${accent}`}>
+                                {statusLabel}
+                            </span>
+                        </div>
                         <span className="passenger-card__sub">
                             {res.cantidadPasajeros
                                 ? `${res.cantidadPasajeros} pasajero${res.cantidadPasajeros !== 1 ? "s" : ""}`
                                 : "1 pasajero"}
                         </span>
                     </div>
-
-                    {statusChip(status)}
                 </div>
 
                 {/* Pending → accept / reject */}

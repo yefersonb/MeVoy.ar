@@ -11,20 +11,19 @@ import { sendNotification, NOTIF_TYPES } from "../utils/notifications";
 
 const STATUS_CONFIG = {
     // legacy value — backward compat with existing Firestore docs
-    pendiente:   { label: "Pendiente",              cls: "booking-status--pending"    },
+    pendiente:   { label: "Pendiente",              accent: "pending"    },
     // current values
-    requested:   { label: "Solicitud recibida",     cls: "booking-status--pending"    },
-    accepted:    { label: "Aceptada",               cls: "booking-status--accepted"   },
-    confirmed:   { label: "Pago confirmado",        cls: "booking-status--confirmed"  },
-    in_transit:  { label: "En viaje",               cls: "booking-status--in-transit" },
-    completed:   { label: "Finalizado",             cls: "booking-status--done"       },
-    rejected:    { label: "Rechazada",              cls: "booking-status--rejected"   },
-    cancelled:   { label: "Cancelada",              cls: "booking-status--rejected"   },
+    requested:   { label: "Solicitud recibida",     accent: "pending"    },
+    accepted:    { label: "Aceptada",               accent: "accepted"   },
+    confirmed:   { label: "Pago confirmado",        accent: "confirmed"  },
+    in_transit:  { label: "En viaje",               accent: "in-transit" },
+    completed:   { label: "Finalizado",             accent: "done"       },
+    rejected:    { label: "Rechazada",              accent: "rejected"   },
+    cancelled:   { label: "Cancelada",              accent: "rejected"   },
 };
 
-function statusChip(status) {
-    const s = STATUS_CONFIG[status] ?? { label: status ?? "—", cls: "" };
-    return <span className={`booking-status ${s.cls}`}>{s.label}</span>;
+function statusOf(status) {
+    return STATUS_CONFIG[status] ?? { label: status ?? "—", accent: "done" };
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -148,9 +147,10 @@ function ReservationCard({ res }) {
     const isConfirmed = status === "confirmed";
     const isInTransit = status === "in_transit";
     const isTerminal  = status === "completed" || status === "rejected" || status === "cancelled";
+    const { label: statusLabel, accent } = statusOf(status);
 
     return (
-        <div className="passenger-card card">
+        <div className={`passenger-card card passenger-card--${accent}`}>
             <div className="passenger-card__who">
                 <button
                     className="passenger-card__avatar"
@@ -165,13 +165,18 @@ function ReservationCard({ res }) {
                 </button>
 
                 <div className="passenger-card__info">
-                    <button
-                        className="passenger-card__name"
-                        onClick={() => uid && openCard(uid, "viajero")}
-                        disabled={!uid}
-                    >
-                        {name}
-                    </button>
+                    <div className="passenger-card__line1">
+                        <button
+                            className="passenger-card__name"
+                            onClick={() => uid && openCard(uid, "viajero")}
+                            disabled={!uid}
+                        >
+                            {name}
+                        </button>
+                        <span className={`passenger-card__status passenger-card__status--${accent}`}>
+                            {statusLabel}
+                        </span>
+                    </div>
                     <span className="passenger-card__sub">
                         {res.cantidadPasajeros
                             ? `${res.cantidadPasajeros} pasajero${res.cantidadPasajeros !== 1 ? "s" : ""}`
@@ -182,7 +187,15 @@ function ReservationCard({ res }) {
                     </span>
                 </div>
 
-                {statusChip(status)}
+                {isTerminal && !confirmDelete && (
+                    <button
+                        className="button button--icon"
+                        onClick={() => setConfirmDelete(true)}
+                        title="Eliminar reserva"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                )}
             </div>
 
             {res.viaje && (
@@ -241,36 +254,24 @@ function ReservationCard({ res }) {
                 </div>
             )}
 
-            {isTerminal && (
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    {confirmDelete ? (
-                        <div className="trip-card__delete-confirm">
-                            <span>¿Eliminar?</span>
-                            <button
-                                className="button"
-                                style={{ background: "var(--color-danger)", padding: "6px 12px", fontSize: "var(--text-sm)" }}
-                                onClick={handleDelete}
-                                disabled={busy}
-                            >
-                                Sí
-                            </button>
-                            <button
-                                className="button neutral"
-                                style={{ padding: "6px 12px", fontSize: "var(--text-sm)" }}
-                                onClick={() => setConfirmDelete(false)}
-                            >
-                                No
-                            </button>
-                        </div>
-                    ) : (
-                        <button
-                            className="button button--icon"
-                            onClick={() => setConfirmDelete(true)}
-                            title="Eliminar reserva"
-                        >
-                            <Trash2 size={16} />
-                        </button>
-                    )}
+            {isTerminal && confirmDelete && (
+                <div className="trip-card__delete-confirm" style={{ justifyContent: "flex-end" }}>
+                    <span>¿Eliminar?</span>
+                    <button
+                        className="button"
+                        style={{ background: "var(--color-danger)", padding: "6px 12px", fontSize: "var(--text-sm)" }}
+                        onClick={handleDelete}
+                        disabled={busy}
+                    >
+                        Sí
+                    </button>
+                    <button
+                        className="button neutral"
+                        style={{ padding: "6px 12px", fontSize: "var(--text-sm)" }}
+                        onClick={() => setConfirmDelete(false)}
+                    >
+                        No
+                    </button>
                 </div>
             )}
         </div>

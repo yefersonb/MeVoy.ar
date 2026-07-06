@@ -41,7 +41,7 @@ body {
     width: 100%;
     max-width: var(--content-max-width);
     margin: 0 auto;
-    padding: 16px var(--space-1);
+    padding: 16px 1px;
     padding-bottom: calc(var(--bottom-nav-height) + 24px);
     /* background: linear-gradient(rgba(48, 130, 185, 0) 0%, transparent 20%, rgba(0, 0, 0, 0.459)); */
 }
@@ -226,8 +226,9 @@ body {
 /* Icon-only buttons (e.g. delete/trash actions) — circular Material
    icon-button treatment: no boxy border, min 40px tap target. */
 .button--icon {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
     padding: 0;
     background: transparent;
     color: var(--color-text-secondary);
@@ -471,7 +472,6 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .card {
     background-color: var(--color-surface-raised);
-    /*border: 1px solid var(--color-border);*/
     border-radius: var(--radius-lg);
     padding: 16px;
     box-shadow: var(--shadow-sm);
@@ -835,7 +835,7 @@ p { margin: 0 0 var(--space-3) 0; }
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: 16px;
+    padding: 6px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -2338,23 +2338,32 @@ legend {
 .passenger-card {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    padding: 14px;
+    border-left: 3px solid transparent;
 }
+
+/* Status accent — quick color scan down a list instead of a chip */
+.passenger-card--pending    { border-left-color: var(--color-warning); }
+.passenger-card--accepted   { border-left-color: #2563eb; }
+.passenger-card--confirmed  { border-left-color: var(--color-success); }
+.passenger-card--in-transit { border-left-color: #4f46e5; }
+.passenger-card--done       { border-left-color: var(--color-text-muted); }
+.passenger-card--rejected   { border-left-color: var(--color-danger); }
 
 .passenger-card__who {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 /* Avatar wrapper — acts as a tap target */
 .passenger-card__avatar {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     overflow: hidden;
-    background: var(--color-surface-raised);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface-hover);
     flex-shrink: 0;
     cursor: pointer;
     padding: 0;
@@ -2373,7 +2382,14 @@ legend {
     color: var(--color-text-muted);
 }
 
-.passenger-card__info { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.passenger-card__info { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+
+.passenger-card__line1 {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+}
 
 .passenger-card__name {
     background: none;
@@ -2381,15 +2397,26 @@ legend {
     padding: 0;
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--color-text-primary);
     cursor: pointer;
     text-align: left;
     font-family: var(--font-stack);
-    text-decoration: underline;
-    text-underline-offset: 2px;
     line-height: 1.2;
 }
-.passenger-card__name:hover { opacity: 0.75; }
+.passenger-card__name:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* Status label — replaces the old chip, carries the weight the status deserves */
+.passenger-card__status {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+.passenger-card__status--pending    { color: var(--color-warning); }
+.passenger-card__status--accepted   { color: #2563eb; }
+.passenger-card__status--confirmed  { color: var(--color-success); }
+.passenger-card__status--in-transit { color: #4f46e5; }
+.passenger-card__status--done       { color: var(--color-text-muted); }
+.passenger-card__status--rejected   { color: var(--color-danger); }
 
 .passenger-card__sub {
     font-size: var(--text-xs);
@@ -2406,10 +2433,11 @@ legend {
 
 .passenger-card__actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 .passenger-card__actions .button {
     flex: 1;
+    min-height: 44px;
     padding: 10px;
     font-size: var(--text-sm);
 }

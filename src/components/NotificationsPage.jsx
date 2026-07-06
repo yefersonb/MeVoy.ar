@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Bell, User, Check, X, CreditCard, Navigation, Flag } from "react-feather";
 import { useNotifications } from "../contexts/NotificationContext";
@@ -24,10 +23,13 @@ function relativeTime(ts) {
     return date.toLocaleDateString("es-AR", { day: "numeric", month: "short" });
 }
 
-function NotifItem({ notif }) {
+function NotifItem({ notif, onRead }) {
     const { Icon, cls } = TYPE_CONFIG[notif.type] ?? { Icon: Bell, cls: "" };
     return (
-        <div className={`notif-item ${cls}${notif.read ? " notif-item--read" : ""}`}>
+        <div
+            className={`notif-item ${cls}${notif.read ? " notif-item--read" : ""}`}
+            onClick={() => !notif.read && onRead(notif.id)}
+        >
             <div className="notif-item__icon"><Icon size={15} /></div>
             <div className="notif-item__body">
                 <p className="notif-item__msg">{notif.message}</p>
@@ -40,15 +42,8 @@ function NotifItem({ notif }) {
 
 export default function NotificationsPage() {
     const navigate = useNavigate();
-    const { notifications, unreadCount, markAllRead } = useNotifications();
+    const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
     const recent = notifications.slice(0, 12);
-
-    useEffect(() => {
-        if (unreadCount > 0) {
-            const t = setTimeout(markAllRead, 1000);
-            return () => clearTimeout(t);
-        }
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className="notif-page">
@@ -71,7 +66,7 @@ export default function NotificationsPage() {
                 </div>
             ) : (
                 <div className="notif-page__list">
-                    {recent.map(n => <NotifItem key={n.id} notif={n} />)}
+                    {recent.map(n => <NotifItem key={n.id} notif={n} onRead={markRead} />)}
                 </div>
             )}
         </div>

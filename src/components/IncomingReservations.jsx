@@ -265,11 +265,11 @@ function ReservationCard({ res }) {
                     ) : (
                         <button
                             className="button neutral"
-                            style={{ padding: "6px 10px" }}
+                            style={{ padding: "6px 10px", border: "none" }}
                             onClick={() => setConfirmDelete(true)}
                             title="Eliminar reserva"
                         >
-                            <Trash2 size={14} />
+                            <Trash2 size={16} />
                         </button>
                     )}
                 </div>

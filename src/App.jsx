@@ -14,6 +14,7 @@ import Avatar from "./components/ui/Avatar";
 import "./styles/classic.css";
 import "./styles/cozyglow.css";
 import "./styles/markdown.css";
+
 // Shell
 import Header from "./components/Header";
 import BottomNav from "./components/layout/BottomNav";

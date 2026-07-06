@@ -3344,10 +3344,10 @@ legend {
 }
 .header-bell__dot {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 8px;
-    height: 8px;
+    top: 0px;
+    right: 0px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: var(--color-danger);
     border: 2px solid var(--color-surface);
@@ -3502,6 +3502,8 @@ legend {
 .notif-item--read {
     opacity: 0.6;
 }
+
+.notif-item:not(.notif-item--read) { cursor: pointer; }
 
 .notif-item__icon {
     width: 34px;

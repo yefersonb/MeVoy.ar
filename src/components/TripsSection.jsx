@@ -308,12 +308,11 @@ function ReservationRow({ res, trip }) {
                             </div>
                         ) : (
                             <button
-                                className="button neutral"
-                                style={{ padding: "6px 10px" }}
+                                className="button button--icon"
                                 onClick={() => setConfirmDelete(true)}
                                 title="Eliminar reserva"
                             >
-                                <Trash2 size={14} />
+                                <Trash2 size={16} />
                             </button>
                         )}
                     </div>
@@ -343,12 +342,11 @@ function ReservationRow({ res, trip }) {
                             </div>
                         ) : (
                             <button
-                                className="button neutral"
-                                style={{ padding: "6px 10px" }}
+                                className="button button--icon"
                                 onClick={() => setConfirmDelete(true)}
                                 title="Eliminar"
                             >
-                                <Trash2 size={14} />
+                                <Trash2 size={16} />
                             </button>
                         )}
                     </div>
@@ -444,12 +442,11 @@ function TripCard({ trip, reservations, onDeleteTrip }) {
                     </div>
                 ) : (
                     <button
-                        className="button neutral"
-                        style={{ padding: "5px 8px" }}
+                        className="button button--icon"
                         onClick={() => setConfirming(true)}
                         title="Eliminar viaje"
                     >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                     </button>
                 )}
             </div>

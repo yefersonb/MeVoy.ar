@@ -264,8 +264,7 @@ function ReservationCard({ res }) {
                         </div>
                     ) : (
                         <button
-                            className="button neutral"
-                            style={{ padding: "6px 10px", border: "none" }}
+                            className="button button--icon"
                             onClick={() => setConfirmDelete(true)}
                             title="Eliminar reserva"
                         >

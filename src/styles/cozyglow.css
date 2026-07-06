@@ -219,9 +219,25 @@ body {
 .button.neutral {
     background-color: var(--color-surface-raised);
     color: var(--color-text-primary);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-strong);
 }
 .button.neutral:hover { background-color: var(--color-surface-hover); }
+
+/* Icon-only buttons (e.g. delete/trash actions) — circular Material
+   icon-button treatment: no boxy border, min 40px tap target. */
+.button--icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: none;
+    border-radius: var(--radius-full);
+}
+.button--icon:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-primary);
+}
 
 .button.pill,     .btn.pill     { border-radius: var(--radius-full); }
 .button.fill,     .btn.fill,
@@ -454,8 +470,8 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .card {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background-color: var(--color-surface-raised);
+    /*border: 1px solid var(--color-border);*/
     border-radius: var(--radius-lg);
     padding: 16px;
     box-shadow: var(--shadow-sm);
@@ -2396,6 +2412,10 @@ legend {
     flex: 1;
     padding: 10px;
     font-size: var(--text-sm);
+}
+.passenger-card__actions .button--icon {
+    flex: 0 0 auto;
+    padding: 0;
 }
 
 /* Inline delete confirmation (replaces window.confirm) */

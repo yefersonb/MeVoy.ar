@@ -199,6 +199,34 @@ export default function App() {
                 >
                     <Star size={16} /> [Test] Calificar viaje
                 </button>
+                {/* TODO: remove — test button for the MP sandbox checkout */}
+                <button
+                    className="action-list__item"
+                    onClick={async () => {
+                        try {
+                            const res = await fetch("/create_preference", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    items: [{
+                                        title: "Pago de prueba MeVoy",
+                                        quantity: 1,
+                                        unit_price: 1000,
+                                        currency_id: "ARS",
+                                    }],
+                                }),
+                            });
+                            const data = await res.json();
+                            if (data.init_point) window.open(data.init_point, "_blank");
+                            else toast.error("No se pudo crear la preferencia.");
+                        } catch (e) {
+                            console.error("MP sandbox test error:", e);
+                            toast.error("Error al conectar con MercadoPago.");
+                        }
+                    }}
+                >
+                    <CreditCard size={16} /> [Test] Pago MercadoPago
+                </button>
                 <button className="action-list__item">
                     <CreditCard size={16} /> Medios de Pago
                 </button>

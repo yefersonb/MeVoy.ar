@@ -47,7 +47,7 @@ async function main() {
             items: [{
                 title: 'Viaje de prueba MeVoy',
                 quantity: 1,
-                unit_price: 3141592,
+                unit_price: 1000,
                 currency_id: 'ARS',
             }],
             external_reference,

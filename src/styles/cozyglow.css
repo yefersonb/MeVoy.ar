@@ -2331,6 +2331,35 @@ legend {
     padding-top: 4px;
 }
 
+.trip-card__rejected {
+    margin-top: 4px;
+    border-top: 1px solid var(--color-border-strong);
+    padding-top: 8px;
+}
+
+.trip-card__rejected-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 40px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-family: var(--font-stack);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.trip-card__rejected-toggle:hover { color: var(--color-text-secondary); }
+
+.trip-card__rejected-chevron {
+    transition: transform var(--transition-fast);
+}
+.trip-card__rejected-chevron--open { transform: rotate(180deg); }
+
 /* =============================================
    PASSENGER RESERVATION CARD (driver's incoming view)
    ============================================= */

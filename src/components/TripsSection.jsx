@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-    Calendar, Clock, Trash2, Check, X, Navigation, Flag, Star,
+    Calendar, Clock, Trash2, Check, X, Navigation, Flag, Star, ChevronDown,
 } from "react-feather";
 import {
     doc, getDoc, updateDoc, deleteDoc, increment,
@@ -38,6 +38,10 @@ const STATUS_CONFIG = {
 function statusOf(status) {
     return STATUS_CONFIG[status] ?? { label: status ?? "—", accent: "done" };
 }
+
+const isRejectedStatus = (status) =>
+    status === "rejected" || status === "rechazado" ||
+    status === "cancelled" || status === "cancelado" || status === "payment_failed";
 
 const passengerUid = (res) =>
     res.uidPasajero || res.pasajeroUid || res.viajanteUid ||
@@ -181,8 +185,7 @@ function ReservationRow({ res, trip }) {
     const isConfirmed  = status === "confirmed";
     const isInTransit  = status === "in_transit";
     const isCompleted  = status === "completed";
-    const isTerminal   = isCompleted || status === "rejected" || status === "rechazado" ||
-                         status === "cancelled" || status === "cancelado" || status === "payment_failed";
+    const isTerminal   = isCompleted || isRejectedStatus(status);
     const { label: statusLabel, accent } = statusOf(status);
 
     return (
@@ -221,6 +224,16 @@ function ReservationRow({ res, trip }) {
                                 : "1 pasajero"}
                         </span>
                     </div>
+
+                    {isTerminal && !confirmDelete && (
+                        <button
+                            className="button button--icon"
+                            onClick={() => setConfirmDelete(true)}
+                            title="Eliminar reserva"
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                    )}
                 </div>
 
                 {/* Pending → accept / reject */}
@@ -279,9 +292,9 @@ function ReservationRow({ res, trip }) {
                     </div>
                 )}
 
-                {/* Completed → rate passenger + optional delete */}
+                {/* Completed → rate passenger */}
                 {isCompleted && (
-                    <div className="passenger-card__actions" style={{ justifyContent: "space-between" }}>
+                    <div className="passenger-card__actions">
                         <button
                             className="button neutral"
                             style={{ padding: "6px 10px", fontSize: "var(--text-sm)" }}
@@ -289,69 +302,28 @@ function ReservationRow({ res, trip }) {
                         >
                             <Star size={13} /> Calificar pasajero
                         </button>
-
-                        {confirmDelete ? (
-                            <div className="trip-card__delete-confirm">
-                                <span>¿Eliminar?</span>
-                                <button
-                                    className="button"
-                                    style={{ background: "var(--color-danger)", padding: "6px 12px", fontSize: "var(--text-sm)" }}
-                                    onClick={handleDelete}
-                                    disabled={busy}
-                                >
-                                    Sí
-                                </button>
-                                <button
-                                    className="button neutral"
-                                    style={{ padding: "6px 12px", fontSize: "var(--text-sm)" }}
-                                    onClick={() => setConfirmDelete(false)}
-                                >
-                                    No
-                                </button>
-                            </div>
-                        ) : (
-                            <button
-                                className="button button--icon"
-                                onClick={() => setConfirmDelete(true)}
-                                title="Eliminar reserva"
-                            >
-                                <Trash2 size={16} />
-                            </button>
-                        )}
                     </div>
                 )}
 
-                {/* Other terminal states (rejected/cancelled) → delete only */}
-                {isTerminal && !isCompleted && (
-                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        {confirmDelete ? (
-                            <div className="trip-card__delete-confirm">
-                                <span>¿Eliminar?</span>
-                                <button
-                                    className="button"
-                                    style={{ background: "var(--color-danger)", padding: "6px 12px", fontSize: "var(--text-sm)" }}
-                                    onClick={handleDelete}
-                                    disabled={busy}
-                                >
-                                    Sí
-                                </button>
-                                <button
-                                    className="button neutral"
-                                    style={{ padding: "6px 12px", fontSize: "var(--text-sm)" }}
-                                    onClick={() => setConfirmDelete(false)}
-                                >
-                                    No
-                                </button>
-                            </div>
-                        ) : (
-                            <button
-                                className="button button--icon"
-                                onClick={() => setConfirmDelete(true)}
-                                title="Eliminar"
-                            >
-                                <Trash2 size={16} />
-                            </button>
-                        )}
+                {/* Delete confirmation (any terminal state) */}
+                {isTerminal && confirmDelete && (
+                    <div className="trip-card__delete-confirm" style={{ justifyContent: "flex-end" }}>
+                        <span>¿Eliminar?</span>
+                        <button
+                            className="button"
+                            style={{ background: "var(--color-danger)", padding: "6px 12px", fontSize: "var(--text-sm)" }}
+                            onClick={handleDelete}
+                            disabled={busy}
+                        >
+                            Sí
+                        </button>
+                        <button
+                            className="button neutral"
+                            style={{ padding: "6px 12px", fontSize: "var(--text-sm)" }}
+                            onClick={() => setConfirmDelete(false)}
+                        >
+                            No
+                        </button>
                     </div>
                 )}
             </div>
@@ -392,8 +364,9 @@ function ReservationRow({ res, trip }) {
 
 function TripCard({ trip, reservations, onDeleteTrip }) {
     const toast = useToast();
-    const [confirming, setConfirming] = useState(false);
-    const [deleting, setDeleting]     = useState(false);
+    const [confirming, setConfirming]       = useState(false);
+    const [deleting, setDeleting]           = useState(false);
+    const [showRejected, setShowRejected]   = useState(false);
 
     const handleDelete = async () => {
         setDeleting(true);
@@ -418,6 +391,9 @@ function TripCard({ trip, reservations, onDeleteTrip }) {
     const statsLabel = totalReqs === 0
         ? (seats != null ? `${seats} asientos` : null)
         : `${totalReqs} solicitud${totalReqs !== 1 ? "es" : ""} · ${confirmed}/${seats ?? "?"} confirmados`;
+
+    const activeReservations   = reservations.filter(r => !isRejectedStatus(r.estadoReserva));
+    const rejectedReservations = reservations.filter(r =>  isRejectedStatus(r.estadoReserva));
 
     return (
         <li className="trip-card">
@@ -482,15 +458,43 @@ function TripCard({ trip, reservations, onDeleteTrip }) {
             </div>
 
             {/* Reservations */}
-            {reservations.length > 0 && (
+            {activeReservations.length > 0 && (
                 <div className="trip-card__reservations">
-                    {reservations.map((res) => (
+                    {activeReservations.map((res) => (
                         <ReservationRow
                             key={res.id ?? res.key}
                             res={res}
                             trip={trip}
                         />
                     ))}
+                </div>
+            )}
+
+            {/* Rejected/cancelled — tucked away, closed by default */}
+            {rejectedReservations.length > 0 && (
+                <div className="trip-card__rejected">
+                    <button
+                        className="trip-card__rejected-toggle"
+                        onClick={() => setShowRejected((v) => !v)}
+                        aria-expanded={showRejected}
+                    >
+                        <ChevronDown
+                            size={14}
+                            className={`trip-card__rejected-chevron${showRejected ? " trip-card__rejected-chevron--open" : ""}`}
+                        />
+                        Rechazadas ({rejectedReservations.length})
+                    </button>
+                    {showRejected && (
+                        <div className="trip-card__reservations">
+                            {rejectedReservations.map((res) => (
+                                <ReservationRow
+                                    key={res.id ?? res.key}
+                                    res={res}
+                                    trip={trip}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </li>

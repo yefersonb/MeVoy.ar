@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { User, CreditCard, List, LogOut, ChevronRight, Shield } from "react-feather";
+import { User, CreditCard, List, LogOut, ChevronRight, Shield, ArrowLeft } from "react-feather";
 import { CarIcon } from "./components/common/icons";
 import { collection, doc, addDoc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
@@ -186,7 +186,7 @@ export default function App() {
                         </button>
                     </>
                 )}
-                
+
                 {/* TODO: remove — test button for the rating drawer */}
                 <button
                     className="action-list__item"
@@ -199,6 +199,10 @@ export default function App() {
                     )}
                 >
                     <Star size={16} /> [Test] Calificar viaje
+                </button>
+
+                <button className="action-list__item">
+                    <ArrowRight size={16} /> --- Entering MP ---
                 </button>
 
                 {/* TODO: remove — test button for the MP sandbox checkout */}
@@ -229,6 +233,11 @@ export default function App() {
                 >
                     <CreditCard size={16} /> [Test] Pago MercadoPago
                 </button>
+
+                <button className="action-list__item">
+                    <ArrowRight size={16} /> --- Leaving MP ---
+                </button>
+
                 <button className="action-list__item">
                     <CreditCard size={16} /> Medios de Pago
                 </button>

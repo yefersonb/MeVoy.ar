@@ -186,6 +186,7 @@ export default function App() {
                         </button>
                     </>
                 )}
+                
                 {/* TODO: remove — test button for the rating drawer */}
                 <button
                     className="action-list__item"
@@ -199,6 +200,7 @@ export default function App() {
                 >
                     <Star size={16} /> [Test] Calificar viaje
                 </button>
+
                 {/* TODO: remove — test button for the MP sandbox checkout */}
                 <button
                     className="action-list__item"

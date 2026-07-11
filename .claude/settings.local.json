@@ -12,7 +12,8 @@
       "Bash(Get-ChildItem -Recurse -Path src -Filter \"*.jsx\" -o \"*.js\")",
       "Bash(node -e ' *)",
       "Bash(npx vite *)",
-      "Bash(node --experimental-vm-modules -e \"1\")"
+      "Bash(node --experimental-vm-modules -e \"1\")",
+      "Bash(python3 -)"
     ]
   }
 }

@@ -50,12 +50,8 @@ const ProfileSection = ({
         ? Math.round((perfil.viajesCompletados / perfil.viajesPublicados) * 100)
         : 0;
 
-    const valoraciones = perfil.valoraciones || {
-        conduccion: 0,
-        puntualidad: 0,
-        amabilidad: 0,
-        limpieza: 0,
-    };
+    const ratingCount = perfil.ratingCount || 0;
+    const ratingAvg = ratingCount ? perfil.ratingTotal / ratingCount : 0;
 
     // TODO: Remove if profile percentage display is unwanted (sums: photo, bio, WhatsApp, DOB, vehicle, and doc verification %)
     const { percent: _verDocPct } = useDriverVerification(usuario?.uid);
@@ -193,16 +189,14 @@ const ProfileSection = ({
 
                         {/* Valoraciones */}
                         <div className='panel'>
-                            <h3> Valoraciones de Conductores </h3>
+                            <h3> Calificación </h3>
                             <div style={{ borderRadius: "8px", overflow: "hidden" }}>
-                                <RatingRow label="Conducción" value={valoraciones.conduccion} />
-                                <RatingRow label="Puntualidad" value={valoraciones.puntualidad} />
-                                <RatingRow label="Amabilidad" value={valoraciones.amabilidad} />
-                                <RatingRow label="Limpieza" value={valoraciones.limpieza} />
+                                <RatingRow label="Promedio general" value={ratingAvg} />
                             </div>
                             <div style={{ marginTop: "8px" }}>
                                 <span> {perfil.viajesCompletados || 0} viajes completados </span>
                                 <div> {completadosPercent}% de éxito </div>
+                                <div> {ratingCount} calificaci{ratingCount === 1 ? "ón" : "ones"} </div>
                             </div>
                         </div>
                         {/* Fin Valoraciones */}

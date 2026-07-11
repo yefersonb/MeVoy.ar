@@ -133,12 +133,12 @@ function BookingCard({ reserva, trip }) {
         openDrawer(
             <TripRatingSheet
                 trip={trip}
-                onSubmit={async ({ ratings, comment }) => {
+                onSubmit={async ({ rating, comment }) => {
                     await submitRating({
                         raterUid:  auth.currentUser?.uid,
                         targetUid: driverUid,
                         tripId:    reserva.viajeId,
-                        ratings,
+                        rating,
                         comment,
                     });
                 }}

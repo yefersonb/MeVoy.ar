@@ -23,43 +23,20 @@ function RatingRow({ label, value, uid }) {
     );
 }
 
-// ─── Role-specific rating sections ────────────────────────────────────────────
+// ─── Rating section ────────────────────────────────────────────────────────────
 
-function DriverRatings({ profile }) {
-    const v = profile.valoraciones || {};
-    const trips = profile.viajesCompletados || 0;
-
-    return (
-        <div className="ucs-section">
-            <span className="ucs-section__label">Valoraciones como conductor</span>
-            <RatingRow label="Conducción"  value={v.conduccion}  uid="c" />
-            <RatingRow label="Puntualidad" value={v.puntualidad} uid="p" />
-            <RatingRow label="Amabilidad"  value={v.amabilidad}  uid="a" />
-            <RatingRow label="Limpieza"    value={v.limpieza}    uid="l" />
-            <span className="ucs-trips">
-                {trips} viaje{trips !== 1 ? "s" : ""} completado{trips !== 1 ? "s" : ""}
-            </span>
-        </div>
-    );
-}
-
-function PassengerRatings({ profile }) {
-    // TODO: populate valoracionesPasajero once passenger review flow is built.
-    // Expected schema on usuarios/{uid}:
-    //   valoracionesPasajero: { puntualidad: float, comportamiento: float, limpieza: float }
-    //   viajesComoPasajero: number
-    const v = profile.valoracionesPasajero || {};
-    const trips = profile.viajesComoPasajero || 0;
+function ProfileRating({ profile }) {
+    const count = profile.ratingCount || 0;
+    const avg   = count ? profile.ratingTotal / count : 0;
 
     return (
         <div className="ucs-section">
-            <span className="ucs-section__label">Valoraciones como pasajero</span>
-            <RatingRow label="Puntualidad"    value={v.puntualidad}    uid="pp" />
-            <RatingRow label="Comportamiento" value={v.comportamiento} uid="pc" />
-            <RatingRow label="Limpieza"       value={v.limpieza}       uid="pl" />
-            <span className="ucs-trips">
-                {trips} viaje{trips !== 1 ? "s" : ""} como pasajero
-            </span>
+            <span className="ucs-section__label">Calificación</span>
+            <RatingRow
+                label={`${count} calificaci${count === 1 ? "ón" : "ones"}`}
+                value={avg}
+                uid="overall"
+            />
         </div>
     );
 }
@@ -122,11 +99,8 @@ export default function UserCardContent({ uid, contextRole }) {
                 </div>
             </div>
 
-            {/* Role-specific ratings */}
-            {isDriver
-                ? <DriverRatings  profile={profile} />
-                : <PassengerRatings profile={profile} />
-            }
+            {/* Rating */}
+            <ProfileRating profile={profile} />
 
             {/* Bio — after ratings, height-capped so long bios don't dominate */}
             {bio && bioVisible && (

@@ -29,10 +29,11 @@ export const FIELD_MAP = {
     tripsCompleted:  "viajesCompletados",
     tripsPublished:  "viajesPublicados",
     lastTrip:        "ultimoViaje",
-    ratings:         "valoraciones",
     // Already English — listed for completeness, values intentionally match keys:
     whatsapp:        "whatsapp",
     email:           "email",
+    ratingCount:     "ratingCount",
+    ratingTotal:     "ratingTotal",
 };
 
 // ⚠️  photoUrl inconsistency:
@@ -63,7 +64,8 @@ export function fromFirestore(data = {}, authUser = null) {
         responseRate:    data.tasaRespuesta    ?? null,
         tripsCompleted:  data.viajesCompletados ?? null,
         tripsPublished:  data.viajesPublicados  ?? null,
-        ratings:         data.valoraciones     ?? null,
+        ratingCount:     data.ratingCount        ?? 0,
+        ratingTotal:     data.ratingTotal        ?? 0,
     };
 }
 
@@ -88,7 +90,6 @@ export function toFirestore(profile) {
     if ("responseRate"    in profile) out.tasaRespuesta    = profile.responseRate;
     if ("tripsCompleted"  in profile) out.viajesCompletados = profile.tripsCompleted;
     if ("tripsPublished"  in profile) out.viajesPublicados  = profile.tripsPublished;
-    if ("ratings"         in profile) out.valoraciones     = profile.ratings;
     return out;
 }
 

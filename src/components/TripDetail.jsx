@@ -66,8 +66,6 @@ export default function TripDetail({ viaje, pasajeros }) {
     const [rutaError, setRutaError]             = useState(null);
     const [datosConductor, setDatosConductor]   = useState(null);
     const [vehiculo, setVehiculo]               = useState(null);
-    const [reputacion, setReputacion]           = useState(null);
-    const [totalOpiniones, setTotalOpiniones]   = useState(0);
     const [reservando, setReservando]           = useState(false);
     const [abrirEnvio, setAbrirEnvio]           = useState(false);
 
@@ -118,15 +116,6 @@ export default function TripDetail({ viaje, pasajeros }) {
             try {
                 const vehSnap = await getDocs(collection(db, "usuarios", viaje.conductor.uid, "vehiculos"));
                 if (!vehSnap.empty) setVehiculo(vehSnap.docs[0].data());
-            } catch {}
-
-            try {
-                const calSnap = await getDocs(collection(db, "usuarios", viaje.conductor.uid, "calificaciones"));
-                const notas = calSnap.docs.map(d => d.data()?.puntuacion).filter(n => typeof n === "number");
-                if (notas.length) {
-                    setReputacion(notas.reduce((a, b) => a + b, 0) / notas.length);
-                    setTotalOpiniones(notas.length);
-                }
             } catch {}
         };
         fetchDatos();
@@ -246,8 +235,8 @@ export default function TripDetail({ viaje, pasajeros }) {
                             <span className="trip-detail-driver-row__name">
                                 {datosConductor.nombre || "Conductor"}
                             </span>
-                            {reputacion !== null
-                                ? <StarRating value={reputacion} count={totalOpiniones} />
+                            {datosConductor.ratingCount > 0
+                                ? <StarRating value={datosConductor.ratingTotal / datosConductor.ratingCount} count={datosConductor.ratingCount} />
                                 : <span className="trip-detail-driver-row__no-rating">Sin calificaciones aún</span>
                             }
                         </div>

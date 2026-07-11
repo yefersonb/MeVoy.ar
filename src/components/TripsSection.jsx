@@ -157,17 +157,12 @@ function ReservationRow({ res, trip }) {
         openDrawer(
             <TripRatingSheet
                 trip={trip}
-                categories={[
-                    { key: "puntualidad",    label: "Puntualidad" },
-                    { key: "comunicacion",   label: "Comunicación" },
-                    { key: "respeto",        label: "Respeto" },
-                ]}
-                onSubmit={async ({ ratings, comment }) => {
+                onSubmit={async ({ rating, comment }) => {
                     await submitRating({
                         raterUid:  auth.currentUser?.uid,
                         targetUid: uid,
                         tripId:    viajeId,
-                        ratings,
+                        rating,
                         comment,
                     });
                 }}

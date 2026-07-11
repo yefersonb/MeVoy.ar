@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Plus, Edit2, Trash2, Check, ExternalLink } from "react-feather";
+import { Plus, Edit2, Trash2, Check } from "react-feather";
 import { CarIcon } from "./common/icons";
 import { useUser } from "../contexts/UserContext";
 import { useToast } from "../contexts/ToastContext";
@@ -11,6 +11,7 @@ import {
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import InputField from "./ui/InputField";
 import Spinner from "./common/Spinner";
+import { DocTile, DocThumb } from "./common/DocTile";
 
 // ─── Seats counter — implements the original TODO ────────────────────────────
 
@@ -23,45 +24,6 @@ function SeatsCounter({ value, onChange }) {
             <button type="button" className="seats-counter__btn"
                 onClick={() => onChange(Math.min(9, value + 1))}>+</button>
         </div>
-    );
-}
-
-// ─── Document slot picker ─────────────────────────────────────────────────────
-
-function DocPicker({ label, accept = "image/*,application/pdf", file, existingUrl, onSelect, status }) {
-    return (
-        <div className="doc-picker">
-            <span className="doc-picker__label">{label}</span>
-            <label className="doc-picker__btn button neutral button--outline">
-                {file ? file.name : existingUrl ? "Actualizar" : "Seleccionar"}
-                <input
-                    type="file" accept={accept}
-                    onChange={e => onSelect(e.target.files[0] || null)}
-                    style={{ display: "none" }}
-                />
-            </label>
-            {existingUrl && !file && (
-                <a href={existingUrl} target="_blank" rel="noreferrer" className="doc-picker__link">
-                    <ExternalLink size={12} /> Ver
-                </a>
-            )}
-            {status === "uploading" && <span className="doc-picker__status">Subiendo…</span>}
-            {status === "error"     && <span className="doc-picker__status doc-picker__status--error">Error</span>}
-            {status === "ok"        && <span className="doc-picker__status doc-picker__status--ok"><Check size={12} /></span>}
-        </div>
-    );
-}
-
-// ─── Doc status chip (view mode) ─────────────────────────────────────────────
-
-function DocChip({ label, url }) {
-    if (!url) return (
-        <span className="doc-chip doc-chip--missing">{label}</span>
-    );
-    return (
-        <a href={url} target="_blank" rel="noreferrer" className="doc-chip doc-chip--ok">
-            <Check size={10} /> {label}
-        </a>
     );
 }
 
@@ -301,23 +263,31 @@ export default function VehiculosConductor() {
                                                 onChange={n => setEditForm(f => ({ ...f, seats: n }))} />
                                         </div>
 
-                                        <div className="vehicle-docs-grid">
-                                            <DocPicker label="Foto" accept="image/*"
-                                                file={editFiles.photo} existingUrl={v.photoUrl}
-                                                onSelect={f => setEditFiles(p => ({ ...p, photo: f }))}
-                                                status={editStatus.photo} />
-                                            <DocPicker label="Cédula"
-                                                file={editFiles.cedula} existingUrl={v.cedulaUrl}
-                                                onSelect={f => setEditFiles(p => ({ ...p, cedula: f }))}
-                                                status={editStatus.cedula} />
-                                            <DocPicker label="Seguro"
-                                                file={editFiles.insurance} existingUrl={v.insuranceUrl}
-                                                onSelect={f => setEditFiles(p => ({ ...p, insurance: f }))}
-                                                status={editStatus.insurance} />
-                                            <DocPicker label="VTV"
-                                                file={editFiles.vtv} existingUrl={v.vtvUrl}
-                                                onSelect={f => setEditFiles(p => ({ ...p, vtv: f }))}
-                                                status={editStatus.vtv} />
+                                        <div className="doc-tile-grid">
+                                            <DocTile label="Foto"
+                                                url={v.photoUrl}
+                                                previewUrl={editFiles.photo ? URL.createObjectURL(editFiles.photo) : null}
+                                                uploading={editStatus.photo === "uploading"}
+                                                error={editStatus.photo === "error" ? "Error al subir" : null}
+                                                onSelect={f => setEditFiles(p => ({ ...p, photo: f }))} />
+                                            <DocTile label="Cédula"
+                                                url={v.cedulaUrl}
+                                                previewUrl={editFiles.cedula ? URL.createObjectURL(editFiles.cedula) : null}
+                                                uploading={editStatus.cedula === "uploading"}
+                                                error={editStatus.cedula === "error" ? "Error al subir" : null}
+                                                onSelect={f => setEditFiles(p => ({ ...p, cedula: f }))} />
+                                            <DocTile label="Seguro"
+                                                url={v.insuranceUrl}
+                                                previewUrl={editFiles.insurance ? URL.createObjectURL(editFiles.insurance) : null}
+                                                uploading={editStatus.insurance === "uploading"}
+                                                error={editStatus.insurance === "error" ? "Error al subir" : null}
+                                                onSelect={f => setEditFiles(p => ({ ...p, insurance: f }))} />
+                                            <DocTile label="VTV"
+                                                url={v.vtvUrl}
+                                                previewUrl={editFiles.vtv ? URL.createObjectURL(editFiles.vtv) : null}
+                                                uploading={editStatus.vtv === "uploading"}
+                                                error={editStatus.vtv === "error" ? "Error al subir" : null}
+                                                onSelect={f => setEditFiles(p => ({ ...p, vtv: f }))} />
                                         </div>
 
                                         <div className="row">
@@ -345,10 +315,10 @@ export default function VehiculosConductor() {
                                             {v.seats && <span className="trip-card__meta-item">{v.seats} asientos</span>}
                                         </div>
 
-                                        <div className="vehicle-card__docs">
-                                            <DocChip label="Cédula"  url={v.cedulaUrl} />
-                                            <DocChip label="Seguro"  url={v.insuranceUrl} />
-                                            <DocChip label="VTV"     url={v.vtvUrl} />
+                                        <div className="doc-thumb-grid">
+                                            <DocThumb label="Cédula"  url={v.cedulaUrl} />
+                                            <DocThumb label="Seguro"  url={v.insuranceUrl} />
+                                            <DocThumb label="VTV"     url={v.vtvUrl} />
                                         </div>
 
                                         {deletingId === v.id ? (
@@ -418,23 +388,27 @@ export default function VehiculosConductor() {
 
                     <p className="profile-editor__section-label">Foto y documentación</p>
 
-                    <div className="vehicle-docs-grid">
-                        <DocPicker label="Foto del vehículo" accept="image/*"
-                            file={files.photo} onSelect={f => setFiles(p => ({ ...p, photo: f }))}
-                            status={uploadStatus.photo} />
-                        {files.photo && (
-                            <img src={URL.createObjectURL(files.photo)} alt="Preview"
-                                className="vehicle-card__photo-preview" />
-                        )}
-                        <DocPicker label="Cédula de automotor"
-                            file={files.cedula} onSelect={f => setFiles(p => ({ ...p, cedula: f }))}
-                            status={uploadStatus.cedula} />
-                        <DocPicker label="Seguro"
-                            file={files.insurance} onSelect={f => setFiles(p => ({ ...p, insurance: f }))}
-                            status={uploadStatus.insurance} />
-                        <DocPicker label="VTV"
-                            file={files.vtv} onSelect={f => setFiles(p => ({ ...p, vtv: f }))}
-                            status={uploadStatus.vtv} />
+                    <div className="doc-tile-grid">
+                        <DocTile label="Foto del vehículo"
+                            previewUrl={files.photo ? URL.createObjectURL(files.photo) : null}
+                            uploading={uploadStatus.photo === "uploading"}
+                            error={uploadStatus.photo === "error" ? "Error al subir" : null}
+                            onSelect={f => setFiles(p => ({ ...p, photo: f }))} />
+                        <DocTile label="Cédula de automotor"
+                            previewUrl={files.cedula ? URL.createObjectURL(files.cedula) : null}
+                            uploading={uploadStatus.cedula === "uploading"}
+                            error={uploadStatus.cedula === "error" ? "Error al subir" : null}
+                            onSelect={f => setFiles(p => ({ ...p, cedula: f }))} />
+                        <DocTile label="Seguro"
+                            previewUrl={files.insurance ? URL.createObjectURL(files.insurance) : null}
+                            uploading={uploadStatus.insurance === "uploading"}
+                            error={uploadStatus.insurance === "error" ? "Error al subir" : null}
+                            onSelect={f => setFiles(p => ({ ...p, insurance: f }))} />
+                        <DocTile label="VTV"
+                            previewUrl={files.vtv ? URL.createObjectURL(files.vtv) : null}
+                            uploading={uploadStatus.vtv === "uploading"}
+                            error={uploadStatus.vtv === "error" ? "Error al subir" : null}
+                            onSelect={f => setFiles(p => ({ ...p, vtv: f }))} />
                     </div>
 
                     <div className="row">

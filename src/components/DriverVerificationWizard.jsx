@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
-import { CheckCircle, Clock, AlertCircle, Camera, Image, ChevronRight, Check, ArrowRight } from "react-feather";
-import DocCamera, { ID_CARD_RATIO } from "./common/DocCamera";
+import React, { useEffect, useMemo, useState } from "react";
+import { CheckCircle, Clock, AlertCircle, ChevronRight, Check, ArrowRight } from "react-feather";
+import { DocTile, DocThumb } from "./common/DocTile";
 import { auth, db, storage } from "../firebase";
 import {
     doc,
@@ -356,7 +356,7 @@ function DocsStep({ title, frontKey, backKey, urls, uploading, onFile }) {
             <p className="verif-paso__hint">
                 Fotografiá el frente y el dorso de tu {title.toLowerCase()}. Asegurate de que los datos se lean con claridad.
             </p>
-            <div className="verif-doc-pair">
+            <div className="doc-tile-grid">
                 <DocTile
                     label="Frente"
                     url={urls[frontKey]}
@@ -396,17 +396,9 @@ function ReviewStep({ formData, urls, status }) {
                 </div>
             </div>
 
-            <div className="verif-thumb-grid">
+            <div className="doc-thumb-grid">
                 {allDocs.map(({ label, url }) => (
-                    <div key={label} className="verif-thumb">
-                        <span className="verif-thumb__label">{label}</span>
-                        {url
-                            ? <a href={url} target="_blank" rel="noreferrer">
-                                <img src={url} alt={label} className="verif-thumb__img" />
-                              </a>
-                            : <div className="verif-thumb__empty">Sin foto</div>
-                        }
-                    </div>
+                    <DocThumb key={label} label={label} url={url} />
                 ))}
             </div>
 
@@ -417,78 +409,3 @@ function ReviewStep({ formData, urls, status }) {
     );
 }
 
-// ── DocTile ──────────────────────────────────────────────────────────────────
-
-function DocTile({ label, url, progress, onSelect }) {
-    const fileRef     = useRef(null);
-    const [cam, setCam] = useState(false);
-
-    const handleChange = e => {
-        const file = e.target.files?.[0];
-        if (file) onSelect(file);
-        e.target.value = "";
-    };
-
-    const isUploading = typeof progress === "number" && progress < 100;
-
-    return (
-        <div className="verif-doc-tile">
-            <span className="verif-doc-tile__label">{label}</span>
-
-            {/* Preview area */}
-            <div className={`verif-doc-tile__preview${url ? " verif-doc-tile__preview--filled" : ""}`}>
-                {isUploading ? (
-                    <div className="verif-doc-tile__uploading">
-                        <div className="verif-doc-tile__progress-bar">
-                            <div className="verif-doc-tile__progress-fill" style={{ width: `${progress}%` }} />
-                        </div>
-                        <span>{progress}%</span>
-                    </div>
-                ) : url ? (
-                    <img src={url} alt={label} className="verif-doc-tile__img" />
-                ) : (
-                    <span className="verif-doc-tile__placeholder">Sin foto</span>
-                )}
-            </div>
-
-            {/* Action buttons */}
-            <div className="verif-doc-tile__actions">
-                <button
-                    type="button"
-                    className="button neutral verif-doc-tile__btn"
-                    onClick={() => setCam(true)}
-                    disabled={isUploading}
-                >
-                    <Camera size={14} />
-                    Cámara
-                </button>
-                <button
-                    type="button"
-                    className="button neutral verif-doc-tile__btn"
-                    onClick={() => fileRef.current?.click()}
-                    disabled={isUploading}
-                >
-                    <Image size={14} />
-                    Galería
-                </button>
-            </div>
-
-            <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-                style={{ display: "none" }}
-            />
-
-            {cam && (
-                <DocCamera
-                    aspectRatio={ID_CARD_RATIO}
-                    label={`Encuadrá el ${label} dentro del marco`}
-                    onCapture={file => { setCam(false); onSelect(file); }}
-                    onCancel={() => setCam(false)}
-                />
-            )}
-        </div>
-    );
-}

@@ -4,15 +4,6 @@ import StarPicker from "./ui/StarPicker";
 import { useToast } from "../contexts/ToastContext";
 import { useDrawer } from "../contexts/UserCardContext";
 
-// Default categories for a passenger rating a driver after a trip.
-// Callers can pass their own `categories` array for other contexts.
-const DEFAULT_CATEGORIES = [
-    { key: "conduccion",  label: "Conducción" },
-    { key: "puntualidad", label: "Puntualidad" },
-    { key: "amabilidad",  label: "Amabilidad" },
-    { key: "estadoAuto",  label: "Estado del auto" },
-];
-
 // ─── Trip rating sheet content ────────────────────────────────────────────────
 //
 // Usage:
@@ -22,30 +13,22 @@ const DEFAULT_CATEGORIES = [
 //     "Calificar viaje"
 //   );
 //
-// Optional props:
-//   categories  — array of { key, label } to rate. Defaults to DEFAULT_CATEGORIES.
-//   onSubmit    — async ({ ratings, comment }) => void
+// onSubmit — async ({ rating, comment }) => void
 
-export default function TripRatingSheet({ trip, categories = DEFAULT_CATEGORIES, onSubmit }) {
-    const [ratings, setRatings] = useState({});   // { [key]: 1–5 }
+export default function TripRatingSheet({ trip, onSubmit }) {
+    const [rating, setRating]   = useState(0);
     const [comment, setComment] = useState("");
     const [busy, setBusy]       = useState(false);
     const toast                 = useToast();
     const { closeDrawer }       = useDrawer();
 
-    const setRating = (key, value) =>
-        setRatings(prev => ({ ...prev, [key]: value }));
-
-    const ratedCount  = Object.keys(ratings).length;
-    const canSubmit   = !busy && ratedCount > 0;
+    const canSubmit = !busy && rating > 0;
 
     const handleSubmit = async () => {
         if (!canSubmit) return;
         setBusy(true);
         try {
-            // TODO: Wire to Firestore — aggregate ratings into usuarios/{driverUid}.valoraciones
-            //       and write the full submission to viajes/{tripId}/ratings/{uid}
-            await onSubmit?.({ ratings, comment: comment.trim() || null });
+            await onSubmit?.({ rating, comment: comment.trim() || null });
             toast.success("¡Gracias por tu valoración!");
             closeDrawer();
         } catch (e) {
@@ -69,18 +52,7 @@ export default function TripRatingSheet({ trip, categories = DEFAULT_CATEGORIES,
                 </div>
             )}
 
-            {/* One StarPicker per category */}
-            <div className="trip-rating__categories">
-                {categories.map(cat => (
-                    <StarPicker
-                        key={cat.key}
-                        size="sm"
-                        label={cat.label}
-                        value={ratings[cat.key] || 0}
-                        onChange={v => setRating(cat.key, v)}
-                    />
-                ))}
-            </div>
+            <StarPicker value={rating} onChange={setRating} />
 
             {/* Optional comment */}
             <div className="ucs-section">

@@ -3,13 +3,6 @@ import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const defaultValoraciones = {
-  conduccion: 0,
-  puntualidad: 0,
-  amabilidad: 0,
-  limpieza: 0,
-};
-
 export const usePerfilData = (usuario) => {
   const [perfil, setPerfil] = useState({
     nombre: "",
@@ -23,7 +16,6 @@ export const usePerfilData = (usuario) => {
     viajesCompletados: 10,
     viajesPublicados: 10,
     ultimoViaje: "2025-07-28",
-    valoraciones: defaultValoraciones,
   });
   
   const [original, setOriginal] = useState({});
@@ -51,7 +43,6 @@ export const usePerfilData = (usuario) => {
             ...data,
             nombre: data.nombre || usuario?.displayName || "",
             fotoURL: data.fotoURL || usuario?.photoURL || "",
-            valoraciones: { ...defaultValoraciones, ...(data.valoraciones || {}) },
           };
           setPerfil(perfilData);
           setOriginal(perfilData);
@@ -59,7 +50,6 @@ export const usePerfilData = (usuario) => {
           const fallbackData = {
             nombre: usuario?.displayName || "",
             fotoURL: usuario?.photoURL || "",
-            valoraciones: defaultValoraciones,
           };
           setPerfil(prev => ({ ...prev, ...fallbackData }));
           setOriginal(fallbackData);

@@ -133,15 +133,12 @@ export default function TravelerProfilePage() {
                         )}
                     </div>
 
-                    {/* Driver ratings */}
-                    {isDriver && profile.ratings && (
+                    {/* Rating */}
+                    {profile.ratingCount > 0 && (
                         <div className="profile-ratings">
-                            <p className="profile-editor__section-label">Valoraciones</p>
+                            <p className="profile-editor__section-label">Calificación</p>
                             <div style={{ borderRadius: "var(--radius-md)", overflow: "hidden" }}>
-                                <RatingRow label="Conducción"  value={profile.ratings.conduccion  ?? 0} />
-                                <RatingRow label="Puntualidad" value={profile.ratings.puntualidad ?? 0} />
-                                <RatingRow label="Amabilidad"  value={profile.ratings.amabilidad  ?? 0} />
-                                <RatingRow label="Limpieza"    value={profile.ratings.limpieza    ?? 0} />
+                                <RatingRow label="Promedio general" value={profile.ratingTotal / profile.ratingCount} />
                             </div>
                         </div>
                     )}

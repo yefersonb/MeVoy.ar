@@ -1,7 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
 import { ArrowLeft, Bell, User, Check, X, CreditCard, Navigation, Flag } from "react-feather";
+import { db } from "../firebase";
 import { useNotifications } from "../contexts/NotificationContext";
+import { useDrawer } from "../contexts/UserCardContext";
+import { useToast } from "../contexts/ToastContext";
 import { NOTIF_TYPES } from "../utils/notifications";
+import TripDetail from "./TripDetail";
 
 const TYPE_CONFIG = {
     [NOTIF_TYPES.NEW_RESERVATION]:       { Icon: User,       cls: "notif-item--request" },
@@ -23,13 +28,10 @@ function relativeTime(ts) {
     return date.toLocaleDateString("es-AR", { day: "numeric", month: "short" });
 }
 
-function NotifItem({ notif, onRead }) {
+function NotifItem({ notif, onOpen }) {
     const { Icon, cls } = TYPE_CONFIG[notif.type] ?? { Icon: Bell, cls: "" };
     return (
-        <div
-            className={`notif-item ${cls}${notif.read ? " notif-item--read" : ""}`}
-            onClick={() => !notif.read && onRead(notif.id)}
-        >
+        <div className={`notif-item ${cls}`} onClick={() => onOpen(notif)}>
             <div className="notif-item__icon"><Icon size={15} /></div>
             <div className="notif-item__body">
                 <p className="notif-item__msg">{notif.message}</p>
@@ -43,7 +45,23 @@ function NotifItem({ notif, onRead }) {
 export default function NotificationsPage() {
     const navigate = useNavigate();
     const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
+    const { openDrawer } = useDrawer();
+    const toast = useToast();
     const recent = notifications.slice(0, 12);
+
+    const openNotif = async (notif) => {
+        if (!notif.read) markRead(notif.id);
+        if (!notif.tripId) return;
+        try {
+            const snap = await getDoc(doc(db, "viajes", notif.tripId));
+            if (!snap.exists()) { toast.error("Este viaje ya no está disponible."); return; }
+            navigate("/");
+            openDrawer(<TripDetail viaje={{ id: snap.id, ...snap.data() }} />, "Detalle de viaje");
+        } catch (e) {
+            console.error("[NotificationsPage] openNotif error:", e);
+            toast.error("No se pudo abrir el viaje.");
+        }
+    };
 
     return (
         <div className="notif-page">
@@ -66,7 +84,7 @@ export default function NotificationsPage() {
                 </div>
             ) : (
                 <div className="notif-page__list">
-                    {recent.map(n => <NotifItem key={n.id} notif={n} onRead={markRead} />)}
+                    {recent.map(n => <NotifItem key={n.id} notif={n} onOpen={openNotif} />)}
                 </div>
             )}
         </div>

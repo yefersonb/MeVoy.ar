@@ -25,7 +25,7 @@ import { abbreviateLocation } from "../utils/location";
 import { availableSeats } from "../utils/tripUtils";
 import { sendNotification, NOTIF_TYPES } from "../utils/notifications";
 import RequestShipment from "./RequestShipment";
-import StarRatingWidget from "./ui/StarRating";
+import RatingSummary from "./ui/RatingSummary";
 
 function haversineKm(a, b) {
     const toRad = (deg) => (deg * Math.PI) / 180;
@@ -38,19 +38,6 @@ function haversineKm(a, b) {
         Math.sin(dLat / 2) ** 2 +
         Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
     return 2 * R * Math.asin(Math.sqrt(h));
-}
-
-function StarRating({ value, count }) {
-    return (
-        <span className="star-rating">
-            <span className="star-rating__widget">
-                <StarRatingWidget rating={value} />
-            </span>
-            <span className="star-rating__label">
-                {value.toFixed(1)} · {count} opinión{count !== 1 ? "es" : ""}
-            </span>
-        </span>
-    );
 }
 
 export default function TripDetail({ viaje, pasajeros }) {
@@ -235,10 +222,11 @@ export default function TripDetail({ viaje, pasajeros }) {
                             <span className="trip-detail-driver-row__name">
                                 {datosConductor.nombre || "Conductor"}
                             </span>
-                            {datosConductor.ratingCount > 0
-                                ? <StarRating value={datosConductor.ratingTotal / datosConductor.ratingCount} count={datosConductor.ratingCount} />
-                                : <span className="trip-detail-driver-row__no-rating">Sin calificaciones aún</span>
-                            }
+                            <RatingSummary
+                                ratingCount={datosConductor.ratingCount || 0}
+                                ratingTotal={datosConductor.ratingTotal || 0}
+                                uid={viaje.conductor.uid}
+                            />
                         </div>
                         <ChevronRight size={16} className="trip-detail-driver-row__chevron" />
                     </button>

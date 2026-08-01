@@ -10,7 +10,7 @@ import Toggle from "./ui/Toggle";
 import Avatar from "./ui/Avatar";
 import Spinner from "./common/Spinner";
 import Badge from "./Badge";
-import RatingRow from "./RatingRow";
+import RatingSummary from "./ui/RatingSummary";
 
 function calcCompletion(profile) {
     if (!profile) return 0;
@@ -137,9 +137,7 @@ export default function TravelerProfilePage() {
                     {profile.ratingCount > 0 && (
                         <div className="profile-ratings">
                             <p className="profile-editor__section-label">Calificación</p>
-                            <div style={{ borderRadius: "var(--radius-md)", overflow: "hidden" }}>
-                                <RatingRow label="Promedio general" value={profile.ratingTotal / profile.ratingCount} />
-                            </div>
+                            <RatingSummary ratingCount={profile.ratingCount} ratingTotal={profile.ratingTotal} uid={usuario?.uid} />
                         </div>
                     )}
                 </>

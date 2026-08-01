@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useId } from 'react';
 
-const Rating = ({ rating = 0 }) => {
+const Rating = ({ rating = 0, idPrefix }) => {
     const fillPercentage = (rating / 5) * 100;
 
-    // Generate a unique gradient ID based on the rating
-    const gradientId = `gradient-${rating}`;
+    // Unique per-instance gradient ID — two Rating widgets showing the same
+    // numeric value would otherwise collide on `gradient-${rating}` when both
+    // are mounted at once (e.g. a list of trip cards).
+    const autoId = useId();
+    const gradientId = `gradient-${idPrefix ?? autoId}`;
 
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 7" width="100%" height="100%">

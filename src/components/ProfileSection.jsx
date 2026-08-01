@@ -13,7 +13,7 @@ import { useDriverVerification } from '../hooks/useDriverVerification';
 // UI
 import InputField from './ui/InputField';
 import Badge from './Badge';
-import RatingRow from './RatingRow';
+import RatingSummary from './ui/RatingSummary';
 import ActionBar from './ActionBar';
 import Spinner from './common/Spinner';
 import ErrorMessage from './common/ErrorMessage';
@@ -51,7 +51,6 @@ const ProfileSection = ({
         : 0;
 
     const ratingCount = perfil.ratingCount || 0;
-    const ratingAvg = ratingCount ? perfil.ratingTotal / ratingCount : 0;
 
     // TODO: Remove if profile percentage display is unwanted (sums: photo, bio, WhatsApp, DOB, vehicle, and doc verification %)
     const { percent: _verDocPct } = useDriverVerification(usuario?.uid);
@@ -190,13 +189,10 @@ const ProfileSection = ({
                         {/* Valoraciones */}
                         <div className='panel'>
                             <h3> Calificación </h3>
-                            <div style={{ borderRadius: "8px", overflow: "hidden" }}>
-                                <RatingRow label="Promedio general" value={ratingAvg} />
-                            </div>
+                            <RatingSummary ratingCount={ratingCount} ratingTotal={perfil.ratingTotal || 0} uid={usuario?.uid} />
                             <div style={{ marginTop: "8px" }}>
                                 <span> {perfil.viajesCompletados || 0} viajes completados </span>
                                 <div> {completadosPercent}% de éxito </div>
-                                <div> {ratingCount} calificaci{ratingCount === 1 ? "ón" : "ones"} </div>
                             </div>
                         </div>
                         {/* Fin Valoraciones */}

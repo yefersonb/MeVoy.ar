@@ -22,6 +22,7 @@ function DestinationPin() {
     );
 }
 import TripDetail from "./TripDetail";
+import TripResultCard from "./TripResultCard";
 import AutocompleteInput from "./AutocompleteInput";
 import { useDrawer } from "../contexts/UserCardContext";
 import useTripsSearch from "../hooks/useTripsSearch";
@@ -213,55 +214,14 @@ export default function TripSearch({ user, onBook }) {
             {/* Results */}
             {listaFinal.length > 0 && (
                 <ul className="trip-search__results">
-                    {listaFinal.map((v) => {
-                        const fechaViaje = getFechaHora(v);
-                        return (
-                            <li key={v.id} className="trip-card">
-                                <div className="trip-card__route">
-                                    <span className="trip-card__city">{v.origen}</span>
-                                    <span className="trip-card__arrow">→</span>
-                                    <span className="trip-card__city">{v.destino}</span>
-                                </div>
-
-                                <div className="trip-card__meta">
-                                    {fechaViaje && (
-                                        <span className="trip-card__meta-item">
-                                            <Calendar size={12} />
-                                            {fechaViaje.toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" })}
-                                        </span>
-                                    )}
-                                    {fechaViaje && (
-                                        <span className="trip-card__meta-item">
-                                            <Clock size={12} />
-                                            {fechaViaje.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
-                                        </span>
-                                    )}
-                                    <span className="trip-card__meta-item">
-                                        <Users size={12} />
-                                        {availableSeats(v)} asiento{availableSeats(v) !== 1 ? "s" : ""} libre{availableSeats(v) !== 1 ? "s" : ""}
-                                    </span>
-                                </div>
-
-                                {v.aceptaPaquetes && (
-                                    <div className="trip-card__packages">
-                                        <Package size={12} />
-                                        <span>Acepta paquetes</span>
-                                        {v.pesoMax && <span>· {v.pesoMax} kg máx</span>}
-                                        {v.volumenMax && <span>· {v.volumenMax} L máx</span>}
-                                        {v.costoBasePaquete != null && (
-                                            <span>· Desde ${Number(v.costoBasePaquete).toLocaleString("es-AR")}</span>
-                                        )}
-                                    </div>
-                                )}
-
-                                <div className="trip-card__actions">
-                                    <button className="button" onClick={() => openTrip(v)}>
-                                        Ver detalles
-                                    </button>
-                                </div>
-                            </li>
-                        );
-                    })}
+                    {listaFinal.map((v) => (
+                        <TripResultCard
+                            key={v.id}
+                            viaje={v}
+                            fechaViaje={getFechaHora(v)}
+                            onOpen={openTrip}
+                        />
+                    ))}
                 </ul>
             )}
 

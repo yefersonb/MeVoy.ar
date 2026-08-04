@@ -6,7 +6,7 @@ import Stars from "./StarRating";
 // and rendering it slightly differently.
 export default function RatingSummary({ ratingCount = 0, ratingTotal = 0, uid, label }) {
     if (!ratingCount) {
-        return <span className="rating-summary rating-summary--empty">Sin calificaciones aún</span>;
+        return <span className="rating-summary rating-summary--empty">Sin calificación</span>;
     }
 
     const avg = ratingTotal / ratingCount;

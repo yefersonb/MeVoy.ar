@@ -41,8 +41,7 @@ function BookingCard({ reserva, trip }) {
     const { openDrawer } = useDrawer();
     const toast          = useToast();
 
-    const [busy, setBusy]               = useState(false);
-    const [showSimulator, setShowSimulator] = useState(false);
+    const [busy, setBusy] = useState(false);
 
     const status     = reserva.estadoReserva || "requested";
     const { label, cls, hint } = statusInfo(status);
@@ -101,11 +100,18 @@ function BookingCard({ reserva, trip }) {
 
     // ── Payment handlers ──
     const handleConfirm = () => {
-        setShowSimulator(true);
+        openDrawer(
+            <SimulatorCheckoutModal
+                trip={trip}
+                reservation={reserva}
+                onApprove={handlePaymentApproved}
+                onReject={handlePaymentRejected}
+            />,
+            "Confirmar pago"
+        );
     };
 
     const handlePaymentApproved = async (simulatedPaymentId) => {
-        setShowSimulator(false);
         await transitionTo("confirmed", {
             extraData: {
                 simulatedPaymentId,
@@ -116,7 +122,6 @@ function BookingCard({ reserva, trip }) {
     };
 
     const handlePaymentRejected = () => {
-        setShowSimulator(false);
         toast.error("Pago rechazado. Podés intentarlo de nuevo cuando quieras.");
     };
 
@@ -149,22 +154,11 @@ function BookingCard({ reserva, trip }) {
 
     return (
         <>
-            {showSimulator && (
-                <SimulatorCheckoutModal
-                    trip={trip}
-                    reservation={reserva}
-                    onApprove={handlePaymentApproved}
-                    onReject={handlePaymentRejected}
-                    onClose={() => setShowSimulator(false)}
-                />
-            )}
-
             <li className="trip-card">
                 <div className="trip-card__route">
                     <span className="trip-card__city">
                         {abbreviateLocation(trip?.origen ?? "Origen desconocido")}
                     </span>
-                    <span className="trip-card__arrow">→</span>
                     <span className="trip-card__city">
                         {abbreviateLocation(trip?.destino ?? "Destino desconocido")}
                     </span>

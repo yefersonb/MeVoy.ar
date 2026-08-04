@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Calendar, Clock, Users, Package, Truck } from "react-feather";
+import { Calendar, Clock, Users, Package, Truck, ArrowRight } from "react-feather";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { availableSeats } from "../utils/tripUtils";
@@ -39,20 +39,22 @@ export default function TripResultCard({ viaje, fechaViaje, onOpen }) {
     }, [conductorUid, vehiculoId]);
 
     return (
-        <li className="trip-card">
+        <li className="trip-card" onClick={() => onOpen(viaje)} style={{position: "relative"}}>
             <div className="trip-result-card__driver">
                 <span className="trip-result-card__driver-name">
                     {viaje.conductor?.nombre || "Conductor"}
                 </span>
-                {driver && (
-                    <RatingSummary
-                        ratingCount={driver.ratingCount || 0}
-                        ratingTotal={driver.ratingTotal || 0}
-                        uid={conductorUid}
-                    />
-                )}
-                {identityVerified && <VerifiedBadge label="Verificado" />}
-                {vehicleVerified && <VerifiedBadge icon={Truck} label="Vehículo verificado" />}
+                <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
+                    {driver && (
+                        <RatingSummary
+                            ratingCount={driver.ratingCount || 0}
+                            ratingTotal={driver.ratingTotal || 0}
+                            uid={conductorUid}
+                        />
+                    )}
+                    {identityVerified && <VerifiedBadge label="" />}
+                    {vehicleVerified && <VerifiedBadge icon={Truck} label="" />}
+                </div>
             </div>
 
             <div className="trip-card__route">
@@ -91,12 +93,7 @@ export default function TripResultCard({ viaje, fechaViaje, onOpen }) {
                     )}
                 </div>
             )}
-
-            <div className="trip-card__actions">
-                <button className="button" onClick={() => onOpen(viaje)}>
-                    Ver detalles
-                </button>
-            </div>
+            <ArrowRight style={{position: "absolute", right: 0, bottom: 0, opacity: 0.2}}></ArrowRight>
         </li>
     );
 }

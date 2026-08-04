@@ -741,16 +741,17 @@ p { margin: 0 0 var(--space-3) 0; }
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: 6px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
 }
 
 /* Driver trust-signal row on a passenger-facing trip result card */
 .trip-result-card__driver {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
     flex-wrap: wrap;
     font-size: var(--text-sm);
@@ -760,6 +761,7 @@ p { margin: 0 0 var(--space-3) 0; }
 .trip-result-card__driver-name {
     font-weight: 600;
     color: var(--color-text-primary);
+    opacity: 0.5;
 }
 
 .trip-card__route {
@@ -2752,6 +2754,54 @@ legend {
 .button--fill {
     width: 100%;
     justify-content: center;
+}
+
+/* ─── Payment simulator sheet ──────────────────────────────────────────────── */
+
+.sim-checkout__amount {
+    align-items: center;
+    text-align: center;
+}
+
+.sim-checkout__amount-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.1;
+}
+
+.sim-checkout__seats {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.sim-checkout__result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: var(--text-base);
+    padding: 14px;
+    border-radius: var(--radius-md);
+}
+.sim-checkout__result--ok   { background: rgba(59,165,92,0.15);  color: var(--color-success); }
+.sim-checkout__result--fail { background: rgba(211,93,95,0.15);  color: var(--color-danger);  }
+
+.sim-checkout__actions {
+    display: flex;
+    gap: 8px;
+}
+.sim-checkout__actions .button { flex: 1; }
+
+.sim-checkout__disclaimer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: 0;
 }
 
 /* =============================================

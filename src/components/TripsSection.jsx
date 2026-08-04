@@ -516,7 +516,6 @@ export default function TripsSection({
 
     return (
         <div className="rack-s">
-            <h2 className="section-title">Mis viajes</h2>
             {publishedTrips.length === 0 ? (
                 <div className="bookings-empty">
                     <p>No publicaste ningún viaje todavía.</p>

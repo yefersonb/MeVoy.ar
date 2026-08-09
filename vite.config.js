@@ -9,6 +9,7 @@ export default defineConfig({
     proxy: {
       "/create_preference": "http://localhost:3001",
       "/webhook": "http://localhost:3001",
+      "/release_payment": "http://localhost:3001",
     },
   },
   build: {

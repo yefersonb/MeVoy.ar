@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "source": "functions"
+  },
   "hosting": {
     "public": "build",
     "ignore": [
@@ -7,6 +10,18 @@
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/create_preference",
+        "function": "api"
+      },
+      {
+        "source": "/webhook/mp",
+        "function": "api"
+      },
+      {
+        "source": "/release_payment",
+        "function": "api"
+      },
       {
         "source": "**",
         "destination": "/index.html"

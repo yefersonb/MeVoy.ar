@@ -183,37 +183,6 @@ export default function App() {
                     </>
                 )}
 
-                {/* Verifies the deployed MercadoPago sandbox pipe is reachable end-to-end.
-                    Not tied to a real reservation yet — real booking payment still goes
-                    through the SimulatorCheckoutModal flow. */}
-                <button
-                    className="action-list__item"
-                    onClick={async () => {
-                        try {
-                            const res = await fetch("/create_preference", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    items: [{
-                                        title: "Pago de prueba MeVoy",
-                                        quantity: 1,
-                                        unit_price: 1000,
-                                        currency_id: "ARS",
-                                    }],
-                                }),
-                            });
-                            const data = await res.json();
-                            if (data.init_point) window.open(data.init_point, "_blank");
-                            else toast.error("No se pudo crear la preferencia.");
-                        } catch (e) {
-                            console.error("MP sandbox test error:", e);
-                            toast.error("Error al conectar con MercadoPago.");
-                        }
-                    }}
-                >
-                    <CreditCard size={16} /> Probar conexión MercadoPago
-                </button>
-
                 <button className="action-list__item">
                     <CreditCard size={16} /> Medios de Pago
                 </button>
